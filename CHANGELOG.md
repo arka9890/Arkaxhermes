@@ -10,7 +10,7 @@
 - Skrip build: `fetch-proot.sh`, `fetch-hermes-src.sh`, `build-rootfs.sh`, `make-assets.sh`, `build-apk.sh`, `check.sh`; CI validasi sintaks.
 - Dokumentasi: arsitektur, peta seluruh fitur, API jembatan, panduan build, dan batasan jujur proot/Android non-root.
 
-### Aset biner yang sudah ikut di repo
+### Aset biner yang sudah ada di workspace (di-.gitignore, dibuat ulang oleh `make-assets.sh`)
 - `jniLibs/arm64-v8a/`: `libproot.so` 5.1.107.102 aarch64 + `libproot-loader.so`, `libtalloc.so.2(.5.0)`, `libandroid-shmem.so` (paket Termux).
 - `assets/rootfs/`: Ubuntu Base 24.04.5 arm64 + `/opt/arkax`, 2 bagian (28 MB) dengan `rootfs.sha256` terverifikasi.
 - `assets/runtime/hermes-src.tar.gz`: source Hermes `v0.23.1` pack slim (51 MB, `apps/` tetap ada).

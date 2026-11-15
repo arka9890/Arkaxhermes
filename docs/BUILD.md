@@ -9,7 +9,9 @@ scripts/build-rootfs.sh     → android/app/src/main/assets/rootfs/ubuntu-rootfs
 scripts/build-apk.sh        → android/app/build/outputs/apk/{debug,release}/app-*.apk
 ```
 
-`make-assets.sh` menjalankan tiga yang pertama sekaligus. **Di repo Arkaxhermes yang dikirimkan, ketiga hasil itu sudah ada** (≈80 MB, sengaja ikut ter-commit agar built-in distro benar-benar ada): `libproot.so` + loader + dependency, `ubuntu-rootfs.tar.gz.part001/002` + `rootfs.sha256`, dan `hermes-src.tar.gz` pack slim. Jalankan skrip hanya bila ingin membangun ulang, mengganti tag, atau menambah ABI x86_64. Artefak perantara (`rootfs/work/`, arsip utuh, `dist/`) tetap di-`.gitignore`.
+`make-assets.sh` menjalankan tiga yang pertama sekaligus. **Di workspace Arkaxhermes yang dikirimkan, ketiga hasil itu sudah ada** (≈80 MB): `libproot.so` + loader + dependency, `ubuntu-rootfs.tar.gz.part001/002` + `rootfs.sha256`, dan `hermes-src.tar.gz` pack slim, sehingga Anda bisa langsung `build-apk.sh`.
+
+Berkas biner itu **ada di workspace tetapi di-`.gitignore`** (supaya `.git` tetap ≈0,5 MB / 60 berkas). Setelah `push` + `clone`, jalankan `make-assets.sh` sekali untuk membuatnya ulang; atau `git add -f`/Git LFS bila ingin menyimpannya di remote. Artefak perantara (`rootfs/work/`, arsip utuh, `dist/`) juga diabaikan.
 
 ---
 
@@ -118,7 +120,7 @@ Yang terjadi:
 
 ## 5. Rakit semua aset
 
-Aset di repo sudah dirakit, jadi langkah ini **opsional**. Untuk membangun ulang (misal ganti tag atau ABI emulator):
+Aset sudah dirakit di workspace, jadi langkah ini **opsional di sini** — tetapi **wajib setelah clone repo Git** karena berkas biner diabaikan. Untuk membangun ulang (misal ganti tag atau ABI emulator):
 
 ```bash
 ./scripts/make-assets.sh --arch arm64 --hermes-tag v0.23.1 --abi arm64-v8a

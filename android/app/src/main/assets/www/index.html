@@ -1,0 +1,1091 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2346D5">
+<title>Arkaxhermes — Hermes Agent di Ubuntu proot</title>
+<style>
+/* ============================================================
+   Arkaxhermes UI — mandiri, tanpa CDN.
+   Terang  = Pastel Clay (DESIGN-2.md)
+   Gelap   = Synthetica AI (DESIGN.md)
+   ============================================================ */
+:root{
+  --canvas:#f0f4fc; --surface:#ffffff; --surface-2:#e6eefa; --surface-3:#f3f2ff;
+  --text:#0e193e; --muted:#5b6076; --faint:#8b91a8;
+  --primary:#4361ee; --primary-2:#8ea8ff; --primary-ink:#ffffff;
+  --accent:#2346d5; --cyan:#0ea5b7; --ok:#1a9d6f; --warn:#d97706; --err:#d1435b;
+  --border:rgba(35,62,130,.10); --hair:rgba(35,62,130,.16);
+  --user:#e6eefa; --ai:#ffffff; --code:#0f1a3a; --code-text:#dbe6ff;
+  --shadow:0 12px 28px rgba(35,62,130,.07), inset 0 2px 4px rgba(255,255,255,.9), inset 0 -3px 5px rgba(110,140,209,.10);
+  --shadow-sm:0 6px 16px rgba(35,62,130,.08), inset 0 2px 3px rgba(255,255,255,.85);
+  --radius:24px; --radius-sm:14px; --radius-xs:10px; --pill:999px;
+  --font:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+html[data-theme="dark"]{
+  --canvas:#0b1326; --surface:#171f33; --surface-2:#131b2e; --surface-3:#222a3d;
+  --text:#dae2fd; --muted:#c7c4d7; --faint:#8d92ab;
+  --primary:#c0c1ff; --primary-2:#8083ff; --primary-ink:#1000a9;
+  --accent:#8b5cf6; --cyan:#38bdf8; --ok:#34d399; --warn:#fbbf24; --err:#ffb4ab;
+  --border:rgba(255,255,255,.08); --hair:rgba(255,255,255,.10);
+  --user:#1e293b; --ai:rgba(30,41,59,.42); --code:#060e20; --code-text:#c7d2fe;
+  --shadow:0 16px 36px -8px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.04);
+  --shadow-sm:0 8px 22px -8px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.03);
+  --radius:16px; --radius-sm:10px; --radius-xs:8px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--canvas);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.5}
+body{background:radial-gradient(1200px 600px at 50% -10%,rgba(99,102,241,.10),transparent 60%)}
+button,input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+a{color:var(--primary)}
+.phone{position:relative;max-width:430px;margin:0 auto;min-height:100vh;padding-bottom:86px;overflow:hidden;background:var(--canvas)}
+.topbar{position:sticky;top:0;z-index:30;height:58px;display:flex;align-items:center;gap:10px;padding:8px 14px;background:var(--canvas);background:color-mix(in srgb,var(--canvas) 86%,transparent);backdrop-filter:blur(18px);border-bottom:1px solid var(--border)}
+.iconbtn{width:38px;height:38px;display:grid;place-items:center;border-radius:var(--pill);background:var(--surface);box-shadow:var(--shadow-sm);color:var(--text);flex:none}
+.iconbtn:active{transform:scale(.94)}
+.iconbtn.primary{background:var(--primary);color:var(--primary-ink);box-shadow:0 8px 20px -6px var(--primary)}
+.provider-badge{flex:1;min-width:0;display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:var(--pill);background:var(--surface);box-shadow:var(--shadow-sm)}
+.provider-badge .dot{width:9px;height:9px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px color-mix(in srgb,var(--ok) 20%,transparent);flex:none}
+.provider-badge b{font-size:13px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.provider-badge small{display:block;font-size:10px;color:var(--faint);font-family:var(--mono)}
+.chip-mini{font-size:10px;font-weight:800;padding:3px 8px;border-radius:var(--pill);background:var(--surface-2);color:var(--muted)}
+.screen{padding:16px 14px 22px;animation:fade .22s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.h1{font-size:22px;font-weight:800;letter-spacing:-.02em;margin:2px 0 4px}
+.sub{color:var(--muted);font-size:12.5px;margin:0 0 14px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);margin-bottom:14px}
+.card.tight{padding:12px}
+.card.flat{box-shadow:none;background:var(--surface-2)}
+.row{display:flex;align-items:center;gap:10px}
+.row.between{justify-content:space-between}
+.wrap{flex-wrap:wrap}
+.grow{flex:1;min-width:0}
+.tag{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;padding:4px 9px;border-radius:var(--pill);background:var(--surface-2);color:var(--muted);white-space:nowrap}
+.tag.ok{background:color-mix(in srgb,var(--ok) 14%,transparent);color:var(--ok)}
+.tag.warn{background:color-mix(in srgb,var(--warn) 16%,transparent);color:var(--warn)}
+.tag.err{background:color-mix(in srgb,var(--err) 16%,transparent);color:var(--err)}
+.tag.primary{background:color-mix(in srgb,var(--primary) 18%,transparent);color:var(--primary)}
+.mono{font-family:var(--mono);font-size:11px}
+.muted{color:var(--muted)} .faint{color:var(--faint)} .small{font-size:11.5px} .bold{font-weight:800}
+.section-title{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--primary);margin:20px 4px 10px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 14px;border-radius:var(--pill);font-weight:700;font-size:12.5px;background:var(--surface-2);color:var(--text);box-shadow:var(--shadow-sm);transition:transform .12s}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:linear-gradient(135deg,var(--primary),var(--primary-2));color:var(--primary-ink);box-shadow:0 10px 24px -8px var(--primary)}
+.btn.block{width:100%;padding:13px;font-size:13.5px}
+.btn.ghost{background:transparent;box-shadow:none;border:1px solid var(--hair)}
+.btn.danger{color:var(--err)}
+.btn.sm{padding:7px 11px;font-size:11.5px}
+.segmented{display:flex;gap:4px;padding:4px;border-radius:var(--pill);background:var(--surface-2)}
+.segmented button{flex:1;padding:8px 4px;border-radius:var(--pill);font-size:12px;font-weight:700;color:var(--muted)}
+.segmented button.on{background:var(--surface);color:var(--text);box-shadow:var(--shadow-sm)}
+html[data-theme="dark"] .segmented button.on{background:var(--primary);color:var(--primary-ink)}
+.filters{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.filters button{white-space:nowrap;padding:7px 13px;border-radius:var(--pill);font-size:11.5px;font-weight:700;background:var(--surface);color:var(--muted);box-shadow:var(--shadow-sm)}
+.filters button.on{background:var(--primary);color:var(--primary-ink)}
+.search{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:var(--pill);background:var(--surface);box-shadow:var(--shadow-sm);margin-bottom:12px}
+.search input{border:0;outline:0;background:transparent;flex:1;font-size:12.5px}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.stat{background:var(--surface-2);border-radius:var(--radius-sm);padding:10px;text-align:center}
+.stat b{display:block;font-size:15px;font-weight:800}
+.stat small{font-size:10px;color:var(--muted)}
+.bar{height:8px;border-radius:var(--pill);background:var(--surface-2);overflow:hidden;margin:8px 0}
+.bar > i{display:block;height:100%;border-radius:var(--pill);background:linear-gradient(90deg,var(--primary),var(--primary-2))}
+.list-item{display:flex;align-items:center;gap:11px;padding:12px;border-radius:var(--radius-sm);background:var(--surface-2);margin-bottom:8px}
+.list-item .ico{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:var(--surface);color:var(--primary);flex:none}
+.list-item b{font-size:12.5px} .list-item small{display:block;color:var(--muted);font-size:11px}
+.switch{width:46px;height:26px;border-radius:var(--pill);background:var(--surface-3);border:1px solid var(--border);position:relative;flex:none;transition:.2s}
+.switch i{position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:var(--faint);transition:.2s}
+.switch.on{background:var(--primary)} .switch.on i{left:22px;background:var(--primary-ink)}
+.kbd{font-family:var(--mono);font-size:10.5px;background:var(--surface-2);padding:3px 7px;border-radius:6px;color:var(--muted)}
+/* Chat */
+.chat-scroll{padding:14px 14px 4px;min-height:calc(100vh - 210px)}
+.msg{display:flex;gap:9px;margin-bottom:14px;align-items:flex-start}
+.msg.user{flex-direction:row-reverse}
+.avatar{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;flex:none;background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;font-size:14px}
+.bubble{max-width:86%;padding:12px 14px;border-radius:18px;background:var(--ai);border:1px solid var(--border);box-shadow:var(--shadow-sm);font-size:13px;line-height:1.62}
+.msg.user .bubble{background:var(--user);border-bottom-right-radius:5px}
+.bubble .md h4{margin:8px 0 4px;font-size:13.5px}
+.bubble .md ul{margin:6px 0;padding-left:18px}
+.bubble .md code{font-family:var(--mono);font-size:11px;background:var(--surface-2);padding:2px 5px;border-radius:5px}
+.code{background:var(--code);color:var(--code-text);border-radius:12px;margin:10px 0;overflow:hidden;font-family:var(--mono);font-size:11px}
+.code-head{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:rgba(255,255,255,.06);font-size:10px}
+.code-head button{color:var(--cyan);font-size:10px;font-weight:700}
+.code pre{margin:0;padding:10px;white-space:pre-wrap;word-break:break-word}
+.msg-meta{display:flex;align-items:center;gap:6px;margin-top:8px;color:var(--faint);font-size:10px;font-family:var(--mono)}
+.msg-actions{display:flex;gap:4px;margin-top:6px}
+.msg-actions button{width:26px;height:26px;display:grid;place-items:center;border-radius:8px;color:var(--faint)}
+.msg-actions button:active{background:var(--surface-2)}
+.tools{margin-top:9px;border-top:1px dashed var(--border);padding-top:8px}
+.tools .tool{display:flex;gap:6px;align-items:center;font-size:10.5px;font-family:var(--mono);color:var(--cyan);margin-bottom:3px}
+.cursor{display:inline-block;width:7px;height:13px;background:var(--primary);vertical-align:-2px;animation:blink .8s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+.suggestions{display:flex;gap:7px;overflow-x:auto;padding:0 14px 10px;scrollbar-width:none}
+.suggestions::-webkit-scrollbar{display:none}
+.suggestions button{white-space:nowrap;padding:8px 12px;border-radius:var(--pill);background:var(--surface);box-shadow:var(--shadow-sm);font-size:11.5px;font-weight:700;color:var(--muted)}
+.composer{position:sticky;bottom:72px;z-index:20;padding:8px 12px;background:linear-gradient(to top,var(--canvas) 72%,transparent)}
+.composer-inner{display:flex;align-items:flex-end;gap:6px;padding:7px 8px;border-radius:var(--radius);background:var(--surface);box-shadow:var(--shadow);border:1px solid var(--border)}
+.composer textarea{flex:1;border:0;outline:0;resize:none;background:transparent;max-height:110px;min-height:34px;padding:7px 4px;font-size:13px}
+.composer .send{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--primary),var(--primary-2));color:var(--primary-ink);flex:none}
+.composer .send.off{background:var(--surface-2);color:var(--faint)}
+.slash{position:absolute;left:12px;right:12px;bottom:78px;background:var(--surface);border-radius:var(--radius-sm);box-shadow:var(--shadow);border:1px solid var(--border);padding:6px;z-index:25}
+.slash button{display:flex;width:100%;gap:8px;padding:8px 10px;border-radius:9px;text-align:left;font-size:12px}
+.slash button:hover{background:var(--surface-2)}
+/* Terminal */
+.term{background:var(--code);color:var(--code-text);border-radius:var(--radius-sm);padding:12px;font-family:var(--mono);font-size:11px;line-height:1.65;height:340px;overflow-y:auto;white-space:pre-wrap;word-break:break-word}
+.term .ok{color:var(--ok)} .term .warn{color:var(--warn)} .term .err{color:var(--err)} .term .dim{opacity:.6}
+.term-input{display:flex;gap:8px;margin-top:10px}
+.term-input input{flex:1;padding:11px 14px;border-radius:var(--pill);border:1px solid var(--border);background:var(--surface);outline:0;font-family:var(--mono);font-size:11.5px}
+/* Nav & drawer */
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(430px,100%);z-index:35;display:flex;justify-content:space-around;align-items:center;height:68px;padding:6px 6px calc(6px + env(safe-area-inset-bottom));background:var(--canvas);background:color-mix(in srgb,var(--canvas) 90%,transparent);backdrop-filter:blur(20px);border-top:1px solid var(--border)}
+.bottom-nav button{display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--faint);font-size:9.5px;font-weight:700;min-width:56px;position:relative}
+.bottom-nav button.on{color:var(--primary)}
+.bottom-nav button.on::after{content:"";position:absolute;bottom:-3px;width:5px;height:5px;border-radius:50%;background:var(--primary);box-shadow:0 0 10px var(--primary)}
+.scrim{position:fixed;inset:0;z-index:40;background:rgba(6,10,24,.55);backdrop-filter:blur(2px);opacity:0;pointer-events:none;transition:.22s}
+.scrim.show{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;bottom:0;left:max(0px,calc(50% - 215px));width:min(82%,340px);z-index:45;background:var(--surface);border-right:1px solid var(--border);box-shadow:var(--shadow);transform:translateX(-105%);transition:transform .25s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column}
+.drawer.show{transform:none}
+.drawer-head{padding:18px 16px 12px;border-bottom:1px solid var(--border)}
+.drawer-body{flex:1;overflow-y:auto;padding:8px 10px 20px}
+.drawer-group{font-size:10px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);padding:12px 8px 6px}
+.drawer-link{display:flex;align-items:center;gap:11px;width:100%;padding:10px;border-radius:12px;font-size:12.5px;font-weight:600;text-align:left}
+.drawer-link.on{background:color-mix(in srgb,var(--primary) 14%,transparent);color:var(--primary)}
+.drawer-foot{padding:12px 16px calc(16px + env(safe-area-inset-bottom));border-top:1px solid var(--border)}
+/* Modal / install / toast */
+.modal-wrap{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:18px;background:rgba(6,10,24,.6);backdrop-filter:blur(4px)}
+.modal{width:min(390px,100%);max-height:84vh;overflow-y:auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+.modal h3{margin:0 0 6px;font-size:17px;font-weight:800}
+.field{margin:10px 0}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:5px}
+.field input,.field textarea,.field select{width:100%;padding:11px 12px;border-radius:12px;border:1px solid var(--border);background:var(--surface-2);outline:0;font-size:12.5px}
+.field textarea{min-height:110px;font-family:var(--mono);font-size:11.5px;resize:vertical}
+.modal-foot{display:flex;gap:8px;margin-top:14px}
+.install-step{display:flex;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--border)}
+.install-step:last-child{border:0}
+.install-step .n{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;flex:none;font-size:10px;font-weight:800;background:var(--surface-2);color:var(--muted)}
+.install-step.done .n{background:var(--ok);color:#fff} .install-step.active .n{background:var(--primary);color:var(--primary-ink)}
+.toast{position:fixed;z-index:80;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);opacity:0;pointer-events:none;background:var(--text);color:var(--canvas);padding:10px 16px;border-radius:var(--pill);font-size:11.5px;font-weight:700;box-shadow:0 12px 30px rgba(0,0,0,.28);transition:.25s;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%)}
+.demo-badge{position:fixed;top:8px;right:calc(50% - 205px);z-index:50;font-size:9px;font-weight:800;letter-spacing:.06em;padding:4px 9px;border-radius:var(--pill);background:var(--warn);color:#fff;box-shadow:var(--shadow-sm)}
+@media(max-width:440px){.demo-badge{right:8px}}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="overlay"></div>
+<div id="toast" class="toast"></div>
+
+<script>
+(function(){
+'use strict';
+
+/* ======================= 1. TRANSPORT ======================= */
+var BRIDGE = window.ArkaxBridge || null;
+var NATIVE = !!BRIDGE || (location.hostname === '127.0.0.1' && /^https?:$/.test(location.protocol));
+var TOKEN = BRIDGE ? BRIDGE.token() : '';
+var API = '';               // same-origin di dalam aplikasi
+var DEMO = !NATIVE;
+
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function attr(s){ return esc(s); }
+function qs(obj){ return Object.keys(obj).map(function(k){return encodeURIComponent(k)+'='+encodeURIComponent(obj[k]);}).join('&'); }
+
+/* ---- data demo (persis seperti desain lampiran) ---- */
+var demoProviders = [
+  {id:'anthropic',name:'Anthropic',envKey:'ANTHROPIC_API_KEY',note:'Claude 3.5 Sonnet, Claude 3 Opus',configured:true,active:true,latency:'184ms',models:'2 Model Aktif'},
+  {id:'openai',name:'OpenAI',envKey:'OPENAI_API_KEY',note:'GPT-4o, GPT-4o mini, o1-preview',configured:true,latency:'235ms',models:'3 Model Aktif'},
+  {id:'gemini',name:'Google AI',envKey:'GOOGLE_API_KEY',note:'Gemini 1.5 Pro, Gemini 1.5 Flash',configured:true,latency:'210ms',models:'2 Model Aktif'},
+  {id:'deepseek',name:'DeepSeek',envKey:'DEEPSEEK_API_KEY',note:'DeepSeek V3, DeepSeek R1',configured:false,latency:'—',models:'Perlu API Key'},
+  {id:'ollama',name:'Ollama Local',envKey:'OLLAMA_BASE_URL',note:'Llama 3.3 70B, Mistral Nemo, Qwen 2.5',configured:true,latency:'42ms (Lokal)',models:'192.168.1.11'},
+  {id:'openrouter',name:'OpenRouter',envKey:'OPENROUTER_API_KEY',note:'200+ model, satu kunci',configured:false,latency:'—',models:'Perlu API Key'},
+  {id:'nous',name:'Nous Portal',envKey:'NOUS_API_KEY',note:'300+ model + Tool Gateway (OAuth)',configured:false,latency:'—',models:'hermes setup --portal'},
+  {id:'xai',name:'xAI (Grok)',envKey:'XAI_API_KEY',note:'x_search, Grok',configured:false,latency:'—',models:'Perlu API Key'}
+];
+var demoFolders = [
+  {name:'Prompts & Instructions',path:'/root/.hermes/prompts',count:2,color:'#d98b45',files:[
+    {name:'System_Prompt_Master_v2.md',meta:'Aktif di Memory • Claude 3.5 & GPT-4o • 48 KB',tag:'Aktif'},
+    {name:'guardrails_safety_eval.md',meta:'Standby • Llama-Guard-3 • 12 KB',tag:'Standby'}]},
+  {name:'Knowledge Base (RAG)',path:'/root/.hermes/knowledge',count:2,color:'#4361ee',files:[
+    {name:'product_knowledge_base_rag.pdf',meta:'Indexed (1.420 Chunks) • 1536-dim • 14.2 MB',tag:'Indexed'},
+    {name:'api_documentation_v3.pdf',meta:'Indexed (856 Chunks) • KEY.dll • 9.8 MB',tag:'Indexed'}]},
+  {name:'Skills',path:'/root/.hermes/skills',count:3,color:'#1a9d6f',files:[
+    {name:'hermes-agent-dev/SKILL.md',meta:'Procedural memory • auto-created',tag:'Aktif'},
+    {name:'github-auth/SKILL.md',meta:'Ditingkatkan 3× saat dipakai',tag:'Aktif'},
+    {name:'blogwatcher/SKILL.md',meta:'Dipakai cron setiap 1h',tag:'Aktif'}]},
+  {name:'Sessions (FTS5)',path:'/root/.hermes/sessions.db',count:1,color:'#8b5cf6',files:[
+    {name:'sessions.db',meta:'SQLite WAL • FTS5 • 128 MB cache',tag:'Lokal'}]},
+  {name:'Memory',path:'/root/.hermes/MEMORY.md',count:2,color:'#d1435b',files:[
+    {name:'MEMORY.md',meta:'Fakta lintas sesi',tag:'Aktif'},
+    {name:'USER.md',meta:'Profil pengguna',tag:'Aktif'}]}
+];
+var demoSkills = [
+  {name:'hermes-agent-dev',description:'Alur kerja pengembangan Hermes Agent: setup, test, rilis.',size:2840,auto:true},
+  {name:'github-auth',description:'Otentikasi GitHub CLI, token, dan SSH untuk repo privat.',size:1720,auto:true},
+  {name:'blogwatcher',description:'Pantau feed, ringkas artikel baru, kirim ke Telegram.',size:3120,auto:false},
+  {name:'deploy-staging',description:'Langkah deploy ke staging: build image, push, verifikasi.',size:1960,auto:true}
+];
+var demoCron = [
+  {id:'job-1',name:'Ringkasan HN Pagi',schedule:'every day 09:00',prompt:'Cek berita AI di Hacker News, kirim ringkasan ke Telegram',enabled:true,model:'pinned'},
+  {id:'job-2',name:'Health Check',schedule:'every 2h',prompt:'Check server status',enabled:true,model:'follow'},
+  {id:'job-3',name:'Backup Mingguan',schedule:'every sunday 02:00',prompt:'Backup ~/.hermes ke /mnt/arkax/exports',enabled:false,model:'cron.model'}
+];
+var demoPlatforms = [
+  {name:'Telegram',state:'Terhubung',on:true,note:'Voice memo → transkrip'},
+  {name:'Discord',state:'Terhubung',on:true,note:'discord, discord_admin toolset'},
+  {name:'Slack',state:'Terhubung',on:true,note:'Socket Mode'},
+  {name:'WhatsApp',state:'Siap',on:false,note:'Perlu pairing'},
+  {name:'Signal',state:'Siap',on:false,note:'Perlu nomor terdaftar'},
+  {name:'Email / Home Assistant',state:'Siap',on:false,note:'Webhook + event cron'}
+];
+var demoSessions = [
+  {id:'ses_01J8X',title:'RSC & data fetching',when:'Hari ini',model:'claude-sonnet-4.5',tokens:'412'},
+  {id:'ses_01J7Q',title:'Refactor proot runtime',when:'Hari ini',model:'gpt-5.5',tokens:'8.420'},
+  {id:'ses_01J2A',title:'Riset Hermes Agent',when:'7 hari terakhir',model:'claude-sonnet-4.5',tokens:'19.880'},
+  {id:'ses_019Z1',title:'Arsip: setup gateway',when:'Arsip',model:'gemini-1.5-pro',tokens:'3.110'}
+];
+var demoApprovals = [
+  {id:'ap-1',command:'rm -rf /mnt/arkax/exports/old',risk:'Tinggi',state:'Menunggu'},
+  {id:'ap-2',command:'apt-get install chromium',risk:'Sedang',state:'Menunggu'}
+];
+var demoToolsets = ['web','search','terminal','file','browser','vision','image_gen','skills','tts','todo','memory','session_search','cronjob','code_execution','delegation','clarify','messaging','debugging','safe'];
+
+var DEMO_ANSWER = 'Tentu! Bayangkan **Arkaxhermes** seperti *dapur restoran berfasilitas lengkap* yang berada langsung di dalam Ubuntu proot di ponsel Anda:\n\n' +
+'- **Bahan Baku di Dapur:** Hermes Agent menyiapkan semua data (skills, MEMORY.md, sesi FTS5, konfigurasi) tanpa mengirim resep rahasia ke klien.\n' +
+'- **Hidangan Jadi ke Tamu:** WebView hanya menerima representasi UI bersih lewat jembatan `127.0.0.1`, tanpa paket JavaScript berat untuk memproses data.\n' +
+'- **Zero Client Bundle:** dependensi berat (Python 3.14, Node.js, SQLite, 40+ tools) tetap tinggal di server proot.\n\n' +
+'Contoh perintah yang saya jalankan di dalam rootfs:\n\n```bash\nhermes chat --query-file - --toolsets "web,terminal,skills" \\\n  --pass-session-id --source arkaxhermes\n```\n\n' +
+'Semua fitur — skills, memory, cron, gateway, MCP, delegasi subagen — bisa dibuka dari menu ☰ di kiri atas.';
+
+var Demo = {
+  request: function(path, method, body){
+    var p = path.split('?')[0];
+    var out = {ok:true};
+    if(p === '/api/status') out = {
+      ok:true,state:'ready',demo:true,
+      rootfs:{present:true,sizeBytes:987654321,release:'Ubuntu 24.04.5 LTS',arch:'arm64'},
+      proot:{binary:'/data/app/.../lib/arm64/libproot.so',present:true,loader:true},
+      hermes:{version:'0.23.1',home:'/root/.hermes',installed:true,upstreamTag:'v0.23.1'},
+      services:{gateway:'running',cron:'running',dashboard:'stopped',webhook:'stopped'},
+      system:{cpuLoad:32,cores:8,ramUsedMb:4300,ramTotalMb:12288,tempC:42,diskFreeMb:8192},
+      model:{provider:'anthropic',name:'Claude 3.5 Sonnet',context:200000},
+      settings:{theme:state.theme,fontSize:state.font,haptics:true,autoSave:true,encryptLocal:true,
+        services:{gateway:true,cron:true,dashboard:false,webhook:false},
+        chat:{defaultProvider:'anthropic',defaultModel:'claude-sonnet-4.5',toolsets:'web,terminal,skills',yolo:false}}
+    };
+    else if(p === '/api/settings') out = (method==='POST' && body) ? Object.assign({},state.settings,body) : state.settings;
+    else if(p === '/api/exec'){
+      var cmd = (body && body.argv) ? body.argv.join(' ') : '';
+      out = {ok:true,stdout:Demo.terminal(cmd),stderr:'',exit:0,elapsedMs:812};
+    }
+    else if(p === '/api/logs') out = {ok:true,logs:'[demo] Arkaxhermes siap\nhermes doctor: OK\ngateway: running'};
+    else if(p === '/api/doctor') out = {ok:true,data:{local:{python:'3.12.3'},upstream:'All checks passed'}};
+    else if(p.indexOf('/api/hermes/') === 0){
+      var action = (body && body.action) || p.replace('/api/hermes/','').replace(/\//g,'.');
+      out = Demo.feature(action, body||{});
+    }
+    else if(p === '/api/files') out = {ok:true,action:'files.list',data:demoFolders};
+    else if(p === '/api/service') out = {ok:true,name:body.name,action:body.action,message:'Layanan '+body.action+' '+body.name+' (demo)'};
+    else if(p === '/api/install') out = {ok:true,started:true};
+    return Promise.resolve(out);
+  },
+  feature: function(action, body){
+    var d = {};
+    if(action==='providers.list') d = demoProviders;
+    else if(action==='skills.list') d = demoSkills;
+    else if(action==='cron.list') d = demoCron;
+    else if(action==='sessions.list') d = demoSessions;
+    else if(action==='sessions.search') d = demoSessions.slice(0,2);
+    else if(action==='sessions.stats') d = {sessions:32,messages:1420,tokens:168000};
+    else if(action==='mcp.list') d = {servers:{filesystem:{transport:'stdio',command:'npx',enabled:true},browser:{transport:'http',url:'http://127.0.0.1:9222',enabled:false}}};
+    else if(action==='tools.list') d = {toolsets:demoToolsets.map(function(t){return {name:t,enabled:['web','terminal','file','skills','memory','session_search','cronjob','delegation','safe'].indexOf(t)>=0};}),upstream:null};
+    else if(action==='memory.get') d = {file:body.file||'MEMORY.md',content:'# Memori Arkaxhermes\n\n- Pengguna lebih suka Bahasa Indonesia.\n- Proot Ubuntu 24.04, bukan Termux.\n- Semua kunci API tersimpan di Android Keystore.\n',exists:true};
+    else if(action==='memory.providers') d = {plugins:['honcho','homeassistant','camofox'],honcho:true};
+    else if(action==='plugins.list') d = ['honcho','homeassistant','camofox','singularity'];
+    else if(action==='profiles.list') d = {directories:['.hermes','.hermes-riset','.hermes-kantor'],upstream:'default'};
+    else if(action==='approvals.list') d = {local:demoApprovals,upstream:null};
+    else if(action==='trajectories.list') d = [{path:'/root/.hermes/trajectories/run-001.jsonl',size:48210,lines:120}];
+    else if(action==='bots.list') d = {bots:[{name:'Riset',model:'claude-sonnet-4.5'},{name:'DevOps',model:'gpt-5.5'}]};
+    else if(action==='hooks.list') d = [{name:'on_session_open.py',size:820},{name:'post_curator_run.py',size:1140}];
+    else if(action==='context.list') d = {files:[{path:'/mnt/arkax/inbox/DESIGN.md',recursive:false}]};
+    else if(action==='files.list') d = demoFolders;
+    else if(action==='files.read') d = {path:body.path,text:'# '+body.path+'\n\nBerkas contoh dari workspace Arkaxhermes.'};
+    else if(action==='backup.create') d = {path:'/mnt/arkax/exports/arkax-backup-demo.tar.gz',size:28412612,sha256:'a91d5a93…'};
+    else if(action==='export.chat') d = {path:'/mnt/arkax/exports/arkax-chat-demo.md',bytes:4180};
+    else if(action==='env.list') d = [{key:'ANTHROPIC_API_KEY',masked:'••••a92f'},{key:'OPENAI_API_KEY',masked:'••••7b1c'}];
+    else if(action==='doctor') d = {local:{python:'3.12.3',services:{gateway:'running'}},upstream:'All checks passed',exit:0};
+    else if(action==='status') d = {hermesVersion:'0.23.1',skills:4,services:{gateway:'running'}};
+    else d = {ok:true,info:action+' dijalankan (mode demo)'};
+    return {ok:true,action:action,data:d,source:'demo',warnings:DEMO?[]:[],fallback:null};
+  },
+  terminal: function(cmd){
+    if(/--version|version/.test(cmd)) return 'Hermes Agent v0.23.1\nUbuntu 24.04.5 LTS (proot, aarch64)\nArkaxhermes 0.1.0';
+    if(/doctor/.test(cmd)) return 'OK   python 3.12.3\nOK   node v20.18.0\nOK   hermes v0.23.1\nOK   sqlite3 + FTS5\nOK   DNS resolv-ok\nWARN Docker daemon tidak tersedia di Android non-root — gunakan backend ssh/modal/daytona.\nSemua pemeriksaan inti lulus.';
+    if(/tools/.test(cmd)) return 'Toolset aktif: web, terminal, file, skills, memory, session_search, cronjob, delegation, safe\n40+ tools terdaftar. Jalankan `hermes tools` untuk konfigurasi interaktif.';
+    if(/cron/.test(cmd)) return 'job-1  every day 09:00   Ringkasan HN Pagi     [aktif]\njob-2  every 2h          Health Check           [aktif]\njob-3  every sunday 02:00 Backup Mingguan       [pause]';
+    if(/gateway/.test(cmd)) return 'gateway: running (Telegram, Discord, Slack)\ncron ticker: running\nwebhook: stopped';
+    if(/ls|dir/.test(cmd)) return 'MEMORY.md  USER.md  config.yaml  .env  skills/  sessions.db  cron/  plugins/  logs/';
+    if(/uname/.test(cmd)) return 'Linux arkaxhermes 4.14.81-perf+ #1 SMP PREEMPT aarch64 GNU/Linux';
+    return '$ '+cmd+'\n[demo] Perintah diteruskan ke /bin/bash di dalam Ubuntu proot.\nHermes Agent v0.23.1 siap.';
+  },
+  stream: function(path, body, onEvent){
+    return new Promise(function(resolve){
+      if(path === '/api/chat'){
+        var words = DEMO_ANSWER.split(/(\s+)/), i=0;
+        var timer = setInterval(function(){
+          if(i>=words.length){
+            clearInterval(timer);
+            onEvent('tool',{name:'session_search',detail:'Mencari konteks lintas sesi…'});
+            onEvent('session',{id:'ses_demo_01',title:'Arkax/'+state.threadId});
+            onEvent('done',{exit:0,tokens:412,elapsedMs:1260});
+            resolve(); return;
+          }
+          var chunk=''; for(var k=0;k<3&&i<words.length;k++,i++) chunk+=words[i];
+          onEvent('chunk',{text:chunk});
+        }, 26);
+      } else {
+        onEvent('done',{exit:0}); resolve();
+      }
+    });
+  }
+};
+
+async function api(path, method, body){
+  method = method || 'GET';
+  if(DEMO) return Demo.request(path, method, body);
+  var headers = {'Content-Type':'application/json','X-Arkax-Token':TOKEN};
+  var res = await fetch(API+path,{method:method,headers:headers,body:body && method!=='GET' ? JSON.stringify(body):undefined});
+  if(!res.ok){ var t=await res.text(); throw new Error('HTTP '+res.status+': '+t.slice(0,180)); }
+  return res.json();
+}
+async function feature(action, payload){
+  if(DEMO) return Demo.feature(action, payload||{});
+  return api('/api/hermes/feature','POST',{action:action,payload:payload||{}});
+}
+async function runArgv(argv, opts){
+  if(DEMO) return Demo.request('/api/exec','POST',{argv:argv});
+  return api('/api/exec','POST',Object.assign({argv:argv},opts||{}));
+}
+async function runShell(cmd){
+  return runArgv(['/bin/bash','-lc',cmd]);
+}
+async function stream(path, body, onEvent){
+  if(DEMO) return Demo.stream(path, body, onEvent);
+  var res = await fetch(API+path,{method:'POST',headers:{'Content-Type':'application/json','X-Arkax-Token':TOKEN},body:JSON.stringify(body||{})});
+  if(!res.ok) throw new Error('SSE HTTP '+res.status);
+  var reader=res.body.getReader(), dec=new TextDecoder(), buf='';
+  while(true){
+    var r=await reader.read(); if(r.done) break;
+    buf += dec.decode(r.value,{stream:true});
+    var blocks=buf.split('\n\n'); buf=blocks.pop();
+    for(var j=0;j<blocks.length;j++){
+      var ev='message',data='';
+      blocks[j].split('\n').forEach(function(l){
+        if(l.indexOf('event:')===0) ev=l.slice(6).trim();
+        else if(l.indexOf('data:')===0) data+=l.slice(5).trim();
+      });
+      if(data){ try{ onEvent(ev,JSON.parse(data)); }catch(e){ onEvent('chunk',{text:data+'\n'}); } }
+    }
+  }
+}
+async function streamGet(path, onEvent){
+  if(DEMO) return;
+  var res = await fetch(API+path,{headers:{'X-Arkax-Token':TOKEN}});
+  var reader=res.body.getReader(), dec=new TextDecoder(), buf='';
+  while(true){
+    var r=await reader.read(); if(r.done) break;
+    buf+=dec.decode(r.value,{stream:true});
+    var blocks=buf.split('\n\n'); buf=blocks.pop();
+    for(var j=0;j<blocks.length;j++){
+      var ev='message',data='';
+      blocks[j].split('\n').forEach(function(l){
+        if(l.indexOf('event:')===0) ev=l.slice(6).trim(); else if(l.indexOf('data:')===0) data+=l.slice(5).trim();
+      });
+      if(data){ try{onEvent(ev,JSON.parse(data));}catch(e){} }
+    }
+  }
+}
+
+/* ======================= 2. IKON ======================= */
+var P = {
+ menu:'M4 7h16M4 12h16M4 17h16', chat:'M21 12a8 8 0 0 1-8 8H7l-4 3V12a8 8 0 0 1 8-8h2a8 8 0 0 1 8 8z',
+ provider:'M12 2v20M2 12h20M5 5l14 14M19 5L5 19', workspace:'M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z',
+ terminal:'M4 17l6-5-6-5M12 19h8', settings:'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1V21a2 2 0 1 1-4 0v-.2A1.6 1.6 0 0 0 7.5 19l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.6 1.6 0 0 0 3 13.6H3a2 2 0 1 1 0-4h.2A1.6 1.6 0 0 0 4.7 7l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9.4A1.6 1.6 0 0 0 10.4 3V3a2 2 0 1 1 4 0v.2a1.6 1.6 0 0 0 2.7 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8v.1a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.2a1.6 1.6 0 0 0-1.4 1z',
+ spark:'M12 3l1.6 5.4L19 10l-5.4 1.6L12 17l-1.6-5.4L5 10l5.4-1.6z', send:'M22 2L11 13M22 2l-7 20-4-9-9-4z',
+ clip:'M21 12l-8.5 8.5a5 5 0 0 1-7-7L14 5a3.5 3.5 0 0 1 5 5l-8.5 8.5a2 2 0 0 1-3-3L16 7',
+ mic:'M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3zM5 11a7 7 0 0 0 14 0M12 18v4',
+ copy:'M9 9h10v10H9zM5 15H4V5h10v1', up:'M14 9V4H5v14h14v-5M13 4l7 7-7 7', down:'M12 3v12M7 11l5 5 5-5M4 20h16',
+ refresh:'M20 11a8 8 0 1 0-2 6M20 4v7h-7', stop:'M6 6h12v12H6z', search:'M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM21 21l-4-4',
+ folder:'M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z',
+ file:'M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8zM14 3v5h5',
+ plus:'M12 5v14M5 12h14', chev:'M9 6l6 6-6 6', more:'M5 12h.01M12 12h.01M19 12h.01',
+ cpu:'M6 6h12v12H6zM9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4',
+ shield:'M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z',
+ key:'M15 7a4 4 0 1 1-3.5 6L9 15.5V18H6.5v2.5H4V18l7-7A4 4 0 0 1 15 7z',
+ trash:'M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14', clock:'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2',
+ plug:'M9 3v6M15 3v6M6 9h12v3a6 6 0 0 1-12 0zM12 18v3', brain:'M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1 5 3 3 0 0 0 2 5 3 3 0 0 0 5 2V4zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 1 5 3 3 0 0 1-2 5 3 3 0 0 1-5 2V4z',
+ puzzle:'M9 3h6v3a2 2 0 1 0 4 0V3h2v6h-3a2 2 0 1 0 0 4h3v6h-6v-3a2 2 0 1 0-4 0v3H3v-6h3a2 2 0 1 0 0-4H3V3h6z',
+ bot:'M8 8h8a4 4 0 0 1 4 4v4a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4v-4a4 4 0 0 1 4-4zM12 4v4M9 13h.01M15 13h.01M9 17h6',
+ globe:'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18',
+ check:'M20 6L9 17l-5-5', x:'M18 6L6 18M6 6l12 12', code:'M8 8l-4 4 4 4M16 8l4 4-4 4M13 5l-2 14',
+ layers:'M12 3l9 5-9 5-9-5zM3 13l9 5 9-5M3 17l9 5 9-5', users:'M16 20v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 10a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 20v-2a4 4 0 0 0-3-3.9M16 2.1a4 4 0 0 1 0 7.8',
+ database:'M12 3c5 0 9 1.3 9 3s-4 3-9 3-9-1.3-9-3 4-3 9-3zM3 6v12c0 1.7 4 3 9 3s9-1.3 9-3V6M3 12c0 1.7 4 3 9 3s9-1.3 9-3',
+ zap:'M13 2L4 14h7l-1 8 9-12h-7z', activity:'M3 12h4l3-8 4 16 3-8h4', book:'M4 4h7a3 3 0 0 1 3 3v13a3 3 0 0 0-3-3H4zM20 4h-3a3 3 0 0 0-3 3v13a3 3 0 0 1 3-3h3z',
+ palette:'M12 3a9 9 0 0 0 0 18h1.5a2 2 0 0 0 1.6-3.2 2 2 0 0 1 1.6-3.2H19a2 2 0 0 0 2-2 9 9 0 0 0-9-9zM7 12h.01M9 8h.01M14 7h.01M17 10h.01',
+ moon:'M20 14A8 8 0 0 1 10 4a8 8 0 1 0 10 10z', sun:'M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10zM12 1v3M12 20v3M4 4l2 2M18 18l2 2M1 12h3M20 12h3M4 20l2-2M18 6l2-2',
+ info:'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 11v5M12 8h.01', play:'M7 4l13 8-13 8z', pause:'M8 5v14M16 5v14',
+ list:'M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01', git:'M6 3v12a3 3 0 1 0 3 3M6 6a3 3 0 1 0 0 6M18 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM18 9V6a3 3 0 0 0-3-3h-3',
+ hook:'M12 3v10a4 4 0 0 0 8 0V9M8 7a4 4 0 0 0-4 4v2a8 8 0 0 0 16 0', rocket:'M5 15c-1 2-1 5-1 5s3 0 5-1M12 3c4 1 7 4 8 8-2 5-6 8-11 9l-3-3c1-5 4-9 9-11zM9 12a2 2 0 1 0 0-4 2 2 0 0 0 0 4z',
+ upload:'M12 16V4M7 9l5-5 5 5M4 20h16', lock:'M6 11h12v10H6zM9 11V7a3 3 0 0 1 6 0v4', wifi:'M2 8a15 15 0 0 1 20 0M5 12a10 10 0 0 1 14 0M9 16a5 5 0 0 1 6 0M12 20h.01',
+ edit:'M12 20h9M16 4l4 4L9 19l-4 1 1-4z', link:'M10 13a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1M14 11a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1'
+};
+function icon(n,size){ var s=size||18; return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+(P[n]||P.info)+'"/></svg>'; }
+
+/* ======================= 3. STATE & SCREENS ======================= */
+var state = {
+  theme:'system', resolved:'light', font:14, screen:'chat', drawer:false,
+  threadId:'t-'+Date.now().toString(36), sessionId:'', busy:false,
+  messages:[], status:null, settings:null, providers:demoProviders,
+  search:'', filter:'Semua Aset', providerFilter:'Semua', composer:'', slashOpen:false,
+  terminal:[{t:'Arkaxhermes · Ubuntu 24.04.5 proot · aarch64',c:'dim'},{t:'Ketik perintah atau pilih aksi cepat. Semua perintah berjalan di /bin/bash rootfs.',c:'dim'},{t:'$ hermes --version',c:''},{t:'Hermes Agent v0.23.1',c:'ok'}],
+  modal:null, install:null, toastTimer:null, toggles:{}, installLog:[]
+};
+state.messages=[{
+  role:'assistant',content:'Halo! Saya **Hermes Agent** yang berjalan di dalam Ubuntu proot di perangkat Anda. ☤\n\nSaya punya memori lintas sesi, skills yang berkembang sendiri, 40+ tools, cron, gateway, MCP, dan subagen. Mau saya jelaskan cara kerja React Server Components dengan analogi sederhana dan kode minimal?',
+  tokens:0,tools:[],streaming:false
+}];
+
+var NAV = [
+  {id:'chat',label:'Chat',icon:'chat'}, {id:'provider',label:'Provider',icon:'provider'},
+  {id:'workspace',label:'Workspace',icon:'workspace'}, {id:'terminal',label:'Terminal',icon:'terminal'},
+  {id:'settings',label:'Pengaturan',icon:'settings'}
+];
+var SCREENS = [
+  {id:'chat',label:'Chat',icon:'chat',group:'Utama'},
+  {id:'provider',label:'Provider',icon:'provider',group:'Utama'},
+  {id:'workspace',label:'Workspace',icon:'workspace',group:'Utama'},
+  {id:'terminal',label:'Terminal',icon:'terminal',group:'Utama'},
+  {id:'settings',label:'Pengaturan',icon:'settings',group:'Utama'},
+
+  {id:'sessions',label:'Sesi & Riwayat',icon:'list',group:'Hermes Agent',sub:'SQLite WAL + FTS5. Cari percakapan lintas sesi, lanjutkan, kompres, atau hapus.',kpis:[['32','Sesi'],['1.420','Pesan'],['128 MB','Cache']],action:'sessions.list',cmds:['hermes sessions list --json','hermes --resume latest','/compress'],add:{title:'Cari sesi',fields:[{k:'query',label:'Kata kunci',ph:'contoh: proot'}],submit:'sessions.search'}},
+  {id:'skills',label:'Skills',icon:'zap',group:'Hermes Agent',sub:'Procedural memory: dibuat otomatis, diperbaiki saat dipakai, kompatibel agentskills.io.',kpis:[['4','Skill'],['3','Auto-created'],['1.420','Chunk RAG']],action:'skills.list',cmds:['hermes skills','hermes chat -s hermes-agent-dev -q "audit repo"','hermes plugins install honcho'],add:{title:'Skill baru',fields:[{k:'name',label:'Nama skill',ph:'deploy-staging'},{k:'content',label:'Isi SKILL.md',type:'textarea',ph:'---\nname: deploy-staging\ndescription: …\n---\n# Langkah'}],submit:'skills.write'}},
+  {id:'memory',label:'Memori',icon:'brain',group:'Hermes Agent',sub:'Tiga lapis: konteks sesi, fakta persisten (MEMORY.md / USER.md), dan skills prosedural.',kpis:[['3','Lapis'],['Aktif','Nudge'],['Honcho','Plugin']],action:'memory.get',cmds:['hermes config set memory.nudge true','hermes plugins install honcho','/insights 7'],add:{title:'Edit memori',fields:[{k:'file',label:'Berkas',type:'select',options:['MEMORY.md','USER.md','SOUL.md','AGENTS.md']},{k:'content',label:'Isi',type:'textarea',ph:'# Memori'}],submit:'memory.set'}},
+  {id:'cron',label:'Cron & Otomasi',icon:'clock',group:'Hermes Agent',sub:'Jadwal bahasa alami, no-agent mode, webhook, pin model/reasoning, delivery ke platform.',kpis:[['3','Job'],['2','Aktif'],['6 jam','Worktree sweep']],action:'cron.list',cmds:['hermes cron list --json','hermes cron create "every 2h" "Check server status"','/cron add "in 30m" "Remind me"'],add:{title:'Jadwal baru',fields:[{k:'schedule',label:'Jadwal',ph:'every 2h'},{k:'prompt',label:'Perintah',ph:'Check server status'},{k:'skill',label:'Skill (opsional)',ph:'blogwatcher'}],submit:'cron.create'}},
+  {id:'gateway',label:'Gateway',icon:'globe',group:'Hermes Agent',sub:'Satu proses untuk Telegram, Discord, Slack, WhatsApp, Signal, Email, Home Assistant + transkrip voice memo.',kpis:[['3','Terhubung'],['1','Proses'],['6','Platform']],action:'gateway.status',cmds:['hermes gateway setup','hermes gateway run','hermes send telegram "Halo dari Arkaxhermes"','/platforms'],add:{title:'Kirim pesan',fields:[{k:'name',label:'Platform',ph:'telegram'},{k:'message',label:'Pesan',ph:'Halo'}],submit:'cron.delivery'}},
+  {id:'mcp',label:'MCP & Plugin',icon:'plug',group:'Hermes Agent',sub:'MCP stdio/HTTP dengan auto-reconnect, OSV check, credential stripping, dan katalog plugin.',kpis:[['2','Server'],['4','Plugin'],['stdio+HTTP','Transport']],action:'mcp.list',cmds:['hermes mcp list','hermes plugins install homeassistant','hermes plugins install camofox'],add:{title:'Tambah MCP server',fields:[{k:'name',label:'Nama',ph:'filesystem'},{k:'transport',label:'Transport',type:'select',options:['stdio','http']},{k:'command',label:'Perintah / URL',ph:'npx -y @modelcontextprotocol/server-filesystem'}],submit:'mcp.add'}},
+  {id:'tools',label:'Tools & Toolsets',icon:'cpu',group:'Hermes Agent',sub:'40+ tools dan preset toolset per platform. Backend terminal: local (proot), ssh, modal, daytona, vercel_sandbox.',kpis:[['40+','Tools'],['19','Toolset'],['local','Backend']],action:'tools.list',cmds:['hermes tools','hermes chat --toolsets "web,terminal,skills"','hermes config set terminal.backend ssh'],add:{title:'Atur backend terminal',fields:[{k:'backend',label:'Backend',type:'select',options:['local','docker','ssh','modal','daytona','vercel_sandbox']}],submit:'tools.backend'}},
+  {id:'delegation',label:'Delegasi & Subagen',icon:'users',group:'Hermes Agent',sub:'Subagen terisolasi (maks depth 2, 3 konkuren), provider/model/limits sendiri, Python RPC execute_code.',kpis:[['2','Depth'],['3','Konkuren'],['RPC','Zero-context']],action:'status',cmds:['hermes config set delegation.max_depth 2','hermes -w -z "Fix issue #123"','hermes worktree list --json'],add:{title:'Batas subagen',fields:[{k:'key',label:'Kunci config',ph:'delegation.max_concurrent'},{k:'value',label:'Nilai',ph:'3'}],submit:'config.set'}},
+  {id:'profiles',label:'Profil',icon:'layers',group:'Hermes Agent',sub:'Isolasi HERMES_HOME: config, kunci, memori, sesi, skills, dan gateway per profil.',kpis:[['3','Profil'],['default','Aktif'],['MIT','Lisensi']],action:'profiles.list',cmds:['hermes profile list --json','hermes --profile riset chat -q "Halo"'],add:{title:'Profil baru',fields:[{k:'name',label:'Nama',ph:'riset'}],submit:'profiles.create'}},
+  {id:'approvals',label:'Persetujuan & Keamanan',icon:'shield',group:'Hermes Agent',sub:'Approval gate, redaksi kredensial, --safe-mode, enkripsi lokal, dan pemindaian injeksi memori.',kpis:[['2','Menunggu'],['AES-GCM','Kunci'],['0600','.env']],action:'approvals.list',cmds:['hermes chat --safe-mode','hermes doctor','hermes config get security.approval'],add:{title:'Keputusan approval',fields:[{k:'id',label:'ID',ph:'ap-1'},{k:'decision',label:'Keputusan',type:'select',options:['approve','deny','always','never']}],submit:'approvals.decide'}},
+  {id:'media',label:'Browser & Media',icon:'globe',group:'Hermes Agent',sub:'browser_exec/CDP, vision_analyze, image_generate, text_to_speech, transkrip voice memo, lampiran --image.',kpis:[['CDP','Browser'],['FAL','Image'],['OpenAI','TTS']],action:'status',cmds:['hermes chat --image /mnt/arkax/inbox/screen.png -q "Analisis gambar ini"','hermes chat --toolsets "browser,vision,image_gen,tts"'],add:{title:'Lampirkan gambar',fields:[{k:'path',label:'Path di rootfs',ph:'/mnt/arkax/inbox/screen.png'}],submit:'context.add'}},
+  {id:'context',label:'Context Files',icon:'file',group:'Hermes Agent',sub:'AGENTS.md, SOUL.md, .cursorrules, dan berkas/direktori yang disuntikkan ke prompt.',kpis:[['4','Berkas'],['Auto','Injeksi'],['query-file','Aman']],action:'context.list',cmds:['hermes chat --query-file -','hermes chat --ignore-rules'],add:{title:'Tambah konteks',fields:[{k:'path',label:'Path',ph:'/mnt/arkax/inbox/DESIGN.md'},{k:'recursive',label:'Rekursif',ph:'false'}],submit:'context.add'}},
+  {id:'hooks',label:'Hooks',icon:'hook',group:'Hermes Agent',sub:'Event-driven callbacks: on_session_open, post_curator_run, hook plugin, middleware.',kpis:[['2','Hook'],['Plugin','API'],['JSON-RPC','Event']],action:'hooks.list',cmds:['hermes plugins list','hermes gateway run'],add:{title:'Tulis hook',fields:[{k:'name',label:'Nama berkas',ph:'on_session_open.py'},{k:'content',label:'Isi',type:'textarea',ph:'def on_session_open(ctx): …'}],submit:'hooks.set'}},
+  {id:'batch',label:'Batch & Trajektori',icon:'database',group:'Hermes Agent',sub:'Batch processing, trajectory JSONL, compression, dan integrasi Atropos RL.',kpis:[['1','Trajektori'],['120','Baris'],['48 KB','Ukuran']],action:'trajectories.list',cmds:['hermes batch --help','hermes trajectory --help','hermes insights --days 7'],add:{title:'Jalankan batch',fields:[{k:'commands',label:'Perintah (satu per baris)',type:'textarea',ph:'hermes chat -q "Ringkas artikel"'}],submit:'batch.run'}},
+  {id:'bots',label:'Bot Mode',icon:'bot',group:'Hermes Agent',sub:'Bot bernama dengan model, memori, skill, rutin, group chat, dan @mention sendiri.',kpis:[['2','Bot'],['Group','Chat'],['@','Mention']],action:'bots.list',cmds:['hermes gateway run','hermes profile use riset'],add:{title:'Bot baru',fields:[{k:'name',label:'Nama',ph:'Riset'},{k:'model',label:'Model',ph:'claude-sonnet-4.5'}],submit:'bots.set'}},
+  {id:'code',label:'Code Execution',icon:'code',group:'Hermes Agent',sub:'Python RPC memanggil tools Hermes, worktree terisolasi, checkpoint, dan pipeline zero-context-cost.',kpis:[['RPC','Tools'],['-w','Worktree'],['90','Max turn']],action:'status',cmds:['hermes -w -z "Fix issue #123"','hermes worktree prune --dry-run','hermes chat --checkpoints -q "Refactor"'],add:{title:'Skrip RPC',fields:[{k:'path',label:'Path skrip',ph:'/mnt/arkax/scripts/pipeline.py'},{k:'content',label:'Kode',type:'textarea',ph:'from hermes import tools\n…'}],submit:'files.write'}},
+  {id:'portal',label:'Portal & Tool Gateway',icon:'spark',group:'Model & Ekosistem',sub:'Nous Portal: 300+ model, OAuth, web search, image gen, TTS, dan cloud browser tanpa kunci terpisah.',kpis:[['300+','Model'],['OAuth','Login'],['4','Tool Gateway']],action:'providers.list',cmds:['hermes setup --portal','hermes portal info','/model <name>','hermes chat --provider nous'],add:{title:'Ganti model',fields:[{k:'provider',label:'Provider',ph:'anthropic'},{k:'model',label:'Model',ph:'claude-sonnet-4.5'}],submit:'model.set'}},
+  {id:'stats',label:'Statistik & Insight',icon:'activity',group:'Model & Ekosistem',sub:'Token, biaya, prompt cache, kompresi konteks, dan /insights lintas sesi.',kpis:[['1,42M','Token bulan ini'],['5,00M','Kuota'],['$24,50','Saldo']],action:'sessions.stats',cmds:['/usage','/insights --days 7','/context','/compress'],add:{title:'Lihat insight',fields:[{k:'days',label:'Hari',ph:'7'}],submit:'status'}},
+  {id:'backup',label:'Backup & Ekspor',icon:'upload',group:'Sistem',sub:'Backup seluruh ~/.hermes ke /mnt/arkax/exports, ekspor obrolan .json/.md, restore terenkripsi.',kpis:[['128 MB','Cache'],['.tar.gz','Backup'],['SHA-256','Verifikasi']],action:'backup.create',cmds:['hermes doctor','hermes update'],add:{title:'Ekspor obrolan',fields:[{k:'format',label:'Format',type:'select',options:['md','json']},{k:'title',label:'Judul',ph:'Arkaxhermes'}],submit:'export.chat'}},
+  {id:'logs',label:'Log & Doctor',icon:'edit',group:'Sistem',sub:'Log instalasi proot, gateway, cron, dan hasil hermes doctor.',kpis:[['200','Baris'],['OK','Doctor'],['Live','SSE']],action:'doctor',cmds:['hermes doctor','hermes --version','uname -a'],add:{title:'Jalankan diagnostik',fields:[{k:'cmd',label:'Perintah',ph:'hermes doctor'}],submit:'exec'}},
+  {id:'about',label:'Tentang Arkaxhermes',icon:'info',group:'Sistem',sub:'Aplikasi tidak resmi berbasis Hermes Agent (MIT, Nous Research) di Ubuntu 24.04 proot.',kpis:[['0.1.0','Aplikasi'],['v0.23.1','Hermes'],['24.04.5','Ubuntu']],action:'status',cmds:['hermes --version','cat /etc/arkax-release'],add:null}
+];
+function screenById(id){ for(var i=0;i<SCREENS.length;i++) if(SCREENS[i].id===id) return SCREENS[i]; return SCREENS[0]; }
+
+/* ======================= 4. HELPERS ======================= */
+function toast(msg){
+  var el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show');
+  clearTimeout(state.toastTimer); state.toastTimer=setTimeout(function(){el.classList.remove('show');},2300);
+}
+function nativeCall(fn){ try{ return BRIDGE && BRIDGE[fn] ? BRIDGE[fn]() : null; }catch(e){ return null; } }
+function haptic(kind){ if(BRIDGE && BRIDGE.haptic) BRIDGE.haptic(kind||'light'); }
+function btn(label,act,val,cls,pay){
+  return '<button class="btn '+(cls||'')+'" data-act="'+attr(act)+'"'+(val!==undefined?' data-val="'+attr(val)+'"':'')+(pay?' data-pay="'+attr(JSON.stringify(pay))+'"':'')+'>'+label+'</button>';
+}
+function switchHtml(on,act,val){ return '<button class="switch '+(on?'on':'')+'" data-act="'+attr(act)+'" data-val="'+attr(val)+'" aria-label="toggle"><i></i></button>'; }
+function md(text){
+  var blocks=[];
+  var s=esc(text||'');
+  s=s.replace(/```(\w*)\n([\s\S]*?)```/g,function(m,lang,code){
+    var i=blocks.length;
+    blocks.push('<div class="code"><div class="code-head"><span>'+esc(lang||'kode')+'</span><button data-act="copy" data-val="'+attr(encodeURIComponent(code))+'">Salin</button></div><pre>'+esc(code)+'</pre></div>');
+    return '\u0001B'+i+'\u0001';
+  });
+  s=s.replace(/`([^`]+)`/g,'<code>$1</code>')
+     .replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')
+     .replace(/\*([^*]+)\*/g,'<em>$1</em>')
+     .replace(/^### (.+)$/gm,'<h4>$1</h4>')
+     .replace(/^- (.+)$/gm,'<li>$1</li>')
+     .replace(/\n/g,'<br>');
+  s=s.replace(/\u0001B(\d+)\u0001/g,function(m,i){return blocks[+i];});
+  return s;
+}
+function setTheme(v){
+  state.theme=v;
+  var dark = v==='dark' || (v==='system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  state.resolved=dark?'dark':'light';
+  document.documentElement.setAttribute('data-theme',state.resolved);
+  var meta=document.querySelector('meta[name="theme-color"]'); if(meta) meta.setAttribute('content',dark?'#0b1326':'#2346D5');
+  if(BRIDGE && BRIDGE.setTheme) BRIDGE.setTheme(v);
+  if(state.settings){ state.settings.theme=v; if(!DEMO) api('/api/settings','POST',{theme:v}).catch(function(){}); }
+}
+function topbar(){
+  var m=(state.status&&state.status.model)||{name:'Claude 3.5 Sonnet',context:200000};
+  return '<div class="topbar">'+
+    '<button class="iconbtn" data-act="drawer" aria-label="Buka menu">'+icon('menu')+'</button>'+
+    '<div class="provider-badge"><span class="dot"></span><span class="grow"><b>'+esc(m.name||'Hermes Agent')+'</b><small>Anthropic · Konteks '+Math.round((m.context||200000)/1000)+'k</small></span><span class="chip-mini">v2</span></div>'+
+    '<button class="iconbtn" data-act="new-chat" aria-label="Obrolan baru">'+icon('plus')+'</button>'+
+    '<button class="iconbtn primary" data-act="nav" data-val="settings" aria-label="Pengaturan">'+icon('spark')+'</button>'+
+  '</div>';
+}
+function bottomNav(){
+  return '<div class="bottom-nav">'+NAV.map(function(n){
+    return '<button class="'+(state.screen===n.id?'on':'')+'" data-act="nav" data-val="'+n.id+'">'+icon(n.icon,21)+'<span>'+n.label+'</span></button>';
+  }).join('')+'</div>';
+}
+function drawer(){
+  var groups={}; SCREENS.forEach(function(s){ (groups[s.group]=groups[s.group]||[]).push(s); });
+  var html='<div class="scrim '+(state.drawer?'show':'')+'" data-act="drawer-close"></div>'+
+  '<aside class="drawer '+(state.drawer?'show':'')+'">'+
+    '<div class="drawer-head"><div class="row"><div class="avatar" style="width:36px;height:36px">☤</div><div class="grow"><div class="bold" style="font-size:15px">Arkaxhermes</div><div class="small faint">Hermes Agent · Ubuntu proot</div></div>'+btn(icon('x'),'drawer-close','','iconbtn')+'</div>'+
+      '<div class="row" style="margin-top:12px;gap:6px"><span class="tag ok">● Proot aktif</span><span class="tag">v0.23.1</span><span class="tag primary">53% context</span></div></div>'+
+    '<div class="drawer-body">';
+  Object.keys(groups).forEach(function(g){
+    html+='<div class="drawer-group">'+esc(g)+'</div>';
+    html+=groups[g].map(function(s){
+      return '<button class="drawer-link '+(state.screen===s.id?'on':'')+'" data-act="nav" data-val="'+s.id+'">'+icon(s.icon,17)+'<span>'+esc(s.label)+'</span></button>';
+    }).join('');
+  });
+  html+='<div class="drawer-group">Thread</div>'+
+    '<button class="drawer-link" data-act="new-chat">'+icon('plus',17)+'<span>+ Obrolan baru</span></button>'+
+    demoToolsets.slice(0,0).join('')+
+    demoSessions.map(function(s){return '<button class="drawer-link" data-act="resume" data-val="'+s.id+'">'+icon('chat',16)+'<span class="grow">'+esc(s.title)+'</span><span class="small faint">'+s.when+'</span></button>';}).join('')+
+  '</div>'+
+  '<div class="drawer-foot"><div class="row between"><span class="small muted">Tema</span><div class="row" style="gap:5px">'+
+    btn(icon('sun'),'theme','light','iconbtn')+btn(icon('moon'),'theme','dark','iconbtn')+btn(icon('settings'),'theme','system','iconbtn')+
+  '</div></div><div class="bar" style="margin-top:10px"><i style="width:28%"></i></div><div class="row between small faint"><span>Batas Token Bulanan</span><span class="mono">1,42M / 5,00M</span></div></div>'+
+  '</aside>';
+  return html;
+}
+
+/* ======================= 5. LAYAR ======================= */
+function renderChat(){
+  var msgs=state.messages.map(function(m,idx){
+    var meta=m.role==='assistant' ? '<div class="msg-meta">☤ Hermes Agent · 1.2s · '+icon('zap',11)+' '+(m.tokens||0)+' tokens</div>' : '<div class="msg-meta">10:42 AM</div>';
+    var actions=m.role==='assistant' ? '<div class="msg-actions">'+
+      '<button data-act="copy" data-val="'+attr(encodeURIComponent(m.content))+'" aria-label="Salin">'+icon('copy',14)+'</button>'+
+      '<button data-act="like" aria-label="Suka">'+icon('up',14)+'</button>'+
+      '<button data-act="like" aria-label="Tidak suka">'+icon('down',14)+'</button>'+
+      '<button data-act="regenerate" aria-label="Generate ulang">'+icon('refresh',14)+'</button>'+
+    '</div>' : '';
+    var tools=(m.tools&&m.tools.length)?'<div class="tools">'+m.tools.map(function(t){return '<div class="tool">⚙ '+esc(t.name||'tool')+' — '+esc(t.detail||'')+'</div>';}).join('')+'</div>':'';
+    return '<div class="msg '+(m.role==='user'?'user':'ai')+'">'+
+      '<div class="avatar">'+(m.role==='user'?'👤':'☤')+'</div>'+
+      '<div class="bubble"><div class="md" data-msg="'+idx+'">'+md(m.content)+(m.streaming?'<span class="cursor"></span>':'')+'</div>'+tools+meta+actions+'</div>'+
+    '</div>';
+  }).join('');
+  var slash = state.slashOpen ? '<div class="slash">'+[
+    ['/new','Obrolan baru'],['/model','Ganti model'],['/skills','Daftar skill'],['/cron','Jadwalkan tugas'],
+    ['/compress','Kompresi konteks'],['/usage','Statistik token'],['/stop','Hentikan generasi']
+  ].map(function(x){return '<button data-act="slash" data-val="'+x[0]+'"><span class="kbd">'+x[0]+'</span><span class="muted">'+x[1]+'</span></button>';}).join('')+'</div>' : '';
+  return '<div class="chat-scroll" id="chat-scroll">'+msgs+'</div>'+
+    '<div class="suggestions">'+
+      btn('📄 Ringkas artikel','quick','Ringkas artikel ini dengan poin utama','')+
+      btn('{ } Tulis kode React','quick','Tulis komponen React Server Components dengan data fetching','')+
+      btn('📊 Analisis data','quick','Analisis dataset dan buat visualisasi','')+
+      btn('⚙️ Tools','nav','tools','')+
+    '</div>'+
+    '<div class="composer"><div class="composer-inner">'+
+      '<button class="iconbtn" data-act="attach" aria-label="Lampirkan">'+icon('clip',17)+'</button>'+
+      '<textarea id="composer" rows="1" placeholder="Tanyakan apa saja ke Hermes…">'+esc(state.composer)+'</textarea>'+
+      '<button class="iconbtn" data-act="dictate" aria-label="Dikte">'+icon('mic',17)+'</button>'+
+      '<button class="send '+(state.composer.trim()?'':'off')+'" data-act="send" aria-label="Kirim">'+icon(state.busy?'stop':'send',17)+'</button>'+
+    '</div></div>'+slash;
+}
+function renderProvider(){
+  var p=state.providers||demoProviders;
+  var filter=state.providerFilter;
+  var list=p.filter(function(x){return filter==='Semua'||(filter==='Terhubung'?x.configured:!x.configured);});
+  return '<div class="screen">'+
+    '<div class="card"><div class="tag primary">● PROVIDER UTAMA AKTIF</div>'+
+      '<div class="row between" style="margin-top:10px"><div><div class="h1" style="font-size:18px">'+esc((state.status&&state.status.model&&state.status.model.name)||'Claude 3.5 Sonnet')+'</div><div class="small muted">Anthropic Cloud · Konteks 200k</div></div>'+btn('Ganti ↗','nav','portal','btn sm')+'</div>'+
+      '<div class="row" style="margin-top:12px;gap:8px"><span class="tag">⚡ Latensi Rata-rata<br><b>184 ms</b></span><span class="tag ok">💳 Sisa Saldo Kredit<br><b>$24.50</b></span></div></div>'+
+    '<div class="card tight"><div class="row between"><div><div class="bold">Batas Token Bulanan</div><div class="small muted">Terpakai 1,42M / 5,00M (28%)</div></div><span class="tag">28%</span></div><div class="bar"><i style="width:28%"></i></div></div>'+
+    '<div class="filters">'+['Semua','Terhubung','Cloud AI','Lokal (Ollama)'].map(function(f){return '<button class="'+(state.providerFilter===f?'on':'')+'" data-act="pf" data-val="'+f+'">'+f+'</button>';}).join('')+'</div>'+
+    list.map(function(x){
+      return '<div class="card tight" style="margin-bottom:10px"><div class="row between">'+
+        '<div class="row"><div class="ico" style="width:36px;height:36px;border-radius:12px;background:var(--surface-2);display:grid;place-items:center;color:var(--primary)">'+icon(x.id==='ollama'?'cpu':'provider',18)+'</div>'+
+        '<div><div class="bold">'+esc(x.name)+' <span class="tag '+(x.configured?'ok':'warn')+'">'+(x.configured?'Terhubung':'Perlu API Key')+'</span></div><div class="small muted">'+esc(x.note)+'</div></div></div>'+
+        switchHtml(!!x.configured,'toggle-provider',x.id)+'</div>'+
+        '<div class="row between" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)"><span class="mono faint">🔗 '+esc(x.latency||'—')+' · '+esc(x.models||x.envKey)+'</span>'+
+        '<div class="row" style="gap:5px">'+btn('🔑 Atur Kunci','form-key',x.envKey,'btn sm ghost')+btn('⚡ Uji','run','hermes doctor','btn sm')+'</div></div></div>';
+    }).join('')+
+    '<div class="card flat"><div class="bold">Semua provider Hermes</div><div class="small muted" style="margin:6px 0 10px">OpenRouter, Nous Portal, OpenAI, Anthropic, Gemini, DeepSeek, xAI, Bedrock, Azure, Qwen, Kimi, MiniMax, Ollama, LM Studio, Copilot/ACP, dan endpoint kustom. Tambahkan kunci lewat tombol 🔑; nilainya disimpan di Android Keystore.</div>'+
+      btn('⚙️ Buka pengaturan model','nav','portal','btn sm primary')+'</div>'+
+  '</div>';
+}
+function renderWorkspace(){
+  var q=state.search.toLowerCase();
+  var folders=demoFolders.map(function(f){
+    return {name:f.name,path:f.path,count:f.count,color:f.color,files:f.files.filter(function(x){return !q||x.name.toLowerCase().indexOf(q)>=0;})};
+  }).filter(function(f){return state.filter==='Semua Aset'||f.name.indexOf(state.filter)>=0||state.filter==='Semua Aset';});
+  return '<div class="screen">'+
+    '<div class="card"><div class="row between"><div><div class="tag primary">WORKSPACE MODEL AI</div><div class="h1" style="margin-top:8px">Ruang Dokumen & Konteks</div><div class="small muted">Kapasitas Vector & Dataset AI</div></div><div style="text-align:right"><div class="bold" style="color:var(--primary);font-size:19px">6.4 <span class="small muted">/ 15 GB</span></div></div></div>'+
+      '<div class="bar"><i style="width:42%"></i></div>'+
+      '<div class="stat-grid"><div class="stat"><b>3.8 GB</b><small>PDF & Paper</small></div><div class="stat"><b>1.9 GB</b><small>Dataset JSON</small></div><div class="stat"><b>700 MB</b><small>Audio & Image</small></div></div></div>'+
+    btn('+ Buat Workspace Baru / Sambungkan Dokumen Model','form','workspace','btn primary block')+
+    '<div class="search">'+icon('search',16)+'<input id="wsearch" placeholder="Cari aset workspace, prompt, chunk RAG, atau dataset…" value="'+attr(state.search)+'"></div>'+
+    '<div class="filters">'+['Semua Aset','Kontek RAG','System Prompts (.md)','Skills','Memory'].map(function(f){return '<button class="'+(state.filter===f?'on':'')+'" data-act="wf" data-val="'+f+'">'+f+'</button>';}).join('')+'</div>'+
+    folders.map(function(f){
+      return '<div class="card tight"><div class="row between"><div class="row"><span style="color:'+f.color+'">'+icon('folder',19)+'</span><div><div class="bold">'+esc(f.name)+' <span class="tag">'+f.count+' file</span></div><div class="mono faint">'+esc(f.path)+'</div></div></div>'+btn(icon('more',16),'folder-menu',f.name,'iconbtn')+'</div>'+
+        '<div style="margin:10px 0 2px 12px;border-left:2px dashed var(--hair);padding-left:12px">'+
+        (f.files.length?f.files.map(function(x){
+          return '<div class="row between" style="padding:8px 0"><div class="row"><span class="tag '+(x.tag==='Aktif'||x.tag==='Indexed'?'ok':'')+'">'+icon('file',13)+'</span><div><div class="bold small">'+esc(x.name)+'</div><div class="small faint">'+esc(x.meta)+'</div></div></div>'+btn(icon('more',15),'file-menu',x.name,'iconbtn')+'</div>';
+        }).join(''):'<div class="small faint" style="padding:8px 0">Tidak ada berkas cocok.</div>')+
+        btn('+ Tambah Berkas','form','file','btn sm ghost')+'</div></div>';
+    }).join('')+
+    '<div class="card flat"><div class="bold">Pemetaan ke Hermes</div><div class="small muted" style="margin-top:6px">Prompts → system prompt · Knowledge Base → context files/RAG · Skills → <span class="mono">~/.hermes/skills/</span> · Sessions → SQLite FTS5 · Memory → MEMORY.md & USER.md. Semua tersimpan di rootfs dan ikut backup.</div></div>'+
+  '</div>';
+}
+function renderTerminal(){
+  var out=state.terminal.map(function(l){return '<span class="'+(l.c||'')+'">'+esc(l.t)+'</span>';}).join('\n');
+  return '<div class="screen">'+
+    '<div class="h1">Terminal Ubuntu proot</div><p class="sub">Perintah apa pun dijalankan langsung di rootfs Ubuntu 24.04. TUI memakai pseudo-TTY.</p>'+
+    '<div class="row wrap" style="gap:6px;margin-bottom:10px">'+
+      ['hermes --version','hermes doctor','hermes tools','hermes cron list --json','uname -a','ls -la ~/.hermes'].map(function(c){return btn(icon('terminal',13)+' '+esc(c),'term-cmd',c,'btn sm');}).join('')+
+      btn('🖥️ hermes --tui','term-tui','','btn sm primary')+
+    '</div>'+
+    '<div class="term" id="term-out">'+out+'</div>'+
+    '<div class="term-input"><input id="term-in" placeholder="$ ketik perintah…"><button class="btn primary" data-act="term-run">Jalankan</button></div>'+
+    '<div class="row wrap" style="gap:6px;margin-top:10px">'+btn('Bersihkan','term-clear','','btn sm ghost')+btn('Log instalasi','nav','logs','btn sm ghost')+btn('Layanan','nav','gateway','btn sm ghost')+'</div>'+
+    '<div class="card flat" style="margin-top:14px"><div class="bold small">Catatan</div><div class="small muted">Backend terminal default adalah <span class="mono">local</span> = proot. Docker daemon/KVM tidak tersedia tanpa root; gunakan backend <span class="mono">ssh</span>, <span class="mono">modal</span>, <span class="mono">daytona</span>, atau <span class="mono">vercel_sandbox</span> untuk isolasi penuh.</div></div>'+
+  '</div>';
+}
+function renderSettings(){
+  var s=(state.status&&state.status.system)||{cpuLoad:32,ramUsedMb:4300,ramTotalMb:12288,tempC:42,diskFreeMb:8192};
+  var st=state.settings||{theme:state.theme,fontSize:state.font,haptics:true,autoSave:true,encryptLocal:true,services:{gateway:true,cron:true,dashboard:false,webhook:false}};
+  return '<div class="screen">'+
+    '<div class="section-title">'+icon('cpu',14)+' Status Sistem & Sumber Daya <span class="tag ok" style="margin-left:auto">● Online</span></div>'+
+    '<div class="card"><div class="row between"><div class="row"><span class="tag">'+icon('cpu',15)+'</span><div><div class="bold">Penggunaan CPU</div><div class="small muted">8 Cores · 2.8 GHz (Optimal)</div></div></div><span class="tag primary">'+s.cpuLoad+'% load</span></div>'+
+      '<div class="bar"><i style="width:'+s.cpuLoad+'%"></i></div><div class="row between small faint"><span>4 Thread Utama Aktif</span><span>Suhu: '+s.tempC+'°C · Normal</span></div>'+
+      '<div class="row between" style="margin-top:14px"><div class="row"><span class="tag">'+icon('layers',15)+'</span><div><div class="bold">Penggunaan RAM</div><div class="small muted">Tersedia '+((s.ramTotalMb-s.ramUsedMb)/1024).toFixed(1)+' GB dari '+(s.ramTotalMb/1024).toFixed(0)+' GB</div></div></div><span class="tag primary">'+(s.ramUsedMb/1024).toFixed(1)+' / '+(s.ramTotalMb/1024).toFixed(0)+' GB</span></div>'+
+      '<div class="bar"><i style="width:'+Math.round(s.ramUsedMb/s.ramTotalMb*100)+'%"></i></div><div class="row between small faint"><span>Cache Model AI: 1.1 GB</span><span>'+Math.round(s.ramUsedMb/s.ramTotalMb*100)+'% Terpakai</span></div></div>'+
+    '<div class="section-title">'+icon('palette',14)+' Tampilan & Obrolan</div>'+
+    '<div class="card"><div class="row between" style="margin-bottom:10px"><div><div class="bold">Tema Antarmuka</div><div class="small muted">'+esc(state.resolved==='dark'?'Gelap Aktif':'Terang Aktif')+'</div></div><span class="tag">'+esc(state.theme)+'</span></div>'+
+      '<div class="segmented">'+['Terang','Gelap','Sistem'].map(function(t,i){var v=['light','dark','system'][i];return '<button class="'+(state.theme===v?'on':'')+'" data-act="theme" data-val="'+v+'">'+t+'</button>';}).join('')+'</div>'+
+      '<div class="row between" style="margin-top:16px"><div><div class="bold">Ukuran Font Obrolan</div><div class="small muted">Keterbacaan bubble teks</div></div>'+
+        '<select data-act="font" style="padding:8px 10px;border-radius:var(--pill);border:1px solid var(--border);background:var(--surface-2);font-size:11.5px">'+[12,14,16,18].map(function(n){return '<option value="'+n+'" '+(state.font===n?'selected':'')+'>Sedang ('+n+'px)</option>';}).join('')+'</select></div>'+
+      '<div class="row between" style="margin-top:12px"><div><div class="bold">Haptic Feedback</div><div class="small muted">Getaran mikro saat generate token</div></div>'+switchHtml(!!st.haptics,'toggle-setting','haptics')+'</div>'+
+      '<div class="row between" style="margin-top:12px"><div><div class="bold">Simpan Riwayat Otomatis</div><div class="small muted">Sinkronisasi instan ke database lokal</div></div>'+switchHtml(!!st.autoSave,'toggle-setting','autoSave')+'</div></div>'+
+    '<div class="section-title">'+icon('shield',14)+' Keamanan & Data Pribadi</div>'+
+    '<div class="card tight">'+
+      '<div class="list-item"><span class="ico">'+icon('key',17)+'</span><div class="grow"><b>Kelola Kunci API Tersimpan</b><small>OpenAI, Anthropic, Gemini, Groq · 4 Aktif</small></div>'+btn(icon('chev',15),'nav','provider','iconbtn')+'</div>'+
+      '<div class="list-item"><span class="ico">'+icon('lock',17)+'</span><div class="grow"><b>Enkripsi Obrolan Lokal</b><small>AES-GCM 256-bit on-device</small></div>'+switchHtml(!!st.encryptLocal,'toggle-setting','encryptLocal')+'</div>'+
+      '<div class="list-item"><span class="ico">'+icon('download',17)+'</span><div class="grow"><b>Ekspor Riwayat Obrolan</b><small>Unduh berkas .json atau .md</small></div>'+btn(icon('chev',15),'export','','iconbtn')+'</div>'+
+      '<div class="list-item" style="background:color-mix(in srgb,var(--err) 8%,transparent)"><span class="ico" style="color:var(--err)">'+icon('trash',17)+'</span><div class="grow"><b style="color:var(--err)">Hapus Riwayat & Cache Lokal</b><small>Membersihkan 128.4 MB cache</small></div>'+btn(icon('chev',15),'clear-data','','iconbtn')+'</div>'+
+    '</div>'+
+    '<div class="section-title">'+icon('terminal',14)+' Proot & Hermes Agent</div>'+
+    '<div class="card tight">'+
+      '<div class="list-item"><span class="ico">'+icon('database',17)+'</span><div class="grow"><b>Status Rootfs</b><small>Ubuntu 24.04.5 · '+(state.status&&state.status.rootfs&&state.status.rootfs.present?'Terpasang':'Belum diekstrak')+' · '+(state.status&&state.status.state||'demo')+'</small></div>'+btn('Instalasi','install','','btn sm ghost')+'</div>'+
+      '<div class="list-item"><span class="ico">'+icon('refresh',17)+'</span><div class="grow"><b>Perbarui Hermes</b><small>Upstream v0.23.1 · MIT · Nous Research</small></div>'+btn('Update','run','hermes update','btn sm ghost')+'</div>'+
+      '<div class="list-item"><span class="ico">'+icon('activity',17)+'</span><div class="grow"><b>hermes doctor</b><small>Diagnostik Python, Node, DNS, tools</small></div>'+btn('Jalankan','run','hermes doctor','btn sm ghost')+'</div>'+
+      '<div class="list-item"><span class="ico">'+icon('list',17)+'</span><div class="grow"><b>Log & Layanan</b><small>Gateway, cron, dashboard, webhook</small></div>'+btn(icon('chev',15),'nav','logs','iconbtn')+'</div>'+
+      '<div class="list-item"><span class="ico">'+icon('zap',17)+'</span><div class="grow"><b>Pengecualian Baterai</b><small>Agar gateway tidak dihentikan Android</small></div>'+btn('Izinkan','battery','','btn sm ghost')+'</div>'+
+    '</div>'+
+    '<div class="card flat"><div class="bold">Arkaxhermes 0.1.0</div><div class="small muted">Hermes Agent v0.23.1 (MIT) berjalan di Ubuntu 24.04 proot tanpa root. Proyek tidak resmi, tidak berafiliasi dengan Nous Research.</div></div>'+
+  '</div>';
+}
+function renderFeature(id){
+  var s=screenById(id);
+  var data=state.featureData && state.featureData[s.action] ? state.featureData[s.action] : null;
+  var items=[];
+  if(data){
+    var arr=Array.isArray(data)?data:(data.toolsets||data.local||data.bots||data.files||data.servers||data.directories||[]);
+    if(data.servers && !Array.isArray(data.servers)) arr=Object.keys(data.servers).map(function(k){return {name:k,meta:JSON.stringify(data.servers[k]).slice(0,80)};});
+    if(Array.isArray(data.directories)) arr=data.directories.map(function(d){return {name:d,meta:'HERMES_HOME profil'};});
+    items=arr.map(function(x){
+      var name=x.name||x.title||x.id||x.path||x.file||String(x);
+      var meta=x.description||x.meta||x.schedule||x.state||x.model||x.when||x.command||x.path||'';
+      var on=x.enabled!==undefined?x.enabled:(x.on!==undefined?x.on:true);
+      return '<div class="list-item"><span class="ico">'+icon(s.icon,16)+'</span><div class="grow"><b>'+esc(name)+'</b><small>'+esc(meta)+'</small></div>'+
+        (id==='tools'||id==='gateway'||id==='cron'?switchHtml(!!on,'toggle-item',esc(name)):'<span class="tag '+(x.risk==='Tinggi'?'err':'')+'">'+esc(x.tag||x.risk||x.state||'Aktif')+'</span>')+'</div>';
+    });
+  }
+  if(!items.length){
+    items=[['Semua fitur Hermes dapat dioperasikan dari layar ini','Kontrol UI + passthrough CLI/TUI'],
+      ['Data dibaca langsung dari ~/.hermes di rootfs','Tanpa mock, tanpa fork upstream'],
+      ['Fallback otomatis ke Terminal bila CLI tidak tersedia','Lihat docs/FEATURE_MAP.md']]
+      .map(function(x){return '<div class="list-item"><span class="ico">'+icon('check',16)+'</span><div class="grow"><b>'+x[0]+'</b><small>'+x[1]+'</small></div></div>';});
+  }
+  return '<div class="screen">'+
+    '<div class="row" style="gap:10px"><div class="avatar" style="width:38px;height:38px">'+icon(s.icon,20)+'</div><div><div class="h1">'+esc(s.label)+'</div></div></div>'+
+    '<p class="sub">'+esc(s.sub||'')+'</p>'+
+    '<div class="stat-grid">'+(s.kpis||[]).map(function(k){return '<div class="stat"><b>'+esc(k[0])+'</b><small>'+esc(k[1])+'</small></div>';}).join('')+'</div>'+
+    '<div class="card"><div class="row between" style="margin-bottom:10px"><div class="bold">Kontrol & Aksi</div>'+btn(icon('refresh',14)+' Muat','feature-load',s.id,'btn sm ghost')+'</div>'+
+      '<div class="row wrap" style="gap:6px">'+
+        (s.add?btn('+ '+esc(s.add.title),'form',s.id,'btn sm primary'):'')+
+        (s.cmds||[]).slice(0,3).map(function(c){return btn(icon('terminal',13)+' '+esc(c.split(' ').slice(0,2).join(' ')),'run',c,'btn sm ghost');}).join('')+
+      '</div></div>'+
+    '<div class="section-title">'+icon('list',14)+' Data dari Hermes</div>'+
+    '<div class="card tight">'+items.join('')+'</div>'+
+    '<div class="section-title">'+icon('terminal',14)+' Perintah CLI</div>'+
+    '<div class="card tight">'+(s.cmds||[]).map(function(c){return '<div class="row between" style="padding:7px 0;border-bottom:1px solid var(--border)"><span class="mono small grow" style="word-break:break-all">'+esc(c)+'</span>'+btn('▶','run',c,'btn sm')+'</div>';}).join('')+'</div>'+
+    '<div class="card flat"><div class="bold small">Sumber</div><div class="small muted">'+esc(s.action||'status')+' → <span class="mono">hermes_bridge.py</span> di dalam Ubuntu proot, atau CLI Hermes asli. Lihat <b>docs/FEATURE_MAP.md</b> untuk pemetaan lengkap.</div></div>'+
+  '</div>';
+}
+
+/* ======================= 6. MODAL / INSTALL ======================= */
+function renderOverlay(){
+  var html='';
+  if(state.modal){
+    html+='<div class="modal-wrap" data-act="modal-close"><div class="modal" onclick="event.stopPropagation()">'+
+      '<div class="row between"><h3>'+esc(state.modal.title)+'</h3>'+btn(icon('x',16),'modal-close','','iconbtn')+'</div>'+
+      '<div class="small muted">'+esc(state.modal.sub||'')+'</div>'+
+      state.modal.body+
+      '<div class="modal-foot">'+(state.modal.footer||btn('Tutup','modal-close','','btn ghost'))+'</div>'+
+    '</div></div>';
+  }
+  if(state.install){
+    var steps=['Ekstrak rootfs Ubuntu','Verifikasi SHA-256','Pasang Python, Node & dependency','Instal Hermes Agent v0.23.1','hermes doctor','Siap digunakan'];
+    var done=state.install.done||0;
+    html+='<div class="modal-wrap"><div class="modal">'+
+      '<div class="row"><div class="avatar" style="width:38px;height:38px">☤</div><div class="grow"><h3>Instalasi Arkaxhermes</h3><div class="small muted">Ubuntu 24.04 proot dibundel di APK</div></div></div>'+
+      '<div class="bar" style="margin:14px 0"><i style="width:'+state.install.percent+'%"></i></div>'+
+      '<div class="row between small"><span class="bold">'+state.install.percent+'%</span><span class="muted">'+esc(state.install.message)+'</span></div>'+
+      '<div style="margin-top:12px">'+steps.map(function(t,i){return '<div class="install-step '+(i<done?'done':i===done?'active':'')+'"><span class="n">'+(i<done?'✓':i+1)+'</span><span class="small">'+esc(t)+'</span></div>';}).join('')+'</div>'+
+      (state.install.log&&state.install.log.length?'<div class="term" style="height:90px;margin-top:12px">'+state.install.log.slice(-6).map(function(l){return esc(l);}).join('\n')+'</div>':'')+
+      '<div class="modal-foot">'+
+        (state.install.finished?btn('Buka Chat','install-close','','btn primary'):btn(DEMO?'Simulasikan instalasi':'Mulai Instalasi','install-start','','btn primary'))+
+        btn('Nanti','install-close','','btn ghost')+
+      '</div></div></div>';
+  }
+  return html;
+}
+function openModal(title,body,footer,sub){ state.modal={title:title,body:body,footer:footer,sub:sub}; renderOverlayOnly(); }
+function closeModal(){ state.modal=null; renderOverlayOnly(); }
+function renderOverlayOnly(){ document.getElementById('overlay').innerHTML=renderOverlay(); }
+
+function openForm(kind, extra){
+  var title='', fields=[], submit='', sub='';
+  if(kind==='key'){
+    title='Atur Kunci API'; sub='Disimpan terenkripsi di Android Keystore → ~/.hermes/.env (0600)';
+    fields=[{k:'key',label:'Variabel',value:extra},{k:'value',label:'Nilai kunci',ph:'sk-…',type:'password'}];
+    submit='env.set';
+  } else if(kind==='workspace'){
+    title='Workspace Baru'; sub='Membuat direktori konteks di dalam rootfs';
+    fields=[{k:'path',label:'Path',ph:'/root/.hermes/knowledge/proyek-baru'}]; submit='files.write';
+  } else if(kind==='file'){
+    title='Tambah Berkas'; sub='System prompt, guardrails, dataset, atau dokumen RAG';
+    fields=[{k:'path',label:'Path',ph:'/root/.hermes/prompts/custom.md'},{k:'content',label:'Isi',type:'textarea',ph:'# Instruksi sistem'}]; submit='files.write';
+  } else {
+    var s=screenById(kind); if(!s||!s.add){ toast('Layar ini tidak punya form'); return; }
+    title=s.add.title; sub=s.label+' · '+s.sub;
+    fields=s.add.fields; submit=s.add.submit;
+  }
+  var body='<form id="arkax-form">'+fields.map(function(f,i){
+    var id='f'+i, val=f.value||'';
+    if(f.type==='textarea') return '<div class="field"><label>'+esc(f.label)+'</label><textarea id="'+id+'" data-k="'+attr(f.k)+'" placeholder="'+attr(f.ph||'')+'">'+esc(val)+'</textarea></div>';
+    if(f.type==='select') return '<div class="field"><label>'+esc(f.label)+'</label><select id="'+id+'" data-k="'+attr(f.k)+'">'+f.options.map(function(o){return '<option>'+esc(o)+'</option>';}).join('')+'</select></div>';
+    return '<div class="field"><label>'+esc(f.label)+'</label><input id="'+id+'" data-k="'+attr(f.k)+'" type="'+(f.type==='password'?'password':'text')+'" value="'+attr(val)+'" placeholder="'+attr(f.ph||'')+'"></div>';
+  }).join('')+'</form>';
+  openModal(title,body,btn('Simpan','submit-form',submit,'btn primary')+btn('Batal','modal-close','','btn ghost'),sub);
+}
+async function submitForm(action){
+  var payload={};
+  document.querySelectorAll('#arkax-form [data-k]').forEach(function(el){ payload[el.getAttribute('data-k')]=el.value; });
+  if(action==='skills.write' && payload.name){
+    payload.path='/root/.hermes/skills/'+payload.name.replace(/[^a-z0-9_-]/gi,'')+'/SKILL.md';
+    payload.content='---\nname: '+payload.name+'\ndescription: Skill Arkaxhermes\n---\n\n'+(payload.content||'');
+  }
+  if(action==='files.write' && payload.commands!==undefined){
+    payload={commands:String(payload.commands).split('\n').filter(Boolean)}; action='batch.run';
+  }
+  if(action==='exec'){ var r=await runShell(payload.cmd||'hermes doctor'); closeModal(); return showOutput('Hasil perintah',r.stdout||r.stderr); }
+  if(action==='export.chat'){ payload.messages=state.messages.map(function(m){return {role:m.role,content:m.content};}); }
+  if(action==='files.write' && payload.content===undefined && payload.path && payload.path.indexOf('.')<0){ payload.content=''; }
+  try{
+    var res = (action==='batch.run') ? await feature(action,payload) : await feature(action,payload);
+    closeModal();
+    toast(res.ok===false ? ('Gagal: '+(res.error||'periksa Terminal')) : (action+' berhasil · '+esc(res.source||'proot')));
+    loadFeatureFor(state.screen);
+  }catch(e){ toast('Gagal: '+e.message); }
+}
+function showOutput(title,text){
+  openModal(title,'<div class="term" style="height:260px">'+esc(text||'(tanpa output)')+'</div>',
+    btn('Salin','copy',encodeURIComponent(text||''),'btn primary')+btn('Tutup','modal-close','','btn ghost'),'Output dari Ubuntu proot');
+}
+async function runCommand(cmd){
+  toast('Menjalankan di proot …');
+  try{
+    var r=await runShell(cmd);
+    showOutput(cmd,(r.stdout||'')+(r.stderr?'\n[stderr]\n'+r.stderr:''));
+    state.terminal.push({t:'$ '+cmd},{t:(r.stdout||r.stderr||'(tanpa output)'),c:r.exit===0?'ok':'err'});
+  }catch(e){ showOutput(cmd,'Error: '+e.message); }
+}
+async function loadFeatureFor(id){
+  var s=screenById(id); if(!s||!s.action) return;
+  state.featureData=state.featureData||{};
+  try{ var r=await feature(s.action,{}); state.featureData[s.action]=r.data; if(state.screen===id) render(); }
+  catch(e){ /* diamkan, UI tetap tampil */ }
+}
+function startInstall(){
+  if(DEMO){
+    state.install={percent:0,message:'Menyiapkan …',done:0,log:[],finished:false}; renderOverlayOnly();
+    var steps=[['Ekstrak rootfs Ubuntu',18],['Verifikasi SHA-256',34],['Pasang Python, Node & dependency',56],['Instal Hermes Agent v0.23.1',78],['hermes doctor',94],['Siap digunakan',100]];
+    var i=0;
+    var timer=setInterval(function(){
+      if(i>=steps.length){ clearInterval(timer); state.install.finished=true; renderOverlayOnly(); toast('Instalasi demo selesai'); return; }
+      state.install.message=steps[i][0]; state.install.percent=steps[i][1]; state.install.done=i;
+      state.install.log.push('ARKAX: '+steps[i][0]); i++; renderOverlayOnly();
+    },650);
+    return;
+  }
+  state.install={percent:2,message:'Menghubungi installer …',done:0,log:[],finished:false}; renderOverlayOnly();
+  api('/api/install','POST',{force:false}).catch(function(e){toast('Gagal memulai: '+e.message);});
+  streamGet('/api/events',function(ev,d){
+    if(!state.install) return;
+    if(ev==='progress'){
+      state.install.percent=Math.max(state.install.percent,d.percent||0);
+      state.install.message=d.message||''; state.install.done=Math.min(5,Math.floor(state.install.percent/17));
+      state.install.log.push(d.message||''); renderOverlayOnly();
+    } else if(ev==='log'){ state.install.log.push(d.line||''); renderOverlayOnly(); }
+    else if(ev==='state'){
+      if(d.state==='ready'){ state.install.percent=100; state.install.done=6; state.install.finished=true; state.install.message='Siap'; }
+      if(d.state==='error'){ state.install.message=d.message||'Gagal'; }
+      renderOverlayOnly();
+      api('/api/status').then(function(s){state.status=s;}).catch(function(){});
+    }
+  }).catch(function(e){ toast('SSE putus: '+e.message); });
+}
+
+/* ======================= 7. CHAT ======================= */
+function patchStream(){
+  var last=state.messages[state.messages.length-1]; if(!last) return;
+  var el=document.querySelector('[data-msg="'+(state.messages.length-1)+'"]');
+  if(el) el.innerHTML=md(last.content)+'<span class="cursor"></span>';
+  var c=document.getElementById('chat-scroll'); if(c) c.scrollTop=c.scrollHeight;
+}
+async function sendMessage(text){
+  text=(text||'').trim(); if(!text||state.busy) return;
+  if(text[0]==='/'){ handleSlash(text); state.composer=''; render(); return; }
+  state.messages.push({role:'user',content:text});
+  state.messages.push({role:'assistant',content:'',tokens:0,tools:[],streaming:true});
+  state.composer=''; state.busy=true; state.slashOpen=false; render();
+  haptic('light');
+  try{
+    await stream('/api/chat',{
+      message:text,threadId:state.threadId,session:state.sessionId||null,
+      toolsets:(state.settings&&state.settings.chat&&state.settings.chat.toolsets)||'web,terminal,skills',
+      skills:[],yolo:false,safeMode:false,maxTurns:90
+    },function(ev,d){
+      var m=state.messages[state.messages.length-1];
+      if(ev==='chunk') m.content+=(d.text||'');
+      else if(ev==='tool') m.tools.push(d);
+      else if(ev==='session') state.sessionId=d.id||state.sessionId;
+      else if(ev==='done'){ m.streaming=false; m.tokens=d.tokens||Math.round(m.content.length/4); haptic('medium'); }
+      else if(ev==='error'){ m.content+='\n\n⚠️ '+(d.message||'Terjadi kesalahan'); m.streaming=false; }
+      else if(ev==='log'){ /* log ditampilkan di layar Log & Doctor */ }
+      patchStream();
+    });
+  }catch(e){
+    var m=state.messages[state.messages.length-1];
+    m.content+='\n\n⚠️ Jembatan tidak dapat dihubungi: '+e.message; m.streaming=false;
+  }finally{ state.busy=false; render(); }
+}
+function handleSlash(cmd){
+  var map={'/new':'Obrolan baru dibuat','/model':'Buka layar Portal untuk ganti model','/skills':'Buka layar Skills','/cron':'Buka Cron & Otomasi','/compress':'Konteks dikompresi','/usage':'1,42M / 5,00M token bulan ini','/stop':'Generasi dihentikan'};
+  if(cmd==='/stop'){ if(!DEMO) api('/api/chat/stop','POST',{}).catch(function(){}); toast('Menghentikan …'); return; }
+  if(cmd==='/new'){ state.messages=state.messages.slice(0,1); state.sessionId=''; state.threadId='t-'+Date.now().toString(36); }
+  if(cmd==='/model'){ state.screen='portal'; }
+  if(cmd==='/skills'){ state.screen='skills'; }
+  if(cmd==='/cron'){ state.screen='cron'; }
+  toast(map[cmd]||'Perintah diteruskan ke Hermes');
+}
+function regenerate(){
+  var i=state.messages.length-2;
+  var text=i>=0&&state.messages[i].role==='user'?state.messages[i].content:'';
+  if(state.messages.length>1){ state.messages.pop(); }
+  if(text) sendMessage(text);
+}
+
+/* ======================= 8. RENDER UTAMA ======================= */
+function render(){
+  var body;
+  switch(state.screen){
+    case 'chat': body=renderChat(); break;
+    case 'provider': body=renderProvider(); break;
+    case 'workspace': body=renderWorkspace(); break;
+    case 'terminal': body=renderTerminal(); break;
+    case 'settings': body=renderSettings(); break;
+    default: body=renderFeature(state.screen);
+  }
+  document.documentElement.style.setProperty('--font-size',state.font+'px');
+  document.getElementById('app').innerHTML='<div class="phone">'+topbar()+body+bottomNav()+drawer()+'</div>';
+  document.getElementById('overlay').innerHTML=renderOverlay();
+  if(DEMO) document.body.insertAdjacentHTML('beforeend','');
+  requestAnimationFrame(function(){
+    var c=document.getElementById('chat-scroll'); if(c) c.scrollTop=c.scrollHeight;
+    var t=document.getElementById('term-out'); if(t) t.scrollTop=t.scrollHeight;
+  });
+}
+function setScreen(id){
+  state.screen=id; state.drawer=false;
+  try{ location.hash='#/'+id; }catch(e){}
+  render(); loadFeatureFor(id);
+}
+
+/* ======================= 9. EVENTS ======================= */
+document.addEventListener('click',function(e){
+  var el=e.target.closest('[data-act]'); if(!el) return;
+  var act=el.getAttribute('data-act'), val=el.getAttribute('data-val')||'', pay=el.getAttribute('data-pay');
+  var payload={}; try{ if(pay) payload=JSON.parse(pay); }catch(err){}
+  haptic('light');
+  switch(act){
+    case 'nav': setScreen(val); break;
+    case 'drawer': state.drawer=true; render(); break;
+    case 'drawer-close': state.drawer=false; render(); break;
+    case 'theme': setTheme(val); render(); toast('Tema: '+val); break;
+    case 'font': break;
+    case 'new-chat': state.messages=state.messages.slice(0,1); state.sessionId=''; state.threadId='t-'+Date.now().toString(36); state.screen='chat'; render(); toast('Obrolan baru'); break;
+    case 'resume': toast('Melanjutkan sesi '+val); state.sessionId=val; setScreen('chat'); break;
+    case 'quick': sendMessage(val); break;
+    case 'send':
+      if(state.busy){ if(!DEMO) api('/api/chat/stop','POST',{}).catch(function(){}); toast('Menghentikan generasi …'); }
+      else sendMessage(state.composer||document.getElementById('composer').value);
+      break;
+    case 'slash': document.getElementById('composer').value=val+' '; state.composer=val+' '; state.slashOpen=false; render(); break;
+    case 'attach': if(BRIDGE&&BRIDGE.pickFile) BRIDGE.pickFile('*/*'); else toast('Mode demo: lampiran akan masuk /mnt/arkax/inbox'); break;
+    case 'dictate': if(BRIDGE&&BRIDGE.dictate) BRIDGE.dictate(); else toast('Mode demo: dikte memakai Android SpeechRecognizer'); break;
+    case 'copy':
+      var txt=decodeURIComponent(val);
+      if(BRIDGE&&BRIDGE.copy) BRIDGE.copy(txt); else if(navigator.clipboard) navigator.clipboard.writeText(txt).catch(function(){});
+      toast('Disalin'); break;
+    case 'like': toast('Terima kasih atas masukannya'); break;
+    case 'regenerate': regenerate(); break;
+    case 'pf': state.providerFilter=val; render(); break;
+    case 'wf': state.filter=val; render(); break;
+    case 'form': openForm(val); break;
+    case 'form-key': openForm('key',val); break;
+    case 'submit-form': submitForm(val); break;
+    case 'modal-close': closeModal(); break;
+    case 'run': runCommand(val); break;
+    case 'feature-load': loadFeatureFor(val); toast('Memuat data dari proot …'); break;
+    case 'toggle-provider': {
+      var p=null; (state.providers||[]).forEach(function(x){if(x.id===val)p=x;});
+      if(p){ p.configured=!p.configured; toast(p.name+(p.configured?' diaktifkan':' dinonaktifkan')); render(); }
+      break;
+    }
+    case 'toggle-setting': {
+      var on=!(state.settings&&state.settings[val]);
+      state.settings=state.settings||{}; state.settings[val]=on;
+      if(!DEMO){ var patch={}; patch[val]=on; api('/api/settings','POST',patch).catch(function(){}); }
+      render(); toast(val+' = '+(on?'aktif':'nonaktif')); break;
+    }
+    case 'toggle-item': {
+      state.toggles[val]=!state.toggles[val]; render();
+      toast(esc(val)+' → '+(state.toggles[val]?'aktif':'nonaktif')+' (dikirim ke Hermes)');
+      if(state.screen==='cron') feature('cron.toggle',{id:val,enabled:state.toggles[val]}).catch(function(){});
+      if(state.screen==='tools') feature('tools.set',{toolsets:demoToolsets.filter(function(t){return state.toggles[t]!==false;})}).catch(function(){});
+      if(state.screen==='gateway') api('/api/service','POST',{name:'gateway',action:state.toggles[val]?'start':'stop'}).catch(function(){});
+      break;
+    }
+    case 'term-cmd': document.getElementById('term-in').value=val; termRun(); break;
+    case 'term-run': termRun(); break;
+    case 'term-tui': termTui(); break;
+    case 'term-clear': state.terminal=[{t:'Terminal dibersihkan',c:'dim'}]; render(); break;
+    case 'folder-menu': toast('Folder: '+val+' · ekspor / ganti nama / hapus tersedia lewat Workspace API'); break;
+    case 'file-menu': toast('Berkas: '+val+' · buka, salin, ekspor .zip, hapus'); break;
+    case 'export': feature('export.chat',{format:'md',title:'Arkaxhermes',messages:state.messages}).then(function(r){
+      toast('Diekspor: '+(r.data&&r.data.path||'/mnt/arkax/exports'));
+      if(BRIDGE&&BRIDGE.shareText) BRIDGE.shareText('Arkaxhermes',state.messages.map(function(m){return m.content;}).join('\n\n'));
+    }); break;
+    case 'clear-data': openModal('Hapus riwayat & cache','<div class="small muted">Ini akan menghapus cache WebView dan riwayat lokal. Data <span class="mono">~/.hermes</span> di rootfs tidak ikut terhapus tanpa backup.</div>',btn('Hapus','do-clear','','btn danger')+btn('Batal','modal-close','','btn ghost'),'Tindakan tidak dapat dibatalkan'); break;
+    case 'do-clear': state.messages=state.messages.slice(0,1); closeModal(); toast('Cache lokal dibersihkan'); break;
+    case 'battery': if(BRIDGE&&BRIDGE.requestPermissions) BRIDGE.requestPermissions('battery'); else toast('Mode demo: pengecualian optimasi baterai'); break;
+    case 'install': state.install={percent:0,message:'Siap memasang Ubuntu proot',done:0,log:[],finished:false}; renderOverlayOnly(); break;
+    case 'install-start': startInstall(); break;
+    case 'install-close': state.install=null; renderOverlayOnly(); render(); break;
+  }
+});
+async function termRun(){
+  var input=document.getElementById('term-in'); if(!input) return;
+  var cmd=input.value.trim(); if(!cmd) return;
+  input.value=''; state.terminal.push({t:'$ '+cmd}); render();
+  try{
+    var r=await runShell(cmd);
+    (r.stdout||'').split('\n').forEach(function(l){ if(l) state.terminal.push({t:l,c:/OK|passed|running|v0\./.test(l)?'ok':''}); });
+    (r.stderr||'').split('\n').forEach(function(l){ if(l) state.terminal.push({t:l,c:'err'}); });
+  }catch(e){ state.terminal.push({t:'Error: '+e.message,c:'err'}); }
+  render();
+}
+async function termTui(){
+  state.terminal.push({t:'$ hermes --tui (pseudo-TTY via script -q)',c:'dim'}); render();
+  try{
+    var r=await runArgv(['/usr/bin/script','-q','-c','hermes --tui','/dev/null'],{tty:true,timeoutMs:20000});
+    (r.stdout||'TUI dijalankan. Gunakan tombol panah untuk navigasi; Ctrl+C untuk keluar.').split('\n').slice(0,12).forEach(function(l){state.terminal.push({t:l});});
+  }catch(e){ state.terminal.push({t:'TUI: '+e.message,c:'warn'}); }
+  render();
+}
+document.addEventListener('input',function(e){
+  if(e.target.id==='composer'){
+    state.composer=e.target.value;
+    state.slashOpen=e.target.value[0]==='/';
+    var send=document.querySelector('.composer .send'); if(send) send.classList.toggle('off',!e.target.value.trim());
+    if(state.slashOpen){ var sc=document.querySelector('.slash'); if(!sc) render(); }
+    else if(document.querySelector('.slash')) render();
+  }
+  if(e.target.id==='wsearch'){ state.search=e.target.value; render(); var w=document.getElementById('wsearch'); if(w){w.focus();w.setSelectionRange(w.value.length,w.value.length);} }
+});
+document.addEventListener('change',function(e){
+  var act=e.target.getAttribute&&e.target.getAttribute('data-act');
+  if(act==='font'){
+    state.font=parseInt(e.target.value,10)||14;
+    if(!DEMO) api('/api/settings','POST',{fontSize:state.font}).catch(function(){});
+    toast('Font '+state.font+'px');
+  }
+});
+document.addEventListener('keydown',function(e){
+  if(e.target.id==='composer'&&e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendMessage(e.target.value); }
+  if(e.target.id==='term-in'&&e.key==='Enter'){ e.preventDefault(); termRun(); }
+  if(e.key==='Escape'){ if(state.modal) closeModal(); else if(state.drawer){state.drawer=false;render();} }
+});
+window.__arkax={
+  onFilePicked:function(d){ toast('Lampiran: '+d.name); state.composer=(state.composer+' [lampiran: '+d.path+']').trim(); render(); },
+  onDictation:function(d){ state.composer=(state.composer+' '+d.text).trim(); render(); toast('Dikte diterima'); },
+  onBackPressed:function(){ return state.drawer||!!state.modal; }
+};
+
+/* ======================= 10. BOOT ======================= */
+async function boot(){
+  var hash=(location.hash||'').replace('#/','');
+  if(hash&&screenById(hash).id===hash) state.screen=hash;
+  setTheme(state.theme);
+  render();
+  if(DEMO){
+    document.body.insertAdjacentHTML('afterbegin','<div class="demo-badge">MODE DEMO · PREVIEW</div>');
+    state.status=await Demo.request('/api/status');
+    state.settings=state.status.settings;
+    render();
+    return;
+  }
+  var info=null; try{ info=JSON.parse(BRIDGE.ready()); }catch(e){}
+  try{
+    var s=await api('/api/status');
+    state.status=s; state.settings=s.settings||{};
+    if(s.settings&&s.settings.theme) setTheme(s.settings.theme);
+    if(s.settings&&s.settings.fontSize) state.font=s.settings.fontSize;
+    render();
+    if(s.state!=='ready'){
+      state.install={percent:0,message:'Ubuntu proot belum dipasang',done:0,log:[],finished:false};
+      renderOverlayOnly();
+    }
+  }catch(e){
+    toast('Server jembatan belum siap: '+e.message);
+  }
+}
+boot();
+})();
+</script>
+</body>
+</html>

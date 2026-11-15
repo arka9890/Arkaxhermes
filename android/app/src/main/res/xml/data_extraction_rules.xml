@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="file" path="rootfs" />
+        <exclude domain="file" path="runtime" />
+        <include domain="file" path="shared" />
+        <include domain="sharedpref" path="arkax_settings.xml" />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="file" path="rootfs" />
+        <include domain="file" path="shared" />
+    </device-transfer>
+</data-extraction-rules>

@@ -1,0 +1,47 @@
+name: Arkaxhermes CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Tools
+        run: sudo apt-get update && sudo apt-get install -y shellcheck jq
+
+      - name: Setup Python / Node
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Validasi repositori
+        run: ./scripts/check.sh
+
+      - name: ShellCheck (non-fatal untuk skrip proot)
+        run: shellcheck -S warning scripts/*.sh android/app/src/main/assets/runtime/*.sh || true
+
+      - name: Pastikan manifest valid
+        run: jq -e '.ubuntu.architectures.arm64.sha256 | length == 64' rootfs/manifest.json
+
+  build-rootfs-smoke:
+    runs-on: ubuntu-24.04
+    needs: validate
+    steps:
+      - uses: actions/checkout@v4
+      - name: Unduh & verifikasi base Ubuntu (tanpa merakit aset)
+        run: |
+          set -euo pipefail
+          URL="$(jq -r '.ubuntu.baseUrl + "/" + .ubuntu.architectures.arm64.file' rootfs/manifest.json)"
+          EXPECT="$(jq -r '.ubuntu.architectures.arm64.sha256' rootfs/manifest.json)"
+          curl -fsSL "$URL" -o /tmp/ubuntu-base.tar.gz
+          echo "$EXPECT  /tmp/ubuntu-base.tar.gz" | sha256sum -c -
+          echo "Ubuntu base OK: $(du -h /tmp/ubuntu-base.tar.gz | cut -f1)"

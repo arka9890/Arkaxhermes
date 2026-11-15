@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="arkax_canvas_light">#F0F4FC</color>
+    <color name="arkax_canvas_dark">#0B1326</color>
+    <color name="arkax_primary">#4361EE</color>
+    <color name="arkax_primary_dark">#C0C1FF</color>
+    <color name="ic_launcher_background">#2346D5</color>
+</resources>

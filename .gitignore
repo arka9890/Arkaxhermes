@@ -1,0 +1,47 @@
+# Android / Gradle
+*.iml
+.gradle/
+local.properties
+.idea/
+android/build/
+android/app/build/
+android/captures/
+android/.externalNativeBuild/
+android/.cxx/
+android/gradle/wrapper/gradle-wrapper.jar
+dist/
+*.apk
+*.aab
+*.jks
+*.keystore
+
+# Aset biner hasil build. BERKAS INI TETAP ADA di workspace yang dikirimkan
+# (rootfs Ubuntu, proot, source Hermes), tetapi tidak di-commit agar repo
+# ringan dan aman terhadap batas snapshot. Setelah clone, jalankan
+# ./scripts/make-assets.sh untuk membuatnya ulang, atau `git add -f <berkas>`
+# bila memang ingin menyimpannya di Git / Git LFS.
+android/app/src/main/jniLibs/**/libproot*.so
+android/app/src/main/jniLibs/**/libtalloc*.so*
+android/app/src/main/jniLibs/**/libandroid-shmem*.so*
+android/app/src/main/jniLibs/**/README.txt
+android/app/src/main/assets/rootfs/*.part*
+android/app/src/main/assets/rootfs/*.tar.gz
+android/app/src/main/assets/rootfs/rootfs.sha256
+android/app/src/main/assets/rootfs/README.txt
+android/app/src/main/assets/runtime/hermes-src.tar.gz
+rootfs/work/
+build-cache/
+
+# Python / Node / OS
+__pycache__/
+*.pyc
+.venv/
+node_modules/
+.DS_Store
+Thumbs.db
+
+# Rahasia lokal
+.env
+*.key
+*.pem
+secrets.env

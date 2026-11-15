@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Arkaxhermes</string>
+    <string name="app_subtitle">Hermes Agent · Ubuntu proot</string>
+    <string name="notification_channel">Layanan Arkaxhermes</string>
+    <string name="notification_channel_desc">Gateway, cron, dan proses Hermes Agent yang berjalan lama</string>
+    <string name="notification_title">Arkaxhermes aktif</string>
+    <string name="notification_text">Hermes Agent berjalan di Ubuntu proot</string>
+</resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <!-- Rootfs bisa dipulihkan ulang dari aset; data pengguna yang penting ada di ~/.hermes. -->
+    <exclude domain="file" path="rootfs" />
+    <exclude domain="file" path="runtime" />
+    <exclude domain="file" path="cache" />
+    <include domain="file" path="shared" />
+    <include domain="sharedpref" path="arkax_settings.xml" />
+</full-backup-content>

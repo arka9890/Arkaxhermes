@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Simbol ☤ (caduceus Hermes) yang disederhanakan -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,22 C48,30 48,38 54,44 C60,38 60,30 54,22 Z M54,44 L54,84 M36,56 C42,50 48,50 54,56 C60,50 66,50 72,56 M36,68 C42,62 48,62 54,68 C60,62 66,62 72,68 M30,50 C30,42 38,40 42,46 C46,52 42,58 36,58 C32,58 30,55 30,50 Z M78,50 C78,42 70,40 66,46 C62,52 66,58 72,58 C76,58 78,55 78,50 Z" />
+    <path
+        android:fillColor="#FFD86B"
+        android:pathData="M54,18 A5,5 0 1,1 53.9,18 Z" />
+</vector>

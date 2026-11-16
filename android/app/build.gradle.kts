@@ -23,10 +23,6 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "0.1.0"
-        ndk {
-            abiFilters += "arm64-v8a"
-            abiFilters += "x86_64"
-        }
         buildConfigField("String", "ARKAX_UPSTREAM_TAG", "\"v0.23.1\"")
         buildConfigField("String", "ARKAX_ROOTFS", "\"ubuntu-24.04.5\"")
     }
@@ -87,3 +83,4 @@ dependencies {
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
 }
+

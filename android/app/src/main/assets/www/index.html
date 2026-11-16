@@ -12,6 +12,7 @@
    Gelap   = Synthetica AI (DESIGN.md)
    ============================================================ */
 :root{
+  --font-size:14px;
   --canvas:#f0f4fc; --surface:#ffffff; --surface-2:#e6eefa; --surface-3:#f3f2ff;
   --text:#0e193e; --muted:#5b6076; --faint:#8b91a8;
   --primary:#4361ee; --primary-2:#8ea8ff; --primary-ink:#ffffff;
@@ -36,7 +37,7 @@ html[data-theme="dark"]{
   --radius:16px; --radius-sm:10px; --radius-xs:8px;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;padding:0;background:var(--canvas);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.5}
+html,body{margin:0;padding:0;background:var(--canvas);color:var(--text);font-family:var(--font);font-size:var(--font-size);line-height:1.5}
 body{background:radial-gradient(1200px 600px at 50% -10%,rgba(99,102,241,.10),transparent 60%)}
 button,input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
 button{cursor:pointer;border:0;background:none}
@@ -105,7 +106,7 @@ html[data-theme="dark"] .segmented button.on{background:var(--primary);color:var
 .msg{display:flex;gap:9px;margin-bottom:14px;align-items:flex-start}
 .msg.user{flex-direction:row-reverse}
 .avatar{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;flex:none;background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;font-size:14px}
-.bubble{max-width:86%;padding:12px 14px;border-radius:18px;background:var(--ai);border:1px solid var(--border);box-shadow:var(--shadow-sm);font-size:13px;line-height:1.62}
+.bubble{max-width:86%;padding:12px 14px;border-radius:18px;background:var(--ai);border:1px solid var(--border);box-shadow:var(--shadow-sm);font-size:var(--font-size);line-height:1.62}
 .msg.user .bubble{background:var(--user);border-bottom-right-radius:5px}
 .bubble .md h4{margin:8px 0 4px;font-size:13.5px}
 .bubble .md ul{margin:6px 0;padding-left:18px}
@@ -127,7 +128,7 @@ html[data-theme="dark"] .segmented button.on{background:var(--primary);color:var
 .suggestions button{white-space:nowrap;padding:8px 12px;border-radius:var(--pill);background:var(--surface);box-shadow:var(--shadow-sm);font-size:11.5px;font-weight:700;color:var(--muted)}
 .composer{position:sticky;bottom:72px;z-index:20;padding:8px 12px;background:linear-gradient(to top,var(--canvas) 72%,transparent)}
 .composer-inner{display:flex;align-items:flex-end;gap:6px;padding:7px 8px;border-radius:var(--radius);background:var(--surface);box-shadow:var(--shadow);border:1px solid var(--border)}
-.composer textarea{flex:1;border:0;outline:0;resize:none;background:transparent;max-height:110px;min-height:34px;padding:7px 4px;font-size:13px}
+.composer textarea{flex:1;border:0;outline:0;resize:none;background:transparent;max-height:110px;min-height:34px;padding:7px 4px;font-size:var(--font-size)}
 .composer .send{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--primary),var(--primary-2));color:var(--primary-ink);flex:none}
 .composer .send.off{background:var(--surface-2);color:var(--faint)}
 .slash{position:absolute;left:12px;right:12px;bottom:78px;background:var(--surface);border-radius:var(--radius-sm);box-shadow:var(--shadow);border:1px solid var(--border);padding:6px;z-index:25}
@@ -195,14 +196,483 @@ function qs(obj){ return Object.keys(obj).map(function(k){return encodeURICompon
 
 /* ---- data demo (persis seperti desain lampiran) ---- */
 var demoProviders = [
-  {id:'anthropic',name:'Anthropic',envKey:'ANTHROPIC_API_KEY',note:'Claude 3.5 Sonnet, Claude 3 Opus',configured:true,active:true,latency:'184ms',models:'2 Model Aktif'},
-  {id:'openai',name:'OpenAI',envKey:'OPENAI_API_KEY',note:'GPT-4o, GPT-4o mini, o1-preview',configured:true,latency:'235ms',models:'3 Model Aktif'},
-  {id:'gemini',name:'Google AI',envKey:'GOOGLE_API_KEY',note:'Gemini 1.5 Pro, Gemini 1.5 Flash',configured:true,latency:'210ms',models:'2 Model Aktif'},
-  {id:'deepseek',name:'DeepSeek',envKey:'DEEPSEEK_API_KEY',note:'DeepSeek V3, DeepSeek R1',configured:false,latency:'—',models:'Perlu API Key'},
-  {id:'ollama',name:'Ollama Local',envKey:'OLLAMA_BASE_URL',note:'Llama 3.3 70B, Mistral Nemo, Qwen 2.5',configured:true,latency:'42ms (Lokal)',models:'192.168.1.11'},
-  {id:'openrouter',name:'OpenRouter',envKey:'OPENROUTER_API_KEY',note:'200+ model, satu kunci',configured:false,latency:'—',models:'Perlu API Key'},
-  {id:'nous',name:'Nous Portal',envKey:'NOUS_API_KEY',note:'300+ model + Tool Gateway (OAuth)',configured:false,latency:'—',models:'hermes setup --portal'},
-  {id:'xai',name:'xAI (Grok)',envKey:'XAI_API_KEY',note:'x_search, Grok',configured:false,latency:'—',models:'Perlu API Key'}
+  {
+    "id": "nous",
+    "name": "Nous Portal",
+    "envKey": "",
+    "note": "OAuth device-code; 300+ model + Tool Gateway",
+    "configured": true,
+    "active": true,
+    "latency": "—",
+    "models": "OAuth device-code; 300+ model + Tool Gateway",
+    "kind": "oauth"
+  },
+  {
+    "id": "fireworks",
+    "name": "Fireworks AI",
+    "envKey": "FIREWORKS_API_KEY",
+    "note": "OpenAI-compatible direct model API",
+    "configured": true,
+    "active": false,
+    "latency": "—",
+    "models": "OpenAI-compatible direct model API",
+    "kind": "api"
+  },
+  {
+    "id": "openrouter",
+    "name": "OpenRouter",
+    "envKey": "OPENROUTER_API_KEY",
+    "note": "Aggregator 200+ model; OAuth PKCE tersedia",
+    "configured": true,
+    "active": false,
+    "latency": "—",
+    "models": "Aggregator 200+ model; OAuth PKCE tersedia",
+    "kind": "api"
+  },
+  {
+    "id": "moa",
+    "name": "Mixture of Agents",
+    "envKey": "",
+    "note": "Preset virtual; lihat `hermes moa`",
+    "configured": false,
+    "active": false,
+    "latency": "—",
+    "models": "Preset virtual; lihat `hermes moa`",
+    "kind": "virtual"
+  },
+  {
+    "id": "novita",
+    "name": "NovitaAI",
+    "envKey": "NOVITA_API_KEY",
+    "note": "Model API, Agent Sandbox, GPU Cloud",
+    "configured": false,
+    "active": false,
+    "latency": "—",
+    "models": "Model API, Agent Sandbox, GPU Cloud",
+    "kind": "api"
+  },
+  {
+    "id": "lmstudio",
+    "name": "LM Studio",
+    "envKey": "LM_API_KEY",
+    "note": "Server lokal http://127.0.0.1:1234/v1",
+    "configured": false,
+    "active": false,
+    "latency": "—",
+    "models": "Server lokal http://127.0.0.1:1234/v1",
+    "kind": "local"
+  },
+  {
+    "id": "anthropic",
+    "name": "Anthropic",
+    "envKey": "ANTHROPIC_API_KEY",
+    "note": "Claude via API key atau Claude Code",
+    "configured": false,
+    "active": false,
+    "latency": "—",
+    "models": "Claude via API key atau Claude Code",
+    "kind": "api"
+  },
+  {
+    "id": "openai-codex",
+    "name": "ChatGPT / Codex Subscription",
+    "envKey": "",
+    "note": "OAuth eksternal; `hermes auth add openai-codex`",
+    "configured": false,
+    "active": false,
+    "latency": "—",
+    "models": "OAuth eksternal; `hermes auth add openai-codex`",
+    "kind": "oauth"
+  },
+  {
+    "id": "openai-api",
+    "name": "OpenAI API",
+    "envKey": "OPENAI_API_KEY",
+    "note": "api.openai.com; OPENAI_BASE_URL override",
+    "configured": false,
+    "active": false,
+    "latency": "—",
+    "models": "api.openai.com; OPENAI_BASE_URL override",
+    "kind": "api"
+  },
+  {
+    "id": "openai",
+    "name": "OpenAI (alias)",
+    "envKey": "OPENAI_API_KEY",
+    "note": "Alias lama untuk openai-api",
+    "configured": false,
+    "active": false,
+    "latency": "—",
+    "models": "Alias lama untuk openai-api",
+    "kind": "api"
+  },
+  {
+    "id": "alibaba",
+    "name": "Qwen Cloud / DashScope",
+    "envKey": "DASHSCOPE_API_KEY",
+    "note": "Qwen + multi-provider",
+    "configured": false,
+    "active": false,
+    "latency": "—",
+    "models": "Qwen + multi-provider",
+    "kind": "api"
+  },
+  {
+    "id": "alibaba-coding-plan",
+    "name": "Alibaba Coding Plan",
+    "envKey": "ALIBABA_CODING_PLAN_API_KEY",
+    "note": "Coding Plan endpoint",
+    "configured": false,
+    "active": false,
+    "latency": "—",
+    "models": "Coding Plan endpoint",
+    "kind": "api"
+  },
+  {
+    "id": "xai-oauth",
+    "name": "xAI Grok OAuth",
+    "envKey": "",
+    "note": "SuperGrok / Premium+ OAuth",
+    "configured": false,
+    "active": false,
+    "latency": "—",
+    "models": "SuperGrok / Premium+ OAuth",
+    "kind": "oauth"
+  },
+  {
+    "id": "xiaomi",
+    "name": "Xiaomi MiMo",
+    "envKey": "XIAOMI_API_KEY",
+    "note": "MiMo-V2.5 / V2",
+    "configured": false,
+    "active": false,
+    "latency": "—",
+    "models": "MiMo-V2.5 / V2",
+    "kind": "api"
+  },
+  {
+    "id": "tencent-tokenhub",
+    "name": "Tencent TokenHub",
+    "envKey": "TOKENHUB_API_KEY",
+    "note": "Hy4 preview",
+    "configured": false,
+    "active": false,
+    "latency": "—",
+    "models": "Hy4 preview",
+    "kind": "api"
+  },
+  {
+    "id": "tencent-tokenplan",
+    "name": "Tencent TokenPlan",
+    "envKey": "TOKENPLAN_API_KEY",
+    "note": "Hy4 via Anthropic Messages",
+    "configured": false,
+    "active": false,
+    "latency": "—",
+    "models": "Hy4 via Anthropic Messages",
+    "kind": "api"
+  },
+  {
+    "id": "nvidia",
+    "name": "NVIDIA NIM",
+    "envKey": "NVIDIA_API_KEY",
+    "note": "Nemotron / NIM",
+    "configured": false,
+    "active": false,
+    "latency": "—",
+    "models": "Nemotron / NIM",
+    "kind": "api"
+  },
+  {
+    "id": "huggingface",
+    "name": "Hugging Face",
+    "envKey": "HF_TOKEN",
+    "note": "Inference Providers",
+    "configured": false,
+    "active": false,
+    "latency": "—",
+    "models": "Inference Providers",
+    "kind": "api"
+  },
+  {
+    "id": "gemini",
+    "name": "Google AI Studio",
+    "envKey": "GOOGLE_API_KEY",
+    "note": "Native Gemini API",
+    "configured": false,
+    "active": false,
+    "latency": "—",
+    "models": "Native Gemini API",
+    "kind": "api"
+  },
+  {
+    "id": "vertex",
+    "name": "Google Vertex AI",
+    "envKey": "",
+    "note": "Service-account JSON / ADC",
+    "configured": false,
+    "active": false,
+    "latency": "—",
+    "models": "Service-account JSON / ADC",
+    "kind": "sdk"
+  },
+  {
+    "id": "deepseek",
+    "name": "DeepSeek",
+    "envKey": "DEEPSEEK_API_KEY",
+    "note": "V3, R1, coder",
+    "configured": false,
+    "active": false,
+    "latency": "—",
+    "models": "V3, R1, coder",
+    "kind": "api"
+  },
+  {
+    "id": "xai",
+    "name": "xAI",
+    "envKey": "XAI_API_KEY",
+    "note": "Grok direct API + x_search",
+    "configured": false,
+    "active": false,
+    "latency": "—",
+    "models": "Grok direct API + x_search",
+    "kind": "api"
+  },
+  {
+    "id": "zai",
+    "name": "Z.AI / GLM",
+    "envKey": "GLM_API_KEY",
+    "note": "Zhipu direct API",
+    "configured": false,
+    "active": false,
+    "latency": "—",
+    "models": "Zhipu direct API",
+    "kind": "api"
+  },
+  {
+    "id": "kimi-coding",
+    "name": "Kimi / Kimi Coding Plan",
+    "envKey": "KIMI_API_KEY",
+    "note": "api.kimi.com & Moonshot",
+    "configured": false,
+    "active": false,
+    "latency": "—",
+    "models": "api.kimi.com & Moonshot",
+    "kind": "api"
+  },
+  {
+    "id": "kimi-coding-cn",
+    "name": "Kimi / Moonshot (China)",
+    "envKey": "KIMI_CN_API_KEY",
+    "note": "Domestic direct API",
+    "configured": false,
+    "active": false,
+    "latency": "—",
+    "models": "Domestic direct API",
+    "kind": "api"
+  },
+  {
+    "id": "stepfun",
+    "name": "StepFun Step Plan",
+    "envKey": "STEPFUN_API_KEY",
+    "note": "Agent / coding models",
+    "configured": false,
+    "active": false,
+    "latency": "—",
+    "models": "Agent / coding models",
+    "kind": "api"
+  },
+  {
+    "id": "minimax",
+    "name": "MiniMax",
+    "envKey": "MINIMAX_API_KEY",
+    "note": "Global direct API",
+    "configured": false,
+    "active": false,
+    "latency": "—",
+    "models": "Global direct API",
+    "kind": "api"
+  },
+  {
+    "id": "minimax-oauth",
+    "name": "MiniMax (OAuth)",
+    "envKey": "",
+    "note": "Coding Plan OAuth",
+    "configured": false,
+    "active": false,
+    "latency": "—",
+    "models": "Coding Plan OAuth",
+    "kind": "oauth"
+  },
+  {
+    "id": "minimax-cn",
+    "name": "MiniMax (China)",
+    "envKey": "MINIMAX_CN_API_KEY",
+    "note": "Domestic direct API",
+    "configured": false,
+    "active": false,
+    "latency": "—",
+    "models": "Domestic direct API",
+    "kind": "api"
+  },
+  {
+    "id": "ollama-cloud",
+    "name": "Ollama Cloud",
+    "envKey": "OLLAMA_API_KEY",
+    "note": "ollama.com hosted models",
+    "configured": true,
+    "active": false,
+    "latency": "—",
+    "models": "ollama.com hosted models",
+    "kind": "api"
+  },
+  {
+    "id": "ollama",
+    "name": "Ollama Local",
+    "envKey": "OLLAMA_BASE_URL",
+    "note": "Alias `custom` untuk endpoint lokal",
+    "configured": true,
+    "active": false,
+    "latency": "—",
+    "models": "Alias `custom` untuk endpoint lokal",
+    "kind": "local"
+  },
+  {
+    "id": "custom",
+    "name": "Endpoint kustom",
+    "envKey": "OPENAI_BASE_URL",
+    "note": "OpenAI-compatible URL + CUSTOM_API_KEY",
+    "configured": false,
+    "active": false,
+    "latency": "—",
+    "models": "OpenAI-compatible URL + CUSTOM_API_KEY",
+    "kind": "local"
+  },
+  {
+    "id": "arcee",
+    "name": "Arcee AI",
+    "envKey": "ARCEEAI_API_KEY",
+    "note": "Trinity models",
+    "configured": false,
+    "active": false,
+    "latency": "—",
+    "models": "Trinity models",
+    "kind": "api"
+  },
+  {
+    "id": "gmi",
+    "name": "GMI Cloud",
+    "envKey": "GMI_API_KEY",
+    "note": "Multi-model direct API",
+    "configured": false,
+    "active": false,
+    "latency": "—",
+    "models": "Multi-model direct API",
+    "kind": "api"
+  },
+  {
+    "id": "kilocode",
+    "name": "Kilo Code",
+    "envKey": "KILOCODE_API_KEY",
+    "note": "Kilo Gateway API",
+    "configured": false,
+    "active": false,
+    "latency": "—",
+    "models": "Kilo Gateway API",
+    "kind": "api"
+  },
+  {
+    "id": "opencode-zen",
+    "name": "OpenCode Zen",
+    "envKey": "OPENCODE_ZEN_API_KEY",
+    "note": "Curated models, pay-as-you-go",
+    "configured": false,
+    "active": false,
+    "latency": "—",
+    "models": "Curated models, pay-as-you-go",
+    "kind": "api"
+  },
+  {
+    "id": "opencode-go",
+    "name": "OpenCode Go",
+    "envKey": "OPENCODE_GO_API_KEY",
+    "note": "Open models subscription",
+    "configured": false,
+    "active": false,
+    "latency": "—",
+    "models": "Open models subscription",
+    "kind": "api"
+  },
+  {
+    "id": "bedrock",
+    "name": "AWS Bedrock",
+    "envKey": "AWS_ACCESS_KEY_ID",
+    "note": "IAM / AWS SDK; BEDROCK_BASE_URL",
+    "configured": false,
+    "active": false,
+    "latency": "—",
+    "models": "IAM / AWS SDK; BEDROCK_BASE_URL",
+    "kind": "sdk"
+  },
+  {
+    "id": "azure-foundry",
+    "name": "Azure Foundry",
+    "envKey": "AZURE_FOUNDRY_API_KEY",
+    "note": "OpenAI/Anthropic-style deployment",
+    "configured": false,
+    "active": false,
+    "latency": "—",
+    "models": "OpenAI/Anthropic-style deployment",
+    "kind": "api"
+  },
+  {
+    "id": "ai-gateway",
+    "name": "Vercel AI Gateway",
+    "envKey": "AI_GATEWAY_API_KEY",
+    "note": "Multi-model aggregator",
+    "configured": false,
+    "active": false,
+    "latency": "—",
+    "models": "Multi-model aggregator",
+    "kind": "api"
+  },
+  {
+    "id": "qwen-oauth",
+    "name": "Qwen OAuth (Portal)",
+    "envKey": "",
+    "note": "Reuses local Qwen CLI login",
+    "configured": false,
+    "active": false,
+    "latency": "—",
+    "models": "Reuses local Qwen CLI login",
+    "kind": "oauth"
+  },
+  {
+    "id": "qwen",
+    "name": "Qwen (alias)",
+    "envKey": "DASHSCOPE_API_KEY",
+    "note": "Alias untuk alibaba",
+    "configured": false,
+    "active": false,
+    "latency": "—",
+    "models": "Alias untuk alibaba",
+    "kind": "api"
+  },
+  {
+    "id": "copilot",
+    "name": "GitHub Copilot / ACP",
+    "envKey": "COPILOT_GITHUB_TOKEN",
+    "note": "Melalui `hermes acp` / plugin",
+    "configured": false,
+    "active": false,
+    "latency": "—",
+    "models": "Melalui `hermes acp` / plugin",
+    "kind": "acp"
+  }
+];
+var demoBackups = [
+  {name:"arkax-backup-demo.zip",path:"/mnt/arkax/exports/arkax-backup-demo.zip",size:28412612,modified:"2026-11-16T07:00:00"},
+  {name:"arkax-chat-demo.md",path:"/mnt/arkax/exports/arkax-chat-demo.md",size:4180,modified:"2026-11-16T07:05:00"}
 ];
 var demoFolders = [
   {name:'Prompts & Instructions',path:'/root/.hermes/prompts',count:2,color:'#d98b45',files:[
@@ -250,7 +720,7 @@ var demoApprovals = [
   {id:'ap-1',command:'rm -rf /mnt/arkax/exports/old',risk:'Tinggi',state:'Menunggu'},
   {id:'ap-2',command:'apt-get install chromium',risk:'Sedang',state:'Menunggu'}
 ];
-var demoToolsets = ['web','search','terminal','file','browser','vision','image_gen','skills','tts','todo','memory','session_search','cronjob','code_execution','delegation','clarify','messaging','debugging','safe'];
+var demoToolsets = ["bot_room", "browser", "catalog", "clarify", "code_execution", "coding", "computer_use", "connections", "context_engine", "cronjob", "debugging", "delegation", "desktop_ui", "discord", "discord_admin", "feishu_doc", "feishu_drive", "file", "hermes-acp", "hermes-api-server", "hermes-bluebubbles", "hermes-cli", "hermes-cron", "hermes-dingtalk", "hermes-discord", "hermes-email", "hermes-feishu", "hermes-gateway", "hermes-matrix", "hermes-mattermost", "hermes-qqbot", "hermes-signal", "hermes-slack", "hermes-sms", "hermes-telegram", "hermes-webhook", "hermes-wecom", "hermes-wecom-callback", "hermes-weixin", "hermes-whatsapp", "image_gen", "kanban", "memory", "onboarding", "project", "safe", "search", "session_search", "skills", "terminal", "todo", "tts", "video", "video_gen", "vision", "web", "x_search", "stt"];
 
 var DEMO_ANSWER = 'Tentu! Bayangkan **Arkaxhermes** seperti *dapur restoran berfasilitas lengkap* yang berada langsung di dalam Ubuntu proot di ponsel Anda:\n\n' +
 '- **Bahan Baku di Dapur:** Hermes Agent menyiapkan semua data (skills, MEMORY.md, sesi FTS5, konfigurasi) tanpa mengirim resep rahasia ke klien.\n' +
@@ -273,7 +743,7 @@ var Demo = {
       model:{provider:'anthropic',name:'Claude 3.5 Sonnet',context:200000},
       settings:{theme:state.theme,fontSize:state.font,haptics:true,autoSave:true,encryptLocal:true,
         services:{gateway:true,cron:true,dashboard:false,webhook:false},
-        chat:{defaultProvider:'anthropic',defaultModel:'claude-sonnet-4.5',toolsets:'web,terminal,skills',yolo:false}}
+        chat:{defaultProvider:'anthropic',defaultModel:'claude-sonnet-4.5',toolsets:'hermes-cli',yolo:false}}
     };
     else if(p === '/api/settings') out = (method==='POST' && body) ? Object.assign({},state.settings,body) : state.settings;
     else if(p === '/api/exec'){
@@ -296,37 +766,65 @@ var Demo = {
     if(action==='providers.list') d = demoProviders;
     else if(action==='skills.list') d = demoSkills;
     else if(action==='cron.list') d = demoCron;
+    else if(action==='cron.status') d = {info:'Scheduler demo: 2 job aktif'};
+    else if(action==='cron.tick') d = {info:'1 tick dijalankan (demo)'};
     else if(action==='sessions.list') d = demoSessions;
     else if(action==='sessions.search') d = demoSessions.slice(0,2);
     else if(action==='sessions.stats') d = {sessions:32,messages:1420,tokens:168000};
-    else if(action==='mcp.list') d = {servers:{filesystem:{transport:'stdio',command:'npx',enabled:true},browser:{transport:'http',url:'http://127.0.0.1:9222',enabled:false}}};
-    else if(action==='tools.list') d = {toolsets:demoToolsets.map(function(t){return {name:t,enabled:['web','terminal','file','skills','memory','session_search','cronjob','delegation','safe'].indexOf(t)>=0};}),upstream:null};
+    else if(action==='sessions.export') d = {path:'/mnt/arkax/exports/arkax-session-demo.md',bytes:4180};
+    else if(action==='mcp.list') d = {servers:{filesystem:{transport:'stdio',command:'npx',enabled:true},browser:{transport:'http',url:'http://127.0.0.1:9222',enabled:false}},raw:'MCP Servers (demo)'};
+    else if(action==='tools.list') d = {toolsets:demoToolsets.map(function(t){return {name:t,enabled:['hermes-cli','web','browser','terminal','file','skills','memory','session_search','cronjob','delegation','safe','stt'].indexOf(t)>=0,configOnly:t==='stt',configurable:['hermes-cli','codings'].indexOf(t)<0};}),upstream:'Built-in toolsets (demo)'};
+    else if(action==='gateway.status') d = demoPlatforms;
     else if(action==='memory.get') d = {file:body.file||'MEMORY.md',content:'# Memori Arkaxhermes\n\n- Pengguna lebih suka Bahasa Indonesia.\n- Proot Ubuntu 24.04, bukan Termux.\n- Semua kunci API tersimpan di Android Keystore.\n',exists:true};
-    else if(action==='memory.providers') d = {plugins:['honcho','homeassistant','camofox'],honcho:true};
+    else if(action==='memory.providers') d = {plugins:['honcho','homeassistant','camofox'],honcho:true,status:'memory: builtin'};
     else if(action==='plugins.list') d = ['honcho','homeassistant','camofox','singularity'];
-    else if(action==='profiles.list') d = {directories:['.hermes','.hermes-riset','.hermes-kantor'],upstream:'default'};
-    else if(action==='approvals.list') d = {local:demoApprovals,upstream:null};
+    else if(action==='profiles.list') d = {directories:['default','riset','kantor'],upstream:'* default'};
+    else if(action==='approvals.list') d = {suggestions:[],localDecisions:demoApprovals,upstream:null};
+    else if(action==='approvals.decide') d = {id:body.id,decision:body.decision,persistedLocally:true};
     else if(action==='trajectories.list') d = [{path:'/root/.hermes/trajectories/run-001.jsonl',size:48210,lines:120}];
     else if(action==='bots.list') d = {bots:[{name:'Riset',model:'claude-sonnet-4.5'},{name:'DevOps',model:'gpt-5.5'}]};
-    else if(action==='hooks.list') d = [{name:'on_session_open.py',size:820},{name:'post_curator_run.py',size:1140}];
+    else if(action==='hooks.list') d = {hooks:[{name:'pre_tool_call',meta:'/bin/echo hook',matcher:'*',tag:'config.yaml'}],allowlist:{},raw:'Configured shell hooks (demo)'};
     else if(action==='context.list') d = {files:[{path:'/mnt/arkax/inbox/DESIGN.md',recursive:false}]};
     else if(action==='files.list') d = demoFolders;
-    else if(action==='files.read') d = {path:body.path,text:'# '+body.path+'\n\nBerkas contoh dari workspace Arkaxhermes.'};
-    else if(action==='backup.create') d = {path:'/mnt/arkax/exports/arkax-backup-demo.tar.gz',size:28412612,sha256:'a91d5a93…'};
+    else if(action==='files.read') d = {path:body.path,text:'# '+body.path+'\n\nBerkas contoh dari workspace Arkaxhermes (mode demo).'};
+    else if(action==='files.mkdir') d = {path:body.path};
+    else if(action==='backup.create') d = {path:'/mnt/arkax/exports/arkax-backup-demo.zip',size:28412612,sha256:'a91d5a93…',format:'zip'};
+    else if(action==='backups.list') d = demoBackups;
     else if(action==='export.chat') d = {path:'/mnt/arkax/exports/arkax-chat-demo.md',bytes:4180};
     else if(action==='env.list') d = [{key:'ANTHROPIC_API_KEY',masked:'••••a92f'},{key:'OPENAI_API_KEY',masked:'••••7b1c'}];
+    else if(action==='cli.catalog') d = CLI_CATALOG;
     else if(action==='doctor') d = {local:{python:'3.12.3',services:{gateway:'running'}},upstream:'All checks passed',exit:0};
-    else if(action==='status') d = {hermesVersion:'0.23.1',skills:4,services:{gateway:'running'}};
+    else if(action==='status') d = {hermesVersion:'0.23.1',skills:4,services:{gateway:'running'},sessionDb:'/root/.hermes/state.db'};
+    else if(action==='batch.run') d = {results:[{argv:['python3','batch_runner.py'],ok:true}]};
+    else if(action==='bots.set') d = {bots:[{name:body.name||'Bot',model:body.model||'claude-sonnet-4.5'}]};
+    else if(action==='config.set') d = {key:body.key,value:body.value};
+    else if(action==='context.add') d = {files:[{path:body.path,recursive:!!body.recursive}]};
+    else if(action==='cron.create') d = {id:'demo-'+Date.now(),schedule:body.schedule,prompt:body.prompt,noAgent:!!body.noAgent};
+    else if(action==='cron.delivery') d = {platform:body.name||body.platform,message:body.message};
+    else if(action==='cron.toggle') d = {id:body.id,enabled:!!body.enabled};
+    else if(action==='env.delete') d = {keys:[],deleted:body.key};
+    else if(action==='files.delete') d = {path:body.path};
+    else if(action==='files.write') d = {path:body.path,bytes:(body.content||'').length};
+    else if(action==='hooks.set') d = {event:body.event,entry:[{matcher:body.matcher||'*',command:body.command||''}]};
+    else if(action==='mcp.add') d = {name:body.name,entry:{transport:body.transport,command:body.command,url:body.url}};
+    else if(action==='memory.set') d = {file:body.file,bytes:(body.content||'').length};
+    else if(action==='model.set') d = {commands:['config set model.provider','config set model.default'],ok:true};
+    else if(action==='profiles.create') d = {name:body.name,home:'/root/.hermes/profiles/'+body.name};
+    else if(action==='skills.write') d = {path:body.path};
+    else if(action==='tools.backend') d = {backend:body.backend};
+    else if(action==='tools.set') d = {enabled:body.toolsets||body.enabled||[]};
     else d = {ok:true,info:action+' dijalankan (mode demo)'};
-    return {ok:true,action:action,data:d,source:'demo',warnings:DEMO?[]:[],fallback:null};
+    var ok = action!=='approvals.decide';
+    var warn = action==='approvals.decide' ? ['Hermes v0.23.1 tidak punya approval decide CLI; jawab di TUI/Terminal.'] : [];
+    return {ok:ok,action:action,data:d,source:'demo',warnings:warn,fallback:ok?null:{argv:['hermes','--tui'],hint:'Buka TUI'}};
   },
   terminal: function(cmd){
     if(/--version|version/.test(cmd)) return 'Hermes Agent v0.23.1\nUbuntu 24.04.5 LTS (proot, aarch64)\nArkaxhermes 0.1.0';
     if(/doctor/.test(cmd)) return 'OK   python 3.12.3\nOK   node v20.18.0\nOK   hermes v0.23.1\nOK   sqlite3 + FTS5\nOK   DNS resolv-ok\nWARN Docker daemon tidak tersedia di Android non-root — gunakan backend ssh/modal/daytona.\nSemua pemeriksaan inti lulus.';
-    if(/tools/.test(cmd)) return 'Toolset aktif: web, terminal, file, skills, memory, session_search, cronjob, delegation, safe\n40+ tools terdaftar. Jalankan `hermes tools` untuk konfigurasi interaktif.';
+    if(/tools/.test(cmd)) return 'Toolset aktif: hermes-cli (bundle inti)\n57 toolset terdaftar di toolsets.py. Jalankan `hermes tools list --platform cli`.';
     if(/cron/.test(cmd)) return 'job-1  every day 09:00   Ringkasan HN Pagi     [aktif]\njob-2  every 2h          Health Check           [aktif]\njob-3  every sunday 02:00 Backup Mingguan       [pause]';
-    if(/gateway/.test(cmd)) return 'gateway: running (Telegram, Discord, Slack)\ncron ticker: running\nwebhook: stopped';
-    if(/ls|dir/.test(cmd)) return 'MEMORY.md  USER.md  config.yaml  .env  skills/  sessions.db  cron/  plugins/  logs/';
+    if(/gateway/.test(cmd)) return 'gateway: running (Telegram, Discord, Slack)\ncron tick: loop 60s aktif\nwebhook: served by gateway';
+    if(/ls|dir/.test(cmd)) return 'MEMORY.md  USER.md  config.yaml  .env  skills/  state.db  cron/jobs.json  plugins/  logs/';
     if(/uname/.test(cmd)) return 'Linux arkaxhermes 4.14.81-perf+ #1 SMP PREEMPT aarch64 GNU/Linux';
     return '$ '+cmd+'\n[demo] Perintah diteruskan ke /bin/bash di dalam Ubuntu proot.\nHermes Agent v0.23.1 siap.';
   },
@@ -439,7 +937,8 @@ var P = {
  list:'M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01', git:'M6 3v12a3 3 0 1 0 3 3M6 6a3 3 0 1 0 0 6M18 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM18 9V6a3 3 0 0 0-3-3h-3',
  hook:'M12 3v10a4 4 0 0 0 8 0V9M8 7a4 4 0 0 0-4 4v2a8 8 0 0 0 16 0', rocket:'M5 15c-1 2-1 5-1 5s3 0 5-1M12 3c4 1 7 4 8 8-2 5-6 8-11 9l-3-3c1-5 4-9 9-11zM9 12a2 2 0 1 0 0-4 2 2 0 0 0 0 4z',
  upload:'M12 16V4M7 9l5-5 5 5M4 20h16', lock:'M6 11h12v10H6zM9 11V7a3 3 0 0 1 6 0v4', wifi:'M2 8a15 15 0 0 1 20 0M5 12a10 10 0 0 1 14 0M9 16a5 5 0 0 1 6 0M12 20h.01',
- edit:'M12 20h9M16 4l4 4L9 19l-4 1 1-4z', link:'M10 13a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1M14 11a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1'
+ edit:'M12 20h9M16 4l4 4L9 19l-4 1 1-4z', link:'M10 13a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1M14 11a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1',
+ download:'M12 3v12M7 11l5 5 5-5M4 20h16'
 };
 function icon(n,size){ var s=size||18; return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+(P[n]||P.info)+'"/></svg>'; }
 
@@ -450,46 +949,1107 @@ var state = {
   messages:[], status:null, settings:null, providers:demoProviders,
   search:'', filter:'Semua Aset', providerFilter:'Semua', composer:'', slashOpen:false,
   terminal:[{t:'Arkaxhermes · Ubuntu 24.04.5 proot · aarch64',c:'dim'},{t:'Ketik perintah atau pilih aksi cepat. Semua perintah berjalan di /bin/bash rootfs.',c:'dim'},{t:'$ hermes --version',c:''},{t:'Hermes Agent v0.23.1',c:'ok'}],
-  modal:null, install:null, toastTimer:null, toggles:{}, installLog:[]
+  modal:null, install:null, toastTimer:null, toggles:{}, installLog:[],
+  featureData:{}, workspaceData:null, workspacePath:'/root/.hermes', cliSearch:''
 };
 state.messages=[{
   role:'assistant',content:'Halo! Saya **Hermes Agent** yang berjalan di dalam Ubuntu proot di perangkat Anda. ☤\n\nSaya punya memori lintas sesi, skills yang berkembang sendiri, 40+ tools, cron, gateway, MCP, dan subagen. Mau saya jelaskan cara kerja React Server Components dengan analogi sederhana dan kode minimal?',
   tokens:0,tools:[],streaming:false
 }];
 
+var CLI_CATALOG = [{"name":"chat","desc":"Interactive chat with the agent","subs":[],"usage":"usage: hermes chat [-h] [-q QUERY | --query-file PATH] [--oneshot] [--image IMAGE] [-m MODEL] [-t TOOLSETS] [--reasoning LEVEL] [-s SKILLS] [--provider PROVIDER] [--base-url URL] [--api-key KEY]"},{"name":"model","desc":"Select default model and provider","subs":[],"usage":"usage: hermes model [-h] [--refresh] [--portal-url PORTAL_URL] [--inference-url INFERENCE_URL] [--client-id CLIENT_ID] [--scope SCOPE] [--no-browser] [--timeout TIMEOUT] [--ca-bundle CA_BUNDLE]"},{"name":"moa","desc":"Configure Mixture of Agents provider/model slots","subs":["list","ls","configure","config","delete","rm"],"usage":"usage: hermes moa [-h] {list,ls,configure,config,delete,rm} ..."},{"name":"fallback","desc":"Manage fallback providers (tried when the primary model fails)","subs":["list","ls","add","remove","rm","clear"],"usage":"usage: hermes fallback [-h] {list,ls,add,remove,rm,clear} ..."},{"name":"worktree","desc":"Audit and reclaim accumulated git worktrees and merged branches","subs":["list","ls","audit","prune","restore"],"usage":"usage: hermes worktree [-h] {list,ls,audit,prune,restore} ..."},{"name":"browser","desc":"Real-profile browsing helpers (close a browser locking its profile)","subs":["close-profile","export-signins"],"usage":"usage: hermes browser [-h] {close-profile,export-signins} ..."},{"name":"secrets","desc":"Manage external secret sources (Bitwarden, 1Password)","subs":["bitwarden","bw","onepassword","op","1password"],"usage":"usage: hermes secrets [-h] {bitwarden,bw,onepassword,op,1password} ..."},{"name":"egress","desc":"Manage the iron-proxy egress credential-injection firewall","subs":["install","setup","start","stop","restart","reload","status","disable","config"],"usage":"usage: hermes egress [-h] {install,setup,start,stop,restart,reload,status,disable,config} ..."},{"name":"migrate","desc":"Move over from another agent, or migrate retired models and deprecated settings","subs":["xai","relay","openclaw","claude-code","codex","cursor","grok-bot","openbot"],"usage":"usage: hermes migrate [-h] {xai,relay,openclaw,claude-code,codex,cursor,grok-bot,openbot} ..."},{"name":"codex-runtime","desc":"Manage the optional codex app-server runtime (migrate MCP config)","subs":["migrate"],"usage":"usage: hermes codex-runtime [-h] {migrate} ..."},{"name":"gateway","desc":"Messaging gateway management","subs":["run","ensure","attach","start","stop","restart","status","install","uninstall","list","setup","migrate-legacy","migrate","enroll"],"usage":"usage: hermes gateway [-h] [--accept-hooks] {run,ensure,attach,start,stop,restart,status,install,uninstall,list,setup,migrate-legacy,migrate,enroll} ..."},{"name":"proxy","desc":"Local OpenAI-compatible proxy to OAuth providers","subs":["start","status","providers"],"usage":"usage: hermes proxy [-h] {start,status,providers} ..."},{"name":"lsp","desc":"Language Server Protocol management","subs":["status","list","install","install-all","restart","which"],"usage":"usage: hermes lsp [-h] {status,list,install,install-all,restart,which} ..."},{"name":"setup","desc":"Interactive setup wizard","subs":[],"usage":"usage: hermes setup [-h] [--non-interactive] [--reset] [--reconfigure] [--quick] [--portal] [{model,tts,terminal,gateway,tools,telemetry,agent}]"},{"name":"whatsapp","desc":"Set up WhatsApp integration","subs":[],"usage":"usage: hermes whatsapp [-h] [--passkey-browser EXECUTABLE]"},{"name":"whatsapp-cloud","desc":"Set up WhatsApp Business Cloud API integration","subs":[],"usage":"usage: hermes whatsapp-cloud [-h]"},{"name":"slack","desc":"Slack integration helpers (manifest generation, etc.)","subs":["manifest"],"usage":"usage: hermes slack [-h] {manifest} ..."},{"name":"send","desc":"Send a message to a configured platform (scripts, cron jobs, CI).","subs":[],"usage":"usage: hermes send [-h] [-t TARGET] [-f PATH] [-s LINE] [--mention PHONE_OR_JID] [-l] [-q] [--json] [message]"},{"name":"logout","desc":"Clear authentication for an inference provider","subs":[],"usage":"usage: hermes logout [-h] [--provider {nous,openai-codex,xai-oauth}]"},{"name":"auth","desc":"Manage pooled provider credentials","subs":["add","list","remove","reset","priority","refresh","status","logout","upgrade"],"usage":"usage: hermes auth [-h] {add,list,remove,reset,priority,refresh,status,logout,upgrade} ..."},{"name":"status","desc":"Show status of all components","subs":["list","prune"],"usage":"usage: hermes status [-h] [--full] [--deep]"},{"name":"pause","desc":"Emergency stop: pause cron/kanban dispatch and new gateway turns","subs":["resume"],"usage":"usage: hermes pause [-h] [--reason REASON]"},{"name":"resume","desc":"Lift the emergency stop set by `hermes pause`","subs":[],"usage":"usage: hermes resume [-h]"},{"name":"cron","desc":"Cron job management","subs":["list","create","add","edit","pause","resume","run","cancel","remove","rm","delete","status","runs","history","incidents","notepad","doctor","tick"],"usage":"usage: hermes cron [-h] [--accept-hooks] {list,create,add,edit,pause,resume,run,cancel,remove,rm,delete,status,runs,history,incidents,notepad,doctor,tick} ..."},{"name":"webhook","desc":"Manage dynamic webhook subscriptions","subs":["subscribe","add","list","ls","remove","rm","test"],"usage":"usage: hermes webhook [-h] {subscribe,add,list,ls,remove,rm,test} ..."},{"name":"peer","desc":"Bot-to-bot DMs across machines (peer Hermes gateways)","subs":["add","set","list","ls","remove","rm","dm","run","status","stop"],"usage":"usage: hermes peer [-h] {add,set,list,ls,remove,rm,dm,run,status,stop} ..."},{"name":"portal","desc":"Set up Nous Portal (login, model pick, Tool Gateway); see also `portal info`","subs":["login","info","status","open","tools"],"usage":"usage: hermes portal [-h] {login,info,status,open,tools} ..."},{"name":"kanban","desc":"Multi-profile collaboration board (tasks, links, comments)","subs":[],"usage":"usage: hermes kanban [-h] [--board <slug>]"},{"name":"project","desc":"Manage projects (named, multi-folder workspaces)","subs":["create","list","ls","show","add-folder","remove-folder","rename","set-primary","use","archive","restore","bind-board"],"usage":"usage: hermes project [-h] {create,list,ls,show,add-folder,remove-folder,rename,set-primary,use,archive,restore,bind-board} ..."},{"name":"hooks","desc":"Inspect and manage shell-script hooks","subs":["list","ls","test","revoke","remove","rm","doctor"],"usage":"usage: hermes hooks [-h] {list,ls,test,revoke,remove,rm,doctor} ..."},{"name":"doctor","desc":"Check configuration and dependencies","subs":[],"usage":"usage: hermes doctor [-h] [--fix] [--live] [--ack ADVISORY_ID]"},{"name":"verify","desc":"Detect a project's run recipe and smoke-test it","subs":[],"usage":"usage: hermes verify [-h] [--detect-only] [--save] [--skip-start] [--phase {bootstrap,build,test,start}] [--port PORT] [--timeout TIMEOUT] [--ready-timeout READY_TIMEOUT] [--json] [path]"},{"name":"security","desc":"Supply-chain audit (OSV.dev) for venv, plugins, and MCP servers","subs":["audit"],"usage":"usage: hermes security [-h] <subcommand> ..."},{"name":"approvals","desc":"Approval-prompt tools (mine history into allowlist proposals)","subs":["suggest","test"],"usage":"usage: hermes approvals [-h] <subcommand> ..."},{"name":"dump","desc":"Dump setup summary for support/debugging","subs":[],"usage":"usage: hermes dump [-h] [--show-keys]"},{"name":"debug","desc":"Debug tools — upload logs and system info for support","subs":["share","delete"],"usage":"usage: hermes debug [-h] {share,delete} ..."},{"name":"backup","desc":"Back up Hermes home directory to a zip file","subs":[],"usage":"usage: hermes backup [-h] [-o OUTPUT] [-q] [-l LABEL] [-k N]"},{"name":"checkpoints","desc":"Inspect / prune / clear ~/.hermes/checkpoints/","subs":[],"usage":"usage: hermes checkpoints [-h] COMMAND ..."},{"name":"import","desc":"Restore a Hermes backup from a zip file","subs":[],"usage":"usage: hermes import [-h] [--force] zipfile"},{"name":"config","desc":"View and edit configuration","subs":["show","edit","get","set","unset","path","env-path","check","migrate"],"usage":"usage: hermes config [-h] {show,edit,get,set,unset,path,env-path,check,migrate} ..."},{"name":"skin","desc":"List, switch, and tweak skins","subs":["list","use","set"],"usage":"usage: hermes skin [-h] {list,use,set} ..."},{"name":"console","desc":"Open the safe Hermes command console","subs":[],"usage":"usage: hermes console [-h]"},{"name":"pairing","desc":"Manage DM pairing codes for user authorization","subs":["list","approve","revoke","clear-pending"],"usage":"usage: hermes pairing [-h] {list,approve,revoke,clear-pending} ..."},{"name":"skills","desc":"Search, install, configure, and manage skills","subs":["trust","untrust","browse","search","install","inspect","list","check","update","audit","uninstall","reset","list-modified","diff","opt-out","opt-in","repair-official","publish","snapshot","tap","config"],"usage":"usage: hermes skills [-h] {trust,untrust,browse,search,install,inspect,list,check,update,audit,uninstall,reset,list-modified,diff,opt-out,opt-in,repair-official,publish,snapshot,tap,config} ..."},{"name":"bundles","desc":"Create, list, and manage skill bundles (aliases for multiple skills)","subs":["list","show","create","delete","reload"],"usage":"usage: hermes bundles [-h] {list,show,create,delete,reload} ..."},{"name":"plugins","desc":"Manage and validate plugins","subs":["install","search","browse","validate","update","auto-update","adopt","trust-update-url","check-updates","remove","list","enable","disable","capabilities","doctor","pack","export","show"],"usage":"usage: hermes plugins [-h]"},{"name":"curator","desc":"Background skill maintenance (curator) — status, run, pause, pin","subs":["status","usage","run","pause","resume","pin","unpin","lock","unlock","list-unmanaged","adopt","restore","list-archived","archive","prune","backup","rollback","ledger","purge"],"usage":"usage: hermes curator [-h] {status,usage,run,pause,resume,pin,unpin,lock,unlock,list-unmanaged,adopt,restore,list-archived,archive,prune,backup,rollback,ledger,purge} ..."},{"name":"pets","desc":"Browse, install, and select petdex animated pets","subs":["list","install","select","show","off","scale","remove","doctor"],"usage":"usage: hermes pets [-h] {list,install,select,show,off,scale,remove,doctor} ..."},{"name":"clipboard","desc":"Read this machine's clipboard (device-local)","subs":["image"],"usage":"usage: hermes clipboard [-h] {image} ..."},{"name":"journey","desc":"(learning, memory-graph) Timeline of learned skills + memories over time","subs":["list","delete","edit"],"usage":"usage: hermes journey [-h] [--reveal 0..1] [--play] [--fps FPS] [--width WIDTH] [--height HEIGHT] [--no-color] [--json] {list,delete,edit} ..."},{"name":"memory","desc":"Configure external memory provider","subs":["setup","status","off","reset"],"usage":"usage: hermes memory [-h] {setup,status,off,reset} ..."},{"name":"tools","desc":"Configure which tools are enabled per platform","subs":["list","disable","enable","post-setup"],"usage":"usage: hermes tools [-h] [--summary] {list,disable,enable,post-setup} ..."},{"name":"computer-use","desc":"Manage the Computer Use (cua-driver) backend (macOS/Windows/Linux)","subs":["install","status","doctor","permissions","screen"],"usage":"usage: hermes computer-use [-h] {install,status,doctor,permissions,screen} ..."},{"name":"mcp","desc":"Manage MCP server connections","subs":["add","remove","rm","list","ls","test","configure","config","login","reauth","picker","catalog","install"],"usage":"usage: hermes mcp [-h] {add,remove,rm,list,ls,test,configure,config,login,reauth,picker,catalog,install} ..."},{"name":"connectors","desc":"Manage hosted app connectors and their accounts","subs":["list","ls","accounts","connect","rename","disconnect"],"usage":"usage: hermes connectors [-h] {list,ls,accounts,connect,rename,disconnect} ..."},{"name":"sessions","desc":"Manage session history (list, rename, export, prune, delete)","subs":["list","export","delete","prune","archive","optimize","clean-markers","optimize-storage","repair","set-journal-mode","repair-routing","repair-profiles","repair-prompts","recover","stats","pin","unpin","pinned","retitle-skills","browse","import"],"usage":"usage: hermes sessions [-h]"},{"name":"insights","desc":"Show usage insights and analytics","subs":[],"usage":"usage: hermes insights [-h] [--days DAYS] [--source SOURCE]"},{"name":"usage","desc":"Show account rate-limit windows (the /usage block) without starting a session","subs":[],"usage":"usage: hermes usage [-h] [--provider PROVIDER] [--json]"},{"name":"monitoring","desc":"Inspect gateway monitoring (health & diagnostics export)","subs":["status"],"usage":"usage: hermes monitoring [-h] {status} ..."},{"name":"vault","desc":"Manage the local encrypted autofill vault (add/list/rm credentials)","subs":["add","list","rm","sources","key"],"usage":"usage: hermes vault [-h] {add,list,rm,sources,key} ..."},{"name":"update","desc":"Update Hermes Agent to the latest version","subs":[],"usage":"usage: hermes update [-h] [--gateway] [--check] [--plan] [--list-venv-holders] [--no-backup] [--backup] [--yes] [--keep-stash] [--branch NAME] [--switch-branch] [--force] [--force-venv]"},{"name":"uninstall","desc":"Uninstall Hermes Agent","subs":[],"usage":"usage: hermes uninstall [-h] [--full | --gui | --data] [--gui-summary] [--yes] [--dry-run]"},{"name":"acp","desc":"Run Hermes Agent as an ACP (Agent Client Protocol) server","subs":[],"usage":"usage: hermes acp [-h] [--accept-hooks] [--version] [--check] [--setup] [--setup-browser] [--yes]"},{"name":"profile","desc":"Manage profiles — multiple isolated Hermes instances","subs":["list","use","create","delete","describe","show","alias","rename","purge-identity","migrate-identity","export","import","install","update","info"],"usage":"usage: hermes profile [-h] {list,use,create,delete,describe,show,alias,rename,purge-identity,migrate-identity,export,import,install,update,info} ..."},{"name":"completion","desc":"Print shell completion script (bash, zsh, or fish)","subs":[],"usage":"usage: hermes completion [-h] [{bash,zsh,fish}]"},{"name":"dashboard","desc":"Start the web UI dashboard","subs":["register"],"usage":"usage: hermes dashboard [-h] [--port PORT] [--host HOST] [--insecure] [--skip-build] [--isolated] [--stop] [--status] [--no-open] {register} ..."},{"name":"serve","desc":"Start the Hermes backend server (headless; powers the desktop app and remote backends)","subs":[],"usage":"usage: hermes serve [-h] [--port PORT] [--host HOST] [--insecure] [--skip-build] [--isolated] [--stop] [--status] [--ssh-session-token-file PATH] [--ssh-owner-nonce NONCE]"},{"name":"webapp","desc":"Open the Hermes Desktop workspace in a browser","subs":[],"usage":"usage: hermes webapp [-h] [--no-open] [--force-build] [--skip-build] [--build-only | --status | --sign-out]"},{"name":"desktop","desc":"(gui)       Build and launch the native desktop app","subs":[],"usage":"usage: hermes desktop [-h] [--source] [--build-only] [--fake-boot] [--ignore-existing] [--hermes-root HERMES_ROOT] [--cwd CWD] [--skip-build] [--local] [--force-build] [--setup-tcc-identity]"},{"name":"logs","desc":"View and filter Hermes log files","subs":[],"usage":"usage: hermes logs [-h] [-n LINES] [-f] [--level LEVEL] [--session ID] [--since TIME] [--component NAME] [log_name]"},{"name":"prompt-size","desc":"Show a byte breakdown of the system prompt + tool schemas","subs":[],"usage":"usage: hermes prompt-size [-h] [--platform PLATFORM] [--json]"}];
 var NAV = [
   {id:'chat',label:'Chat',icon:'chat'}, {id:'provider',label:'Provider',icon:'provider'},
   {id:'workspace',label:'Workspace',icon:'workspace'}, {id:'terminal',label:'Terminal',icon:'terminal'},
   {id:'settings',label:'Pengaturan',icon:'settings'}
 ];
 var SCREENS = [
-  {id:'chat',label:'Chat',icon:'chat',group:'Utama'},
-  {id:'provider',label:'Provider',icon:'provider',group:'Utama'},
-  {id:'workspace',label:'Workspace',icon:'workspace',group:'Utama'},
-  {id:'terminal',label:'Terminal',icon:'terminal',group:'Utama'},
-  {id:'settings',label:'Pengaturan',icon:'settings',group:'Utama'},
-
-  {id:'sessions',label:'Sesi & Riwayat',icon:'list',group:'Hermes Agent',sub:'SQLite WAL + FTS5. Cari percakapan lintas sesi, lanjutkan, kompres, atau hapus.',kpis:[['32','Sesi'],['1.420','Pesan'],['128 MB','Cache']],action:'sessions.list',cmds:['hermes sessions list --json','hermes --resume latest','/compress'],add:{title:'Cari sesi',fields:[{k:'query',label:'Kata kunci',ph:'contoh: proot'}],submit:'sessions.search'}},
-  {id:'skills',label:'Skills',icon:'zap',group:'Hermes Agent',sub:'Procedural memory: dibuat otomatis, diperbaiki saat dipakai, kompatibel agentskills.io.',kpis:[['4','Skill'],['3','Auto-created'],['1.420','Chunk RAG']],action:'skills.list',cmds:['hermes skills','hermes chat -s hermes-agent-dev -q "audit repo"','hermes plugins install honcho'],add:{title:'Skill baru',fields:[{k:'name',label:'Nama skill',ph:'deploy-staging'},{k:'content',label:'Isi SKILL.md',type:'textarea',ph:'---\nname: deploy-staging\ndescription: …\n---\n# Langkah'}],submit:'skills.write'}},
-  {id:'memory',label:'Memori',icon:'brain',group:'Hermes Agent',sub:'Tiga lapis: konteks sesi, fakta persisten (MEMORY.md / USER.md), dan skills prosedural.',kpis:[['3','Lapis'],['Aktif','Nudge'],['Honcho','Plugin']],action:'memory.get',cmds:['hermes config set memory.nudge true','hermes plugins install honcho','/insights 7'],add:{title:'Edit memori',fields:[{k:'file',label:'Berkas',type:'select',options:['MEMORY.md','USER.md','SOUL.md','AGENTS.md']},{k:'content',label:'Isi',type:'textarea',ph:'# Memori'}],submit:'memory.set'}},
-  {id:'cron',label:'Cron & Otomasi',icon:'clock',group:'Hermes Agent',sub:'Jadwal bahasa alami, no-agent mode, webhook, pin model/reasoning, delivery ke platform.',kpis:[['3','Job'],['2','Aktif'],['6 jam','Worktree sweep']],action:'cron.list',cmds:['hermes cron list --json','hermes cron create "every 2h" "Check server status"','/cron add "in 30m" "Remind me"'],add:{title:'Jadwal baru',fields:[{k:'schedule',label:'Jadwal',ph:'every 2h'},{k:'prompt',label:'Perintah',ph:'Check server status'},{k:'skill',label:'Skill (opsional)',ph:'blogwatcher'}],submit:'cron.create'}},
-  {id:'gateway',label:'Gateway',icon:'globe',group:'Hermes Agent',sub:'Satu proses untuk Telegram, Discord, Slack, WhatsApp, Signal, Email, Home Assistant + transkrip voice memo.',kpis:[['3','Terhubung'],['1','Proses'],['6','Platform']],action:'gateway.status',cmds:['hermes gateway setup','hermes gateway run','hermes send telegram "Halo dari Arkaxhermes"','/platforms'],add:{title:'Kirim pesan',fields:[{k:'name',label:'Platform',ph:'telegram'},{k:'message',label:'Pesan',ph:'Halo'}],submit:'cron.delivery'}},
-  {id:'mcp',label:'MCP & Plugin',icon:'plug',group:'Hermes Agent',sub:'MCP stdio/HTTP dengan auto-reconnect, OSV check, credential stripping, dan katalog plugin.',kpis:[['2','Server'],['4','Plugin'],['stdio+HTTP','Transport']],action:'mcp.list',cmds:['hermes mcp list','hermes plugins install homeassistant','hermes plugins install camofox'],add:{title:'Tambah MCP server',fields:[{k:'name',label:'Nama',ph:'filesystem'},{k:'transport',label:'Transport',type:'select',options:['stdio','http']},{k:'command',label:'Perintah / URL',ph:'npx -y @modelcontextprotocol/server-filesystem'}],submit:'mcp.add'}},
-  {id:'tools',label:'Tools & Toolsets',icon:'cpu',group:'Hermes Agent',sub:'40+ tools dan preset toolset per platform. Backend terminal: local (proot), ssh, modal, daytona, vercel_sandbox.',kpis:[['40+','Tools'],['19','Toolset'],['local','Backend']],action:'tools.list',cmds:['hermes tools','hermes chat --toolsets "web,terminal,skills"','hermes config set terminal.backend ssh'],add:{title:'Atur backend terminal',fields:[{k:'backend',label:'Backend',type:'select',options:['local','docker','ssh','modal','daytona','vercel_sandbox']}],submit:'tools.backend'}},
-  {id:'delegation',label:'Delegasi & Subagen',icon:'users',group:'Hermes Agent',sub:'Subagen terisolasi (maks depth 2, 3 konkuren), provider/model/limits sendiri, Python RPC execute_code.',kpis:[['2','Depth'],['3','Konkuren'],['RPC','Zero-context']],action:'status',cmds:['hermes config set delegation.max_depth 2','hermes -w -z "Fix issue #123"','hermes worktree list --json'],add:{title:'Batas subagen',fields:[{k:'key',label:'Kunci config',ph:'delegation.max_concurrent'},{k:'value',label:'Nilai',ph:'3'}],submit:'config.set'}},
-  {id:'profiles',label:'Profil',icon:'layers',group:'Hermes Agent',sub:'Isolasi HERMES_HOME: config, kunci, memori, sesi, skills, dan gateway per profil.',kpis:[['3','Profil'],['default','Aktif'],['MIT','Lisensi']],action:'profiles.list',cmds:['hermes profile list --json','hermes --profile riset chat -q "Halo"'],add:{title:'Profil baru',fields:[{k:'name',label:'Nama',ph:'riset'}],submit:'profiles.create'}},
-  {id:'approvals',label:'Persetujuan & Keamanan',icon:'shield',group:'Hermes Agent',sub:'Approval gate, redaksi kredensial, --safe-mode, enkripsi lokal, dan pemindaian injeksi memori.',kpis:[['2','Menunggu'],['AES-GCM','Kunci'],['0600','.env']],action:'approvals.list',cmds:['hermes chat --safe-mode','hermes doctor','hermes config get security.approval'],add:{title:'Keputusan approval',fields:[{k:'id',label:'ID',ph:'ap-1'},{k:'decision',label:'Keputusan',type:'select',options:['approve','deny','always','never']}],submit:'approvals.decide'}},
-  {id:'media',label:'Browser & Media',icon:'globe',group:'Hermes Agent',sub:'browser_exec/CDP, vision_analyze, image_generate, text_to_speech, transkrip voice memo, lampiran --image.',kpis:[['CDP','Browser'],['FAL','Image'],['OpenAI','TTS']],action:'status',cmds:['hermes chat --image /mnt/arkax/inbox/screen.png -q "Analisis gambar ini"','hermes chat --toolsets "browser,vision,image_gen,tts"'],add:{title:'Lampirkan gambar',fields:[{k:'path',label:'Path di rootfs',ph:'/mnt/arkax/inbox/screen.png'}],submit:'context.add'}},
-  {id:'context',label:'Context Files',icon:'file',group:'Hermes Agent',sub:'AGENTS.md, SOUL.md, .cursorrules, dan berkas/direktori yang disuntikkan ke prompt.',kpis:[['4','Berkas'],['Auto','Injeksi'],['query-file','Aman']],action:'context.list',cmds:['hermes chat --query-file -','hermes chat --ignore-rules'],add:{title:'Tambah konteks',fields:[{k:'path',label:'Path',ph:'/mnt/arkax/inbox/DESIGN.md'},{k:'recursive',label:'Rekursif',ph:'false'}],submit:'context.add'}},
-  {id:'hooks',label:'Hooks',icon:'hook',group:'Hermes Agent',sub:'Event-driven callbacks: on_session_open, post_curator_run, hook plugin, middleware.',kpis:[['2','Hook'],['Plugin','API'],['JSON-RPC','Event']],action:'hooks.list',cmds:['hermes plugins list','hermes gateway run'],add:{title:'Tulis hook',fields:[{k:'name',label:'Nama berkas',ph:'on_session_open.py'},{k:'content',label:'Isi',type:'textarea',ph:'def on_session_open(ctx): …'}],submit:'hooks.set'}},
-  {id:'batch',label:'Batch & Trajektori',icon:'database',group:'Hermes Agent',sub:'Batch processing, trajectory JSONL, compression, dan integrasi Atropos RL.',kpis:[['1','Trajektori'],['120','Baris'],['48 KB','Ukuran']],action:'trajectories.list',cmds:['hermes batch --help','hermes trajectory --help','hermes insights --days 7'],add:{title:'Jalankan batch',fields:[{k:'commands',label:'Perintah (satu per baris)',type:'textarea',ph:'hermes chat -q "Ringkas artikel"'}],submit:'batch.run'}},
-  {id:'bots',label:'Bot Mode',icon:'bot',group:'Hermes Agent',sub:'Bot bernama dengan model, memori, skill, rutin, group chat, dan @mention sendiri.',kpis:[['2','Bot'],['Group','Chat'],['@','Mention']],action:'bots.list',cmds:['hermes gateway run','hermes profile use riset'],add:{title:'Bot baru',fields:[{k:'name',label:'Nama',ph:'Riset'},{k:'model',label:'Model',ph:'claude-sonnet-4.5'}],submit:'bots.set'}},
-  {id:'code',label:'Code Execution',icon:'code',group:'Hermes Agent',sub:'Python RPC memanggil tools Hermes, worktree terisolasi, checkpoint, dan pipeline zero-context-cost.',kpis:[['RPC','Tools'],['-w','Worktree'],['90','Max turn']],action:'status',cmds:['hermes -w -z "Fix issue #123"','hermes worktree prune --dry-run','hermes chat --checkpoints -q "Refactor"'],add:{title:'Skrip RPC',fields:[{k:'path',label:'Path skrip',ph:'/mnt/arkax/scripts/pipeline.py'},{k:'content',label:'Kode',type:'textarea',ph:'from hermes import tools\n…'}],submit:'files.write'}},
-  {id:'portal',label:'Portal & Tool Gateway',icon:'spark',group:'Model & Ekosistem',sub:'Nous Portal: 300+ model, OAuth, web search, image gen, TTS, dan cloud browser tanpa kunci terpisah.',kpis:[['300+','Model'],['OAuth','Login'],['4','Tool Gateway']],action:'providers.list',cmds:['hermes setup --portal','hermes portal info','/model <name>','hermes chat --provider nous'],add:{title:'Ganti model',fields:[{k:'provider',label:'Provider',ph:'anthropic'},{k:'model',label:'Model',ph:'claude-sonnet-4.5'}],submit:'model.set'}},
-  {id:'stats',label:'Statistik & Insight',icon:'activity',group:'Model & Ekosistem',sub:'Token, biaya, prompt cache, kompresi konteks, dan /insights lintas sesi.',kpis:[['1,42M','Token bulan ini'],['5,00M','Kuota'],['$24,50','Saldo']],action:'sessions.stats',cmds:['/usage','/insights --days 7','/context','/compress'],add:{title:'Lihat insight',fields:[{k:'days',label:'Hari',ph:'7'}],submit:'status'}},
-  {id:'backup',label:'Backup & Ekspor',icon:'upload',group:'Sistem',sub:'Backup seluruh ~/.hermes ke /mnt/arkax/exports, ekspor obrolan .json/.md, restore terenkripsi.',kpis:[['128 MB','Cache'],['.tar.gz','Backup'],['SHA-256','Verifikasi']],action:'backup.create',cmds:['hermes doctor','hermes update'],add:{title:'Ekspor obrolan',fields:[{k:'format',label:'Format',type:'select',options:['md','json']},{k:'title',label:'Judul',ph:'Arkaxhermes'}],submit:'export.chat'}},
-  {id:'logs',label:'Log & Doctor',icon:'edit',group:'Sistem',sub:'Log instalasi proot, gateway, cron, dan hasil hermes doctor.',kpis:[['200','Baris'],['OK','Doctor'],['Live','SSE']],action:'doctor',cmds:['hermes doctor','hermes --version','uname -a'],add:{title:'Jalankan diagnostik',fields:[{k:'cmd',label:'Perintah',ph:'hermes doctor'}],submit:'exec'}},
-  {id:'about',label:'Tentang Arkaxhermes',icon:'info',group:'Sistem',sub:'Aplikasi tidak resmi berbasis Hermes Agent (MIT, Nous Research) di Ubuntu 24.04 proot.',kpis:[['0.1.0','Aplikasi'],['v0.23.1','Hermes'],['24.04.5','Ubuntu']],action:'status',cmds:['hermes --version','cat /etc/arkax-release'],add:null}
+  {
+    "id": "chat",
+    "label": "Chat",
+    "icon": "chat",
+    "group": "Utama",
+    "action": null,
+    "sub": null,
+    "kpis": [],
+    "cmds": [],
+    "add": null
+  },
+  {
+    "id": "provider",
+    "label": "Provider",
+    "icon": "provider",
+    "group": "Utama",
+    "action": "providers.list",
+    "sub": "Katalog provider resmi v0.23.1 (43 entri termasuk OAuth, alias lokal, dan endpoint kustom).",
+    "kpis": [
+      [
+        "43",
+        "Provider"
+      ],
+      [
+        "OAuth",
+        "Login"
+      ],
+      [
+        "1",
+        "Aktif"
+      ]
+    ],
+    "cmds": [
+      "hermes model",
+      "hermes auth list",
+      "hermes setup --portal",
+      "hermes config get model.provider --json"
+    ],
+    "add": null
+  },
+  {
+    "id": "workspace",
+    "label": "Workspace",
+    "icon": "workspace",
+    "group": "Utama",
+    "action": "files.list",
+    "sub": "Berkas nyata ~/.hermes di rootfs: prompts, knowledge, skills, MEMORY.md, state.db, cron.",
+    "kpis": [
+      [
+        "state.db",
+        "Sesi"
+      ],
+      [
+        "jobs.json",
+        "Cron"
+      ],
+      [
+        "MEMORY.md",
+        "Memori"
+      ]
+    ],
+    "cmds": [
+      "hermes config path",
+      "hermes config env-path",
+      "hermes sessions list --limit 20"
+    ],
+    "add": null
+  },
+  {
+    "id": "terminal",
+    "label": "Terminal",
+    "icon": "terminal",
+    "group": "Utama",
+    "action": null,
+    "sub": null,
+    "kpis": [],
+    "cmds": [],
+    "add": null
+  },
+  {
+    "id": "settings",
+    "label": "Pengaturan",
+    "icon": "settings",
+    "group": "Utama",
+    "action": null,
+    "sub": null,
+    "kpis": [],
+    "cmds": [],
+    "add": null
+  },
+  {
+    "id": "sessions",
+    "label": "Sesi & Riwayat",
+    "icon": "list",
+    "group": "Hermes Agent",
+    "sub": "SQLite state.db + FTS5. Cari percakapan lintas sesi, lanjutkan, ekspor, atau hapus.",
+    "kpis": [
+      [
+        "32",
+        "Sesi"
+      ],
+      [
+        "1.420",
+        "Pesan"
+      ],
+      [
+        "FTS5",
+        "Indeks"
+      ]
+    ],
+    "action": "sessions.list",
+    "cmds": [
+      "hermes sessions list --limit 20",
+      "hermes chat --resume latest -Q --oneshot",
+      "hermes sessions stats",
+      "hermes sessions export --format md --yes"
+    ],
+    "add": {
+      "title": "Cari sesi",
+      "fields": [
+        {
+          "k": "query",
+          "label": "Kata kunci",
+          "ph": "contoh: proot"
+        }
+      ],
+      "submit": "sessions.search"
+    }
+  },
+  {
+    "id": "skills",
+    "label": "Skills",
+    "icon": "zap",
+    "group": "Hermes Agent",
+    "sub": "Procedural memory: dibuat otomatis, diperbaiki saat dipakai, kompatibel agentskills.io.",
+    "kpis": [
+      [
+        "4",
+        "Skill"
+      ],
+      [
+        "3",
+        "Auto-created"
+      ],
+      [
+        "10",
+        "Nudge interval"
+      ]
+    ],
+    "action": "skills.list",
+    "cmds": [
+      "hermes skills list",
+      "hermes skills install openai/skills/skill-creator --yes",
+      "hermes config set memory.nudge_interval 10",
+      "hermes chat -s hermes-agent-dev -Q --oneshot"
+    ],
+    "add": {
+      "title": "Skill baru",
+      "fields": [
+        {
+          "k": "name",
+          "label": "Nama skill",
+          "ph": "deploy-staging"
+        },
+        {
+          "k": "content",
+          "label": "Isi SKILL.md",
+          "type": "textarea",
+          "ph": "---\nname: deploy-staging\ndescription: …\n---\n# Langkah"
+        }
+      ],
+      "submit": "skills.write"
+    }
+  },
+  {
+    "id": "memory",
+    "label": "Memori",
+    "icon": "brain",
+    "group": "Hermes Agent",
+    "sub": "Tiga lapis: konteks sesi, MEMORY.md/USER.md, memory provider eksternal (Honcho, retaindb, …).",
+    "kpis": [
+      [
+        "3",
+        "Lapis"
+      ],
+      [
+        "Aktif",
+        "Nudge"
+      ],
+      [
+        "Honcho",
+        "Plugin"
+      ]
+    ],
+    "action": "memory.get",
+    "cmds": [
+      "hermes memory status",
+      "hermes plugins list --json",
+      "hermes insights --days 7",
+      "hermes config get memory.nudge_interval"
+    ],
+    "add": {
+      "title": "Edit memori",
+      "fields": [
+        {
+          "k": "file",
+          "label": "Berkas",
+          "type": "select",
+          "options": [
+            "MEMORY.md",
+            "USER.md",
+            "SOUL.md",
+            "AGENTS.md"
+          ]
+        },
+        {
+          "k": "content",
+          "label": "Isi",
+          "type": "textarea",
+          "ph": "# Memori"
+        }
+      ],
+      "submit": "memory.set"
+    }
+  },
+  {
+    "id": "cron",
+    "label": "Cron & Otomasi",
+    "icon": "clock",
+    "group": "Hermes Agent",
+    "sub": "jobs.json, no-agent mode + --script, webhook, pin model/reasoning, dan delivery lewat hermes send -t.",
+    "kpis": [
+      [
+        "3",
+        "Job"
+      ],
+      [
+        "2",
+        "Aktif"
+      ],
+      [
+        "60s",
+        "Tick"
+      ]
+    ],
+    "action": "cron.list",
+    "cmds": [
+      "hermes cron list",
+      "hermes cron status",
+      "hermes cron create \"every 2h\" \"Check server status\"",
+      "hermes cron tick --accept-hooks",
+      "/cron add \"in 30m\" \"Remind me\""
+    ],
+    "add": {
+      "title": "Jadwal baru",
+      "fields": [
+        {
+          "k": "schedule",
+          "label": "Jadwal",
+          "ph": "every 2h"
+        },
+        {
+          "k": "prompt",
+          "label": "Perintah",
+          "ph": "Check server status"
+        },
+        {
+          "k": "skill",
+          "label": "Skill (opsional)",
+          "ph": "blogwatcher"
+        },
+        {
+          "k": "script",
+          "label": "Script untuk --no-agent",
+          "ph": "/mnt/arkax/scripts/watch.sh"
+        },
+        {
+          "k": "noAgent",
+          "label": "No-agent (wajib script)",
+          "type": "checkbox"
+        }
+      ],
+      "submit": "cron.create"
+    }
+  },
+  {
+    "id": "gateway",
+    "label": "Gateway",
+    "icon": "globe",
+    "group": "Hermes Agent",
+    "sub": "Satu proses untuk Telegram, Discord, Slack, WhatsApp, Signal, Email, Home Assistant + voice memo.",
+    "kpis": [
+      [
+        "3",
+        "Terhubung"
+      ],
+      [
+        "1",
+        "Proses"
+      ],
+      [
+        "6",
+        "Platform"
+      ]
+    ],
+    "action": "gateway.status",
+    "cmds": [
+      "hermes gateway setup",
+      "hermes gateway run",
+      "hermes gateway status",
+      "hermes send -t telegram \"Halo dari Arkaxhermes\"",
+      "/platforms"
+    ],
+    "add": {
+      "title": "Kirim pesan",
+      "fields": [
+        {
+          "k": "name",
+          "label": "Platform / target",
+          "ph": "telegram"
+        },
+        {
+          "k": "message",
+          "label": "Pesan",
+          "ph": "Halo"
+        }
+      ],
+      "submit": "cron.delivery"
+    }
+  },
+  {
+    "id": "mcp",
+    "label": "MCP & Plugin",
+    "icon": "plug",
+    "group": "Hermes Agent",
+    "sub": "mcp_servers di config.yaml, auto-reconnect, OSV check, credential stripping, dan katalog plugin.",
+    "kpis": [
+      [
+        "2",
+        "Server"
+      ],
+      [
+        "4",
+        "Plugin"
+      ],
+      [
+        "stdio+HTTP",
+        "Transport"
+      ]
+    ],
+    "action": "mcp.list",
+    "cmds": [
+      "hermes mcp list",
+      "hermes plugins list --json",
+      "hermes plugins install homeassistant --yes-deps",
+      "hermes plugins install camofox --yes-deps"
+    ],
+    "add": {
+      "title": "Tambah MCP server",
+      "fields": [
+        {
+          "k": "name",
+          "label": "Nama",
+          "ph": "filesystem"
+        },
+        {
+          "k": "transport",
+          "label": "Transport",
+          "type": "select",
+          "options": [
+            "stdio",
+            "http"
+          ]
+        },
+        {
+          "k": "command",
+          "label": "Perintah stdio",
+          "ph": "npx -y @modelcontextprotocol/server-filesystem"
+        },
+        {
+          "k": "url",
+          "label": "URL HTTP (opsional)",
+          "ph": "http://127.0.0.1:9222"
+        }
+      ],
+      "submit": "mcp.add"
+    }
+  },
+  {
+    "id": "tools",
+    "label": "Tools & Toolsets",
+    "icon": "cpu",
+    "group": "Hermes Agent",
+    "sub": "57 toolset dari toolsets.py + stt config-only. Toggle memakai `hermes tools enable/disable`.",
+    "kpis": [
+      [
+        "57",
+        "Toolset"
+      ],
+      [
+        "25",
+        "Configurable"
+      ],
+      [
+        "local",
+        "Backend"
+      ]
+    ],
+    "action": "tools.list",
+    "cmds": [
+      "hermes tools list --platform cli",
+      "hermes tools enable web browser terminal --platform cli",
+      "hermes chat -t hermes-cli -Q --oneshot",
+      "hermes config set terminal.backend ssh"
+    ],
+    "add": {
+      "title": "Atur backend terminal",
+      "fields": [
+        {
+          "k": "backend",
+          "label": "Backend",
+          "type": "select",
+          "options": [
+            "local",
+            "docker",
+            "ssh",
+            "singularity",
+            "sprites",
+            "modal",
+            "daytona",
+            "vercel_sandbox"
+          ]
+        }
+      ],
+      "submit": "tools.backend"
+    }
+  },
+  {
+    "id": "delegation",
+    "label": "Delegasi & Subagen",
+    "icon": "users",
+    "group": "Hermes Agent",
+    "sub": "delegation.max_spawn_depth / max_concurrent_children, provider/model sendiri, Python RPC execute_code.",
+    "kpis": [
+      [
+        "1",
+        "Depth"
+      ],
+      [
+        "10",
+        "Konkuren"
+      ],
+      [
+        "RPC",
+        "Zero-context"
+      ]
+    ],
+    "action": "status",
+    "cmds": [
+      "hermes config set delegation.max_spawn_depth 2",
+      "hermes config set delegation.max_concurrent_children 3",
+      "hermes -w -z \"Fix issue #123\"",
+      "hermes worktree list --json"
+    ],
+    "add": {
+      "title": "Pengaturan subagen",
+      "fields": [
+        {
+          "k": "key",
+          "label": "Kunci config",
+          "ph": "delegation.max_spawn_depth"
+        },
+        {
+          "k": "value",
+          "label": "Nilai",
+          "ph": "2"
+        }
+      ],
+      "submit": "config.set"
+    }
+  },
+  {
+    "id": "profiles",
+    "label": "Profil",
+    "icon": "layers",
+    "group": "Hermes Agent",
+    "sub": "Isolasi HERMES_HOME lewat `hermes profile create/use/list`; config, kunci, memori, sesi, gateway per profil.",
+    "kpis": [
+      [
+        "3",
+        "Profil"
+      ],
+      [
+        "default",
+        "Aktif"
+      ],
+      [
+        "MIT",
+        "Lisensi"
+      ]
+    ],
+    "action": "profiles.list",
+    "cmds": [
+      "hermes profile list",
+      "hermes profile create riset",
+      "hermes profile use riset",
+      "hermes profile show riset"
+    ],
+    "add": {
+      "title": "Profil baru",
+      "fields": [
+        {
+          "k": "name",
+          "label": "Nama",
+          "ph": "riset"
+        }
+      ],
+      "submit": "profiles.create"
+    }
+  },
+  {
+    "id": "approvals",
+    "label": "Persetujuan & Keamanan",
+    "icon": "shield",
+    "group": "Hermes Agent",
+    "sub": "Approval gate live hanya di TUI/gateway; `hermes approvals suggest` menambang allowlist dari state.db.",
+    "kpis": [
+      [
+        "2",
+        "Menunggu"
+      ],
+      [
+        "AES-GCM",
+        "Kunci"
+      ],
+      [
+        "0600",
+        ".env"
+      ]
+    ],
+    "action": "approvals.list",
+    "cmds": [
+      "hermes approvals suggest --json --days 90",
+      "hermes security audit --json",
+      "hermes chat --safe-mode -Q --oneshot",
+      "hermes doctor"
+    ],
+    "add": {
+      "title": "Catat keputusan approval",
+      "fields": [
+        {
+          "k": "id",
+          "label": "ID",
+          "ph": "ap-1"
+        },
+        {
+          "k": "decision",
+          "label": "Keputusan",
+          "type": "select",
+          "options": [
+            "approve",
+            "deny",
+            "always",
+            "never"
+          ]
+        }
+      ],
+      "submit": "approvals.decide"
+    }
+  },
+  {
+    "id": "media",
+    "label": "Browser & Media",
+    "icon": "globe",
+    "group": "Hermes Agent",
+    "sub": "browser_exec/CDP, vision_analyze, image_generate, text_to_speech, transkrip voice memo, satu --image per query.",
+    "kpis": [
+      [
+        "CDP",
+        "Browser"
+      ],
+      [
+        "FAL",
+        "Image"
+      ],
+      [
+        "OpenAI",
+        "TTS"
+      ]
+    ],
+    "action": "status",
+    "cmds": [
+      "hermes chat --image /mnt/arkax/inbox/screen.png -q \"Analisis gambar ini\"",
+      "hermes chat -t browser,vision,image_gen,tts -Q --oneshot",
+      "hermes tools post-setup chromium"
+    ],
+    "add": {
+      "title": "Tambah konteks berkas",
+      "fields": [
+        {
+          "k": "path",
+          "label": "Path di rootfs",
+          "ph": "/mnt/arkax/inbox/screen.png"
+        },
+        {
+          "k": "recursive",
+          "label": "Rekursif (true/false)",
+          "ph": "false"
+        }
+      ],
+      "submit": "context.add"
+    }
+  },
+  {
+    "id": "context",
+    "label": "Context Files",
+    "icon": "file",
+    "group": "Hermes Agent",
+    "sub": "AGENTS.md, SOUL.md, .cursorrules disuntikkan otomatis; daftar tambahan ini adalah indeks Arkaxhermes.",
+    "kpis": [
+      [
+        "4",
+        "Berkas"
+      ],
+      [
+        "Auto",
+        "Injeksi"
+      ],
+      [
+        "query-file",
+        "Aman"
+      ]
+    ],
+    "action": "context.list",
+    "cmds": [
+      "hermes chat --query-file - -Q --oneshot",
+      "hermes chat --ignore-rules -Q --oneshot",
+      "hermes config get context.engine",
+      "hermes prompt-size --json"
+    ],
+    "add": {
+      "title": "Tambah konteks",
+      "fields": [
+        {
+          "k": "path",
+          "label": "Path",
+          "ph": "/mnt/arkax/inbox/DESIGN.md"
+        },
+        {
+          "k": "recursive",
+          "label": "Rekursif (true/false)",
+          "ph": "false"
+        }
+      ],
+      "submit": "context.add"
+    }
+  },
+  {
+    "id": "hooks",
+    "label": "Hooks",
+    "icon": "hook",
+    "group": "Hermes Agent",
+    "sub": "Shell hooks dideklarasi di config.yaml `hooks.<event>`; consent di shell-hooks-allowlist.json.",
+    "kpis": [
+      [
+        "2",
+        "Hook"
+      ],
+      [
+        "Plugin",
+        "API"
+      ],
+      [
+        "JSON-RPC",
+        "Event"
+      ]
+    ],
+    "action": "hooks.list",
+    "cmds": [
+      "hermes hooks list",
+      "hermes hooks doctor",
+      "hermes hooks test pre_tool_call",
+      "hermes gateway run"
+    ],
+    "add": {
+      "title": "Daftarkan shell hook",
+      "fields": [
+        {
+          "k": "event",
+          "label": "Event",
+          "ph": "pre_tool_call"
+        },
+        {
+          "k": "matcher",
+          "label": "Matcher",
+          "ph": "*"
+        },
+        {
+          "k": "command",
+          "label": "Perintah",
+          "type": "textarea",
+          "ph": "/bin/echo hook"
+        }
+      ],
+      "submit": "hooks.set"
+    }
+  },
+  {
+    "id": "batch",
+    "label": "Batch & Trajektori",
+    "icon": "database",
+    "group": "Hermes Agent",
+    "sub": "batch_runner.py memproses dataset JSONL; trajektori JSONL dan integrasi Atropos RL.",
+    "kpis": [
+      [
+        "1",
+        "Trajektori"
+      ],
+      [
+        "120",
+        "Baris"
+      ],
+      [
+        "JSONL",
+        "Dataset"
+      ]
+    ],
+    "action": "trajectories.list",
+    "cmds": [
+      "python3 /opt/hermes-agent/batch_runner.py --help",
+      "python3 /opt/hermes-agent/batch_runner.py --dataset_file=/mnt/arkax/inbox/prompts.jsonl",
+      "hermes sessions export --format trace --yes",
+      "hermes insights --days 7"
+    ],
+    "add": {
+      "title": "Jalankan batch upstream",
+      "fields": [
+        {
+          "k": "dataset",
+          "label": "Dataset JSONL",
+          "ph": "/mnt/arkax/inbox/prompts.jsonl"
+        },
+        {
+          "k": "runName",
+          "label": "Nama run",
+          "ph": "arkax-run"
+        },
+        {
+          "k": "batchSize",
+          "label": "Batch size",
+          "ph": "4"
+        },
+        {
+          "k": "maxTurns",
+          "label": "Max turns",
+          "ph": "10"
+        },
+        {
+          "k": "workers",
+          "label": "Workers",
+          "ph": "2"
+        }
+      ],
+      "submit": "batch.run"
+    }
+  },
+  {
+    "id": "bots",
+    "label": "Bot Mode",
+    "icon": "bot",
+    "group": "Hermes Agent",
+    "sub": "Bot bernama, group chat, @mention, dan relay lewat plugin Desktop/gateway; daftar ini disimpan lokal Arkaxhermes.",
+    "kpis": [
+      [
+        "2",
+        "Bot"
+      ],
+      [
+        "Group",
+        "Chat"
+      ],
+      [
+        "@",
+        "Mention"
+      ]
+    ],
+    "action": "bots.list",
+    "cmds": [
+      "hermes gateway run",
+      "hermes profile use riset",
+      "hermes peer list",
+      "hermes send -t telegram \"Halo bot\""
+    ],
+    "add": {
+      "title": "Bot baru",
+      "fields": [
+        {
+          "k": "name",
+          "label": "Nama",
+          "ph": "Riset"
+        },
+        {
+          "k": "model",
+          "label": "Model",
+          "ph": "claude-sonnet-4.5"
+        }
+      ],
+      "submit": "bots.set"
+    }
+  },
+  {
+    "id": "code",
+    "label": "Code Execution",
+    "icon": "code",
+    "group": "Hermes Agent",
+    "sub": "Python RPC memanggil tools Hermes, worktree terisolasi, checkpoint, dan pipeline zero-context-cost.",
+    "kpis": [
+      [
+        "RPC",
+        "Tools"
+      ],
+      [
+        "-w",
+        "Worktree"
+      ],
+      [
+        "500",
+        "Max turn"
+      ]
+    ],
+    "action": "status",
+    "cmds": [
+      "hermes -w -z \"Fix issue #123\"",
+      "hermes worktree list --json",
+      "hermes chat --checkpoints -Q --oneshot",
+      "hermes checkpoints list"
+    ],
+    "add": {
+      "title": "Tulis skrip RPC",
+      "fields": [
+        {
+          "k": "path",
+          "label": "Path skrip",
+          "ph": "/mnt/arkax/scripts/pipeline.py"
+        },
+        {
+          "k": "content",
+          "label": "Kode",
+          "type": "textarea",
+          "ph": "from hermes import tools\n…"
+        }
+      ],
+      "submit": "files.write"
+    }
+  },
+  {
+    "id": "portal",
+    "label": "Portal & Tool Gateway",
+    "icon": "spark",
+    "group": "Model & Ekosistem",
+    "sub": "Nous Portal: 300+ model, OAuth, web search, image gen, TTS, dan cloud browser tanpa kunci terpisah.",
+    "kpis": [
+      [
+        "300+",
+        "Model"
+      ],
+      [
+        "OAuth",
+        "Login"
+      ],
+      [
+        "4",
+        "Tool Gateway"
+      ]
+    ],
+    "action": "providers.list",
+    "cmds": [
+      "hermes setup --portal",
+      "hermes portal info",
+      "hermes portal tools",
+      "hermes chat --provider nous -Q --oneshot",
+      "/model <name>"
+    ],
+    "add": {
+      "title": "Ganti model",
+      "fields": [
+        {
+          "k": "provider",
+          "label": "Provider",
+          "ph": "anthropic"
+        },
+        {
+          "k": "model",
+          "label": "Model",
+          "ph": "claude-sonnet-4.5"
+        }
+      ],
+      "submit": "model.set"
+    }
+  },
+  {
+    "id": "stats",
+    "label": "Statistik & Insight",
+    "icon": "activity",
+    "group": "Model & Ekosistem",
+    "sub": "Token, biaya, prompt cache, kompresi konteks, usage, dan insights lintas sesi.",
+    "kpis": [
+      [
+        "1,42M",
+        "Token bulan ini"
+      ],
+      [
+        "5,00M",
+        "Kuota"
+      ],
+      [
+        "$24,50",
+        "Saldo"
+      ]
+    ],
+    "action": "sessions.stats",
+    "cmds": [
+      "hermes usage --json",
+      "hermes insights --days 7",
+      "hermes sessions stats",
+      "hermes prompt-size --json",
+      "/usage"
+    ],
+    "add": {
+      "title": "Jalankan insight",
+      "fields": [
+        {
+          "k": "cmd",
+          "label": "Perintah",
+          "ph": "hermes insights --days 7"
+        }
+      ],
+      "submit": "exec"
+    }
+  },
+  {
+    "id": "backup",
+    "label": "Backup & Ekspor",
+    "icon": "upload",
+    "group": "Sistem",
+    "sub": "`hermes backup` menghasilkan ZIP (bukan tar.gz); restore lewat `hermes import`. Ekspor obrolan .md/.json lokal.",
+    "kpis": [
+      [
+        ".zip",
+        "Backup"
+      ],
+      [
+        "SHA-256",
+        "Verifikasi"
+      ],
+      [
+        "state.db",
+        "Sesi"
+      ]
+    ],
+    "action": "backups.list",
+    "cmds": [
+      "hermes backup -o /mnt/arkax/exports/arkax.zip",
+      "hermes import --force /mnt/arkax/exports/arkax.zip",
+      "hermes sessions export --format md --yes",
+      "hermes doctor",
+      "hermes update"
+    ],
+    "add": {
+      "title": "Ekspor obrolan",
+      "fields": [
+        {
+          "k": "format",
+          "label": "Format",
+          "type": "select",
+          "options": [
+            "md",
+            "json"
+          ]
+        },
+        {
+          "k": "title",
+          "label": "Judul",
+          "ph": "Arkaxhermes"
+        }
+      ],
+      "submit": "export.chat"
+    }
+  },
+  {
+    "id": "logs",
+    "label": "Log & Doctor",
+    "icon": "edit",
+    "group": "Sistem",
+    "sub": "Log instalasi proot, gateway, cron, dan hasil hermes doctor.",
+    "kpis": [
+      [
+        "200",
+        "Baris"
+      ],
+      [
+        "OK",
+        "Doctor"
+      ],
+      [
+        "Live",
+        "SSE"
+      ]
+    ],
+    "action": "doctor",
+    "cmds": [
+      "hermes doctor",
+      "hermes doctor --live",
+      "hermes logs -n 100",
+      "hermes --version",
+      "uname -a"
+    ],
+    "add": {
+      "title": "Jalankan diagnostik",
+      "fields": [
+        {
+          "k": "cmd",
+          "label": "Perintah",
+          "ph": "hermes doctor"
+        }
+      ],
+      "submit": "exec"
+    }
+  },
+  {
+    "id": "cli",
+    "label": "Katalog CLI",
+    "icon": "terminal",
+    "group": "Sistem",
+    "sub": "71 perintah tingkat atas diverifikasi dari `hermes --help` v0.23.1. Klik untuk menjalankan `--help` di Terminal.",
+    "kpis": [
+      [
+        "71",
+        "Perintah"
+      ],
+      [
+        "309",
+        "Subcommand"
+      ],
+      [
+        "v0.23.1",
+        "Pin"
+      ]
+    ],
+    "action": null,
+    "cmds": [
+      "hermes --help",
+      "hermes chat --help",
+      "hermes config --help",
+      "hermes gateway --help"
+    ],
+    "add": null
+  },
+  {
+    "id": "about",
+    "label": "Tentang Arkaxhermes",
+    "icon": "info",
+    "group": "Sistem",
+    "sub": "Aplikasi tidak resmi berbasis Hermes Agent (MIT, Nous Research) di Ubuntu 24.04 proot.",
+    "kpis": [
+      [
+        "0.1.0",
+        "Aplikasi"
+      ],
+      [
+        "v0.23.1",
+        "Hermes"
+      ],
+      [
+        "24.04.5",
+        "Ubuntu"
+      ]
+    ],
+    "action": "status",
+    "cmds": [
+      "hermes --version",
+      "cat /etc/arkax-release",
+      "hermes status"
+    ],
+    "add": null
+  }
 ];
 function screenById(id){ for(var i=0;i<SCREENS.length;i++) if(SCREENS[i].id===id) return SCREENS[i]; return SCREENS[0]; }
 
@@ -498,8 +2058,42 @@ function toast(msg){
   var el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show');
   clearTimeout(state.toastTimer); state.toastTimer=setTimeout(function(){el.classList.remove('show');},2300);
 }
+
 function nativeCall(fn){ try{ return BRIDGE && BRIDGE[fn] ? BRIDGE[fn]() : null; }catch(e){ return null; } }
-function haptic(kind){ if(BRIDGE && BRIDGE.haptic) BRIDGE.haptic(kind||'light'); }
+function applyFont(){ document.documentElement.style.setProperty('--font-size',state.font+'px'); }
+function clearStoredState(){
+  try{ localStorage.removeItem('arkax_messages'); }catch(e){}
+  try{ if(BRIDGE && BRIDGE.secureDelete) BRIDGE.secureDelete('chat'); }catch(e){}
+}
+function persistState(){
+  var payload = JSON.stringify({messages:state.messages,threadId:state.threadId,sessionId:state.sessionId});
+  try{
+    if(!state.settings || state.settings.autoSave===false){ clearStoredState(); return; }
+    if(state.settings.encryptLocal && BRIDGE && BRIDGE.securePut){
+      BRIDGE.securePut('chat',payload);
+      try{ localStorage.removeItem('arkax_messages'); }catch(e){}
+    } else {
+      localStorage.setItem('arkax_messages',payload);
+      try{ if(BRIDGE && BRIDGE.secureDelete) BRIDGE.secureDelete('chat'); }catch(e){}
+    }
+  }catch(e){ /* storage penuh: jangan gagalkan UI */ }
+}
+function restoreState(){
+  var raw=null;
+  try{
+    if(state.settings && state.settings.encryptLocal && BRIDGE && BRIDGE.secureGet) raw=BRIDGE.secureGet('chat');
+    if(!raw) raw=localStorage.getItem('arkax_messages');
+    if(raw){
+      var d=JSON.parse(raw);
+      if(d && Array.isArray(d.messages) && d.messages.length){
+        state.messages=d.messages;
+        state.threadId=d.threadId||state.threadId;
+        state.sessionId=d.sessionId||'';
+      }
+    }
+  }catch(e){}
+}
+function haptic(kind){ if((state.settings && state.settings.haptics===false)) return; if(BRIDGE && BRIDGE.haptic) BRIDGE.haptic(kind||'light'); }
 function btn(label,act,val,cls,pay){
   return '<button class="btn '+(cls||'')+'" data-act="'+attr(act)+'"'+(val!==undefined?' data-val="'+attr(val)+'"':'')+(pay?' data-pay="'+attr(JSON.stringify(pay))+'"':'')+'>'+label+'</button>';
 }
@@ -606,48 +2200,77 @@ function renderChat(){
 function renderProvider(){
   var p=state.providers||demoProviders;
   var filter=state.providerFilter;
-  var list=p.filter(function(x){return filter==='Semua'||(filter==='Terhubung'?x.configured:!x.configured);});
+  var list=p.filter(function(x){
+    if(filter==='Semua') return true;
+    if(filter==='Terhubung') return !!x.configured;
+    if(filter==='Cloud AI') return !/ollama|lmstudio|custom/i.test(x.id);
+    if(filter==='Lokal (Ollama)') return /ollama|lmstudio|custom/i.test(x.id);
+    return !x.configured;
+  });
+  var active=(p.filter(function(x){return x.active;})[0])||p[0]||{name:'Hermes Agent',id:'',note:''};
   return '<div class="screen">'+
     '<div class="card"><div class="tag primary">● PROVIDER UTAMA AKTIF</div>'+
-      '<div class="row between" style="margin-top:10px"><div><div class="h1" style="font-size:18px">'+esc((state.status&&state.status.model&&state.status.model.name)||'Claude 3.5 Sonnet')+'</div><div class="small muted">Anthropic Cloud · Konteks 200k</div></div>'+btn('Ganti ↗','nav','portal','btn sm')+'</div>'+
-      '<div class="row" style="margin-top:12px;gap:8px"><span class="tag">⚡ Latensi Rata-rata<br><b>184 ms</b></span><span class="tag ok">💳 Sisa Saldo Kredit<br><b>$24.50</b></span></div></div>'+
+      '<div class="row between" style="margin-top:10px"><div><div class="h1" style="font-size:18px">'+esc((state.status&&state.status.model&&state.status.model.name)||active.name)+'</div><div class="small muted">'+esc(active.id||'auto')+' · '+esc(active.note||'')+'</div></div>'+btn('Ganti ↗','nav','portal','btn sm')+'</div>'+
+      '<div class="row" style="margin-top:12px;gap:8px"><span class="tag">⚡ Provider<br><b>'+p.length+' terdaftar</b></span><span class="tag ok">🔐 Kunci API<br><b>Android Keystore</b></span></div></div>'+
     '<div class="card tight"><div class="row between"><div><div class="bold">Batas Token Bulanan</div><div class="small muted">Terpakai 1,42M / 5,00M (28%)</div></div><span class="tag">28%</span></div><div class="bar"><i style="width:28%"></i></div></div>'+
     '<div class="filters">'+['Semua','Terhubung','Cloud AI','Lokal (Ollama)'].map(function(f){return '<button class="'+(state.providerFilter===f?'on':'')+'" data-act="pf" data-val="'+f+'">'+f+'</button>';}).join('')+'</div>'+
     list.map(function(x){
       return '<div class="card tight" style="margin-bottom:10px"><div class="row between">'+
-        '<div class="row"><div class="ico" style="width:36px;height:36px;border-radius:12px;background:var(--surface-2);display:grid;place-items:center;color:var(--primary)">'+icon(x.id==='ollama'?'cpu':'provider',18)+'</div>'+
-        '<div><div class="bold">'+esc(x.name)+' <span class="tag '+(x.configured?'ok':'warn')+'">'+(x.configured?'Terhubung':'Perlu API Key')+'</span></div><div class="small muted">'+esc(x.note)+'</div></div></div>'+
+        '<div class="row"><div class="ico" style="width:36px;height:36px;border-radius:12px;background:var(--surface-2);display:grid;place-items:center;color:var(--primary)">'+icon(x.kind==='local'?'cpu':'provider',18)+'</div>'+
+        '<div><div class="bold">'+esc(x.name)+' <span class="tag '+(x.configured?'ok':'warn')+'">'+(x.configured?'Terhubung':'Perlu kunci')+'</span>'+(x.active?' <span class="tag primary">Aktif</span>':'')+'</div><div class="small muted">'+esc(x.note)+'</div></div></div>'+
         switchHtml(!!x.configured,'toggle-provider',x.id)+'</div>'+
-        '<div class="row between" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)"><span class="mono faint">🔗 '+esc(x.latency||'—')+' · '+esc(x.models||x.envKey)+'</span>'+
-        '<div class="row" style="gap:5px">'+btn('🔑 Atur Kunci','form-key',x.envKey,'btn sm ghost')+btn('⚡ Uji','run','hermes doctor','btn sm')+'</div></div></div>';
+        '<div class="row between" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)"><span class="mono faint">🔗 '+esc(x.envKey||('OAuth: hermes auth add '+x.id))+'</span>'+
+        '<div class="row" style="gap:5px">'+(x.envKey?btn('🔑 Atur Kunci','form-key',x.envKey,'btn sm ghost'):btn('🔐 Login','run','hermes auth add '+x.id,'btn sm ghost'))+btn('⚡ Uji','run','hermes doctor','btn sm')+'</div></div></div>';
     }).join('')+
-    '<div class="card flat"><div class="bold">Semua provider Hermes</div><div class="small muted" style="margin:6px 0 10px">OpenRouter, Nous Portal, OpenAI, Anthropic, Gemini, DeepSeek, xAI, Bedrock, Azure, Qwen, Kimi, MiniMax, Ollama, LM Studio, Copilot/ACP, dan endpoint kustom. Tambahkan kunci lewat tombol 🔑; nilainya disimpan di Android Keystore.</div>'+
+    '<div class="card flat"><div class="bold">Katalog sesuai source v0.23.1</div><div class="small muted" style="margin:6px 0 10px">43 entri: 37 canonical + alias lokal `openai`, `qwen`, `ollama`, `custom`, `copilot`. Kunci API disimpan terenkripsi lalu ditulis ke <span class="mono">~/.hermes/.env</span> (0600); provider OAuth memakai <span class="mono">hermes auth add</span>. Lihat <b>docs/CLI_CATALOG.md</b>.</div>'+
       btn('⚙️ Buka pengaturan model','nav','portal','btn sm primary')+'</div>'+
   '</div>';
 }
+
+function workspaceGroups(){
+  var raw=state.workspaceData;
+  if(!raw) return null;
+  if(Array.isArray(raw) && raw.length && raw[0].files!==undefined) return raw; // demo lama
+  if(Array.isArray(raw) && raw.length && raw[0].path!==undefined){
+    var groups={}, order=[];
+    raw.forEach(function(e){
+      var key=e.dir?e.path:(e.path.substring(0,e.path.lastIndexOf('/'))||'/');
+      if(!groups[key]){groups[key]={name:key.split('/').pop()||key,path:key,count:0,color:'#4361ee',files:[]};order.push(key);}
+      var size=e.size?Math.round(e.size/1024)+' KB':'';
+      groups[key].files.push({name:e.name,path:e.path,meta:(e.dir?'Direktori · ':'Berkas · ')+size+' · '+e.modified,tag:e.dir?'Folder':'Berkas',dir:!!e.dir});
+      groups[key].count=groups[key].files.length;
+    });
+    return order.map(function(k){return groups[k];});
+  }
+  return null;
+}
 function renderWorkspace(){
   var q=state.search.toLowerCase();
-  var folders=demoFolders.map(function(f){
-    return {name:f.name,path:f.path,count:f.count,color:f.color,files:f.files.filter(function(x){return !q||x.name.toLowerCase().indexOf(q)>=0;})};
-  }).filter(function(f){return state.filter==='Semua Aset'||f.name.indexOf(state.filter)>=0||state.filter==='Semua Aset';});
+  var base=workspaceGroups()||demoFolders;
+  var folders=base.map(function(f){
+    return {name:f.name,path:f.path,count:f.count,color:f.color||'#4361ee',
+      files:f.files.filter(function(x){return !q||x.name.toLowerCase().indexOf(q)>=0||String(x.path).toLowerCase().indexOf(q)>=0;})};
+  }).filter(function(f){return state.filter==='Semua Aset'||f.name.indexOf(state.filter)>=0;});
+  var parent=state.workspacePath.replace(/\/$/,'').replace(/\/[^/]+$/,'')||'/';
   return '<div class="screen">'+
-    '<div class="card"><div class="row between"><div><div class="tag primary">WORKSPACE MODEL AI</div><div class="h1" style="margin-top:8px">Ruang Dokumen & Konteks</div><div class="small muted">Kapasitas Vector & Dataset AI</div></div><div style="text-align:right"><div class="bold" style="color:var(--primary);font-size:19px">6.4 <span class="small muted">/ 15 GB</span></div></div></div>'+
+    '<div class="card"><div class="row between"><div><div class="tag primary">WORKSPACE ROOTFS</div><div class="h1" style="margin-top:8px">Ruang Dokumen & Konteks</div><div class="small mono muted">'+esc(state.workspacePath)+'</div></div><div style="text-align:right"><div class="bold" style="color:var(--primary);font-size:19px">'+folders.length+' <span class="small muted">folder</span></div></div></div>'+
       '<div class="bar"><i style="width:42%"></i></div>'+
-      '<div class="stat-grid"><div class="stat"><b>3.8 GB</b><small>PDF & Paper</small></div><div class="stat"><b>1.9 GB</b><small>Dataset JSON</small></div><div class="stat"><b>700 MB</b><small>Audio & Image</small></div></div></div>'+
-    btn('+ Buat Workspace Baru / Sambungkan Dokumen Model','form','workspace','btn primary block')+
-    '<div class="search">'+icon('search',16)+'<input id="wsearch" placeholder="Cari aset workspace, prompt, chunk RAG, atau dataset…" value="'+attr(state.search)+'"></div>'+
+      '<div class="stat-grid"><div class="stat"><b>state.db</b><small>Sesi FTS5</small></div><div class="stat"><b>config.yaml</b><small>Konfigurasi</small></div><div class="stat"><b>.env</b><small>Kunci 0600</small></div></div></div>'+
+    '<div class="row wrap" style="gap:6px;margin-bottom:10px">'+btn('+ Buat Folder','form','workspace','btn primary')+btn('⬆️ Naik','folder-up',parent,'btn ghost')+btn('🔄 Muat ulang','feature-load','workspace','btn ghost')+'</div>'+
+    '<div class="search">'+icon('search',16)+'<input id="wsearch" placeholder="Cari aset workspace, prompt, skill, atau sesi…" value="'+attr(state.search)+'"></div>'+
     '<div class="filters">'+['Semua Aset','Kontek RAG','System Prompts (.md)','Skills','Memory'].map(function(f){return '<button class="'+(state.filter===f?'on':'')+'" data-act="wf" data-val="'+f+'">'+f+'</button>';}).join('')+'</div>'+
     folders.map(function(f){
-      return '<div class="card tight"><div class="row between"><div class="row"><span style="color:'+f.color+'">'+icon('folder',19)+'</span><div><div class="bold">'+esc(f.name)+' <span class="tag">'+f.count+' file</span></div><div class="mono faint">'+esc(f.path)+'</div></div></div>'+btn(icon('more',16),'folder-menu',f.name,'iconbtn')+'</div>'+
+      return '<div class="card tight"><div class="row between"><div class="row"><span style="color:'+f.color+'">'+icon('folder',19)+'</span><div><div class="bold">'+esc(f.name)+' <span class="tag">'+f.count+' item</span></div><div class="mono faint">'+esc(f.path)+'</div></div></div>'+btn(icon('more',16),'folder-menu',f.path,'iconbtn')+'</div>'+
         '<div style="margin:10px 0 2px 12px;border-left:2px dashed var(--hair);padding-left:12px">'+
         (f.files.length?f.files.map(function(x){
-          return '<div class="row between" style="padding:8px 0"><div class="row"><span class="tag '+(x.tag==='Aktif'||x.tag==='Indexed'?'ok':'')+'">'+icon('file',13)+'</span><div><div class="bold small">'+esc(x.name)+'</div><div class="small faint">'+esc(x.meta)+'</div></div></div>'+btn(icon('more',15),'file-menu',x.name,'iconbtn')+'</div>';
+          return '<div class="row between" style="padding:8px 0"><div class="row"><span class="tag">'+icon('file',13)+'</span><div><div class="bold small">'+esc(x.name)+'</div><div class="small faint">'+esc(x.meta)+'</div></div></div>'+btn(icon('more',15),'file-menu',x.path||x.name,'iconbtn')+'</div>';
         }).join(''):'<div class="small faint" style="padding:8px 0">Tidak ada berkas cocok.</div>')+
         btn('+ Tambah Berkas','form','file','btn sm ghost')+'</div></div>';
     }).join('')+
-    '<div class="card flat"><div class="bold">Pemetaan ke Hermes</div><div class="small muted" style="margin-top:6px">Prompts → system prompt · Knowledge Base → context files/RAG · Skills → <span class="mono">~/.hermes/skills/</span> · Sessions → SQLite FTS5 · Memory → MEMORY.md & USER.md. Semua tersimpan di rootfs dan ikut backup.</div></div>'+
+    '<div class="card flat"><div class="bold">Pemetaan ke Hermes</div><div class="small muted">Prompts → system prompt · Knowledge → context files/RAG · Skills → <span class="mono">~/.hermes/skills/</span> · Sessions → <span class="mono">state.db</span> (FTS5) · Memory → MEMORY.md & USER.md · Cron → <span class="mono">cron/jobs.json</span>.</div></div>'+
   '</div>';
 }
+
 function renderTerminal(){
   var out=state.terminal.map(function(l){return '<span class="'+(l.c||'')+'">'+esc(l.t)+'</span>';}).join('\n');
   return '<div class="screen">'+
@@ -696,42 +2319,81 @@ function renderSettings(){
     '<div class="card flat"><div class="bold">Arkaxhermes 0.1.0</div><div class="small muted">Hermes Agent v0.23.1 (MIT) berjalan di Ubuntu 24.04 proot tanpa root. Proyek tidak resmi, tidak berafiliasi dengan Nous Research.</div></div>'+
   '</div>';
 }
+function normalizeFeatureItems(data, screenId){
+  if(!data) return [];
+  var arr;
+  if(Array.isArray(data)) arr=data;
+  else if(Array.isArray(data.toolsets)) arr=data.toolsets;
+  else if(Array.isArray(data.hooks)) arr=data.hooks;
+  else if(Array.isArray(data.localDecisions)) arr=data.localDecisions;
+  else if(Array.isArray(data.suggestions)) arr=data.suggestions;
+  else if(Array.isArray(data.bots)) arr=data.bots;
+  else if(Array.isArray(data.files)) arr=data.files;
+  else if(Array.isArray(data.directories)) arr=data.directories.map(function(d){return {name:d,meta:'Profil HERMES_HOME'};});
+  else if(data.servers && !Array.isArray(data.servers)) arr=Object.keys(data.servers).map(function(k){return {name:k,meta:JSON.stringify(data.servers[k]).slice(0,100)};});
+  else if(data.local && Array.isArray(data.local)) arr=data.local;
+  else if(data.plugins && Array.isArray(data.plugins)) arr=data.plugins.map(function(x){return {name:String(x)};});
+  else if(data.upstream && typeof data.upstream==='string') arr=[{name:'Output CLI',meta:data.upstream.slice(0,100)}];
+  else return [];
+  return arr.map(function(x){
+    if(typeof x==='string') return {name:x,meta:'',tag:'Aktif'};
+    return {
+      id:x.id||x.name||x.path||x.file||x.title||'',
+      name:x.name||x.title||x.id||x.path||x.file||String(x),
+      meta:x.description||x.meta||x.schedule||x.state||x.model||x.when||x.command||x.path||'',
+      tag:x.tag||x.risk||x.state||'Aktif',
+      on:x.enabled!==undefined?x.enabled:(x.on!==undefined?x.on:true),
+      configOnly:!!x.configOnly
+    };
+  });
+}
 function renderFeature(id){
   var s=screenById(id);
   var data=state.featureData && state.featureData[s.action] ? state.featureData[s.action] : null;
-  var items=[];
-  if(data){
-    var arr=Array.isArray(data)?data:(data.toolsets||data.local||data.bots||data.files||data.servers||data.directories||[]);
-    if(data.servers && !Array.isArray(data.servers)) arr=Object.keys(data.servers).map(function(k){return {name:k,meta:JSON.stringify(data.servers[k]).slice(0,80)};});
-    if(Array.isArray(data.directories)) arr=data.directories.map(function(d){return {name:d,meta:'HERMES_HOME profil'};});
-    items=arr.map(function(x){
-      var name=x.name||x.title||x.id||x.path||x.file||String(x);
-      var meta=x.description||x.meta||x.schedule||x.state||x.model||x.when||x.command||x.path||'';
-      var on=x.enabled!==undefined?x.enabled:(x.on!==undefined?x.on:true);
-      return '<div class="list-item"><span class="ico">'+icon(s.icon,16)+'</span><div class="grow"><b>'+esc(name)+'</b><small>'+esc(meta)+'</small></div>'+
-        (id==='tools'||id==='gateway'||id==='cron'?switchHtml(!!on,'toggle-item',esc(name)):'<span class="tag '+(x.risk==='Tinggi'?'err':'')+'">'+esc(x.tag||x.risk||x.state||'Aktif')+'</span>')+'</div>';
-    });
-  }
+  var items=normalizeFeatureItems(data,id);
   if(!items.length){
     items=[['Semua fitur Hermes dapat dioperasikan dari layar ini','Kontrol UI + passthrough CLI/TUI'],
       ['Data dibaca langsung dari ~/.hermes di rootfs','Tanpa mock, tanpa fork upstream'],
       ['Fallback otomatis ke Terminal bila CLI tidak tersedia','Lihat docs/FEATURE_MAP.md']]
-      .map(function(x){return '<div class="list-item"><span class="ico">'+icon('check',16)+'</span><div class="grow"><b>'+x[0]+'</b><small>'+x[1]+'</small></div></div>';});
+      .map(function(x){return {name:x[0],meta:x[1],tag:'Siap'};});
   }
+  var switches=(id==='tools'||id==='cron');
+  var itemHtml=items.map(function(x){
+    var control=switches?switchHtml(!!x.on,'toggle-item',esc(x.id)):'<span class="tag '+(x.tag==='Tinggi'?'err':'')+'">'+esc(x.tag)+(x.configOnly?' · config':'')+'</span>';
+    return '<div class="list-item"><span class="ico">'+icon(s.icon,16)+'</span><div class="grow"><b>'+esc(x.name)+'</b><small>'+esc(x.meta)+'</small></div>'+control+'</div>';
+  }).join('');
+  var extra = id==='backup' ? btn('+ Buat backup .zip','feature-run','backup.create','btn sm primary') : '';
   return '<div class="screen">'+
     '<div class="row" style="gap:10px"><div class="avatar" style="width:38px;height:38px">'+icon(s.icon,20)+'</div><div><div class="h1">'+esc(s.label)+'</div></div></div>'+
     '<p class="sub">'+esc(s.sub||'')+'</p>'+
     '<div class="stat-grid">'+(s.kpis||[]).map(function(k){return '<div class="stat"><b>'+esc(k[0])+'</b><small>'+esc(k[1])+'</small></div>';}).join('')+'</div>'+
     '<div class="card"><div class="row between" style="margin-bottom:10px"><div class="bold">Kontrol & Aksi</div>'+btn(icon('refresh',14)+' Muat','feature-load',s.id,'btn sm ghost')+'</div>'+
       '<div class="row wrap" style="gap:6px">'+
-        (s.add?btn('+ '+esc(s.add.title),'form',s.id,'btn sm primary'):'')+
+        (s.add?btn('+ '+esc(s.add.title),'form',s.id,'btn sm primary'):'')+extra+
         (s.cmds||[]).slice(0,3).map(function(c){return btn(icon('terminal',13)+' '+esc(c.split(' ').slice(0,2).join(' ')),'run',c,'btn sm ghost');}).join('')+
       '</div></div>'+
     '<div class="section-title">'+icon('list',14)+' Data dari Hermes</div>'+
-    '<div class="card tight">'+items.join('')+'</div>'+
+    '<div class="card tight">'+itemHtml+'</div>'+
     '<div class="section-title">'+icon('terminal',14)+' Perintah CLI</div>'+
     '<div class="card tight">'+(s.cmds||[]).map(function(c){return '<div class="row between" style="padding:7px 0;border-bottom:1px solid var(--border)"><span class="mono small grow" style="word-break:break-all">'+esc(c)+'</span>'+btn('▶','run',c,'btn sm')+'</div>';}).join('')+'</div>'+
-    '<div class="card flat"><div class="bold small">Sumber</div><div class="small muted">'+esc(s.action||'status')+' → <span class="mono">hermes_bridge.py</span> di dalam Ubuntu proot, atau CLI Hermes asli. Lihat <b>docs/FEATURE_MAP.md</b> untuk pemetaan lengkap.</div></div>'+
+    '<div class="card flat"><div class="bold small">Sumber</div><div class="small muted">'+esc(s.action||'status')+' → <span class="mono">hermes_bridge.py</span> di dalam Ubuntu proot, atau CLI Hermes asli. Perintah diverifikasi terhadap <b>docs/CLI_CATALOG.md</b>.</div></div>'+
+  '</div>';
+}
+function renderCliCatalog(){
+  var q=(state.cliSearch||'').toLowerCase();
+  var list=CLI_CATALOG.filter(function(c){
+    return !q || c.name.indexOf(q)>=0 || c.desc.toLowerCase().indexOf(q)>=0 || (c.subs||[]).join(' ').toLowerCase().indexOf(q)>=0;
+  });
+  return '<div class="screen">'+
+    '<div class="h1">Katalog CLI Hermes</div><p class="sub">'+CLI_CATALOG.length+' perintah tingkat atas dari <span class="mono">hermes --help</span> v0.23.1. Semua bisa dijalankan lewat Terminal/TUI; klik Help untuk membuktikan flag-nya.</p>'+
+    '<div class="search">'+icon('search',16)+'<input id="cli-search" placeholder="Cari perintah atau subcommand…" value="'+attr(state.cliSearch)+'"></div>'+
+    '<div class="row wrap" style="gap:6px;margin-bottom:10px">'+btn('hermes --help','run','hermes --help','btn sm primary')+btn('hermes chat --help','run','hermes chat --help','btn sm ghost')+btn('hermes config --help','run','hermes config --help','btn sm ghost')+'</div>'+
+    list.map(function(c){
+      return '<div class="card tight"><div class="row between"><div class="row"><span class="tag">'+icon('terminal',14)+'</span><div><div class="bold mono">'+esc(c.name)+'</div><div class="small muted">'+esc(c.desc)+'</div></div></div>'+btn('Help','run','hermes '+c.name+' --help','btn sm')+'</div>'+
+        ((c.subs||[]).length?'<div class="row wrap" style="gap:5px;margin-top:9px">'+c.subs.slice(0,14).map(function(x){return btn(esc(x),'run','hermes '+c.name+' '+x+' --help','btn sm ghost');}).join('')+'</div>':'')+
+      '</div>';
+    }).join('')+
+    '<div class="card flat"><div class="small muted">Sumber: <b>docs/CLI_CATALOG.md</b>, dibuat dari source Hermes yang dibundel di APK.</div></div>'+
   '</div>';
 }
 
@@ -770,11 +2432,11 @@ function openForm(kind, extra){
   var title='', fields=[], submit='', sub='';
   if(kind==='key'){
     title='Atur Kunci API'; sub='Disimpan terenkripsi di Android Keystore → ~/.hermes/.env (0600)';
-    fields=[{k:'key',label:'Variabel',value:extra},{k:'value',label:'Nilai kunci',ph:'sk-…',type:'password'}];
+    fields=[{k:'key',label:'Variabel',value:extra||'',ph:'NAMA_API_KEY'},{k:'value',label:'Nilai kunci',ph:'sk-…',type:'password'}];
     submit='env.set';
   } else if(kind==='workspace'){
-    title='Workspace Baru'; sub='Membuat direktori konteks di dalam rootfs';
-    fields=[{k:'path',label:'Path',ph:'/root/.hermes/knowledge/proyek-baru'}]; submit='files.write';
+    title='Folder Baru'; sub='Membuat direktori di dalam rootfs lewat files.mkdir';
+    fields=[{k:'path',label:'Path',ph:'/root/.hermes/knowledge/proyek-baru'}]; submit='files.mkdir';
   } else if(kind==='file'){
     title='Tambah Berkas'; sub='System prompt, guardrails, dataset, atau dokumen RAG';
     fields=[{k:'path',label:'Path',ph:'/root/.hermes/prompts/custom.md'},{k:'content',label:'Isi',type:'textarea',ph:'# Instruksi sistem'}]; submit='files.write';
@@ -787,16 +2449,36 @@ function openForm(kind, extra){
     var id='f'+i, val=f.value||'';
     if(f.type==='textarea') return '<div class="field"><label>'+esc(f.label)+'</label><textarea id="'+id+'" data-k="'+attr(f.k)+'" placeholder="'+attr(f.ph||'')+'">'+esc(val)+'</textarea></div>';
     if(f.type==='select') return '<div class="field"><label>'+esc(f.label)+'</label><select id="'+id+'" data-k="'+attr(f.k)+'">'+f.options.map(function(o){return '<option>'+esc(o)+'</option>';}).join('')+'</select></div>';
+    if(f.type==='checkbox') return '<div class="field"><label class="row" style="gap:8px"><input id="'+id+'" data-k="'+attr(f.k)+'" type="checkbox"> <span>'+esc(f.label)+'</span></label></div>';
     return '<div class="field"><label>'+esc(f.label)+'</label><input id="'+id+'" data-k="'+attr(f.k)+'" type="'+(f.type==='password'?'password':'text')+'" value="'+attr(val)+'" placeholder="'+attr(f.ph||'')+'"></div>';
   }).join('')+'</form>';
   openModal(title,body,btn('Simpan','submit-form',submit,'btn primary')+btn('Batal','modal-close','','btn ghost'),sub);
 }
 async function submitForm(action){
   var payload={};
-  document.querySelectorAll('#arkax-form [data-k]').forEach(function(el){ payload[el.getAttribute('data-k')]=el.value; });
+  document.querySelectorAll('#arkax-form [data-k]').forEach(function(el){
+    if(el.type==='checkbox') payload[el.getAttribute('data-k')]=el.checked;
+    else payload[el.getAttribute('data-k')]=el.value;
+  });
   if(action==='skills.write' && payload.name){
     payload.path='/root/.hermes/skills/'+payload.name.replace(/[^a-z0-9_-]/gi,'')+'/SKILL.md';
     payload.content='---\nname: '+payload.name+'\ndescription: Skill Arkaxhermes\n---\n\n'+(payload.content||'');
+  }
+  if(action==='mcp.add' && payload.args) payload.args=String(payload.args).split(/\s+/).filter(Boolean);
+  if(action==='context.add') payload.recursive=/^(true|1|ya|on)$/i.test(String(payload.recursive||''));
+  if(action==='cron.create'){
+    if(payload.skill) payload.skills=[payload.skill];
+    if(payload.noAgent && !payload.script){
+      closeModal(); toast('No-agent membutuhkan --script di Hermes v0.23.1'); return;
+    }
+  }
+  if(action==='hooks.set'){
+    payload.event=payload.event||payload.name;
+    payload.command=payload.command||payload.content;
+    delete payload.content;
+  }
+  if(action==='batch.run' && payload.commands){
+    payload.commands=String(payload.commands).split('\n').filter(Boolean);
   }
   if(action==='files.write' && payload.commands!==undefined){
     payload={commands:String(payload.commands).split('\n').filter(Boolean)}; action='batch.run';
@@ -805,9 +2487,13 @@ async function submitForm(action){
   if(action==='export.chat'){ payload.messages=state.messages.map(function(m){return {role:m.role,content:m.content};}); }
   if(action==='files.write' && payload.content===undefined && payload.path && payload.path.indexOf('.')<0){ payload.content=''; }
   try{
-    var res = (action==='batch.run') ? await feature(action,payload) : await feature(action,payload);
+    var res=await feature(action,payload);
     closeModal();
-    toast(res.ok===false ? ('Gagal: '+(res.error||'periksa Terminal')) : (action+' berhasil · '+esc(res.source||'proot')));
+    toast(res.ok===false ? ('Perlu Terminal: '+((res.warnings&&res.warnings[0])||res.error||'lihat fallback')) : (action+' berhasil · '+esc(res.source||'proot')));
+    if(res.ok===false && res.fallback && res.fallback.argv){
+      var rr=await runArgv(res.fallback.argv);
+      showOutput(res.fallback.hint||'Fallback CLI',(rr.stdout||'')+(rr.stderr?'\n[stderr]\n'+rr.stderr:''));
+    }
     loadFeatureFor(state.screen);
   }catch(e){ toast('Gagal: '+e.message); }
 }
@@ -826,8 +2512,14 @@ async function runCommand(cmd){
 async function loadFeatureFor(id){
   var s=screenById(id); if(!s||!s.action) return;
   state.featureData=state.featureData||{};
-  try{ var r=await feature(s.action,{}); state.featureData[s.action]=r.data; if(state.screen===id) render(); }
-  catch(e){ /* diamkan, UI tetap tampil */ }
+  try{
+    var payload = id==='workspace' ? {path:state.workspacePath} : {};
+    var r=await feature(s.action,payload);
+    state.featureData[s.action]=r.data;
+    if(id==='provider' && Array.isArray(r.data)) state.providers=r.data;
+    if(id==='workspace') state.workspaceData=r.data;
+    if(state.screen===id) render();
+  }catch(e){ /* diamkan, UI tetap tampil */ }
 }
 function startInstall(){
   if(DEMO){
@@ -835,6 +2527,7 @@ function startInstall(){
     var steps=[['Ekstrak rootfs Ubuntu',18],['Verifikasi SHA-256',34],['Pasang Python, Node & dependency',56],['Instal Hermes Agent v0.23.1',78],['hermes doctor',94],['Siap digunakan',100]];
     var i=0;
     var timer=setInterval(function(){
+      if(!state.install){ clearInterval(timer); return; }
       if(i>=steps.length){ clearInterval(timer); state.install.finished=true; renderOverlayOnly(); toast('Instalasi demo selesai'); return; }
       state.install.message=steps[i][0]; state.install.percent=steps[i][1]; state.install.done=i;
       state.install.log.push('ARKAX: '+steps[i][0]); i++; renderOverlayOnly();
@@ -891,7 +2584,7 @@ async function sendMessage(text){
   }catch(e){
     var m=state.messages[state.messages.length-1];
     m.content+='\n\n⚠️ Jembatan tidak dapat dihubungi: '+e.message; m.streaming=false;
-  }finally{ state.busy=false; render(); }
+  }finally{ state.busy=false; persistState(); render(); }
 }
 function handleSlash(cmd){
   var map={'/new':'Obrolan baru dibuat','/model':'Buka layar Portal untuk ganti model','/skills':'Buka layar Skills','/cron':'Buka Cron & Otomasi','/compress':'Konteks dikompresi','/usage':'1,42M / 5,00M token bulan ini','/stop':'Generasi dihentikan'};
@@ -918,6 +2611,7 @@ function render(){
     case 'workspace': body=renderWorkspace(); break;
     case 'terminal': body=renderTerminal(); break;
     case 'settings': body=renderSettings(); break;
+    case 'cli': body=renderCliCatalog(); break;
     default: body=renderFeature(state.screen);
   }
   document.documentElement.style.setProperty('--font-size',state.font+'px');
@@ -947,8 +2641,8 @@ document.addEventListener('click',function(e){
     case 'drawer-close': state.drawer=false; render(); break;
     case 'theme': setTheme(val); render(); toast('Tema: '+val); break;
     case 'font': break;
-    case 'new-chat': state.messages=state.messages.slice(0,1); state.sessionId=''; state.threadId='t-'+Date.now().toString(36); state.screen='chat'; render(); toast('Obrolan baru'); break;
-    case 'resume': toast('Melanjutkan sesi '+val); state.sessionId=val; setScreen('chat'); break;
+    case 'new-chat': state.messages=state.messages.slice(0,1); state.sessionId=''; state.threadId='t-'+Date.now().toString(36); state.screen='chat'; persistState(); render(); toast('Obrolan baru'); break;
+    case 'resume': toast('Melanjutkan sesi '+val); state.sessionId=val; persistState(); setScreen('chat'); break;
     case 'quick': sendMessage(val); break;
     case 'send':
       if(state.busy){ if(!DEMO) api('/api/chat/stop','POST',{}).catch(function(){}); toast('Menghentikan generasi …'); }
@@ -973,35 +2667,63 @@ document.addEventListener('click',function(e){
     case 'feature-load': loadFeatureFor(val); toast('Memuat data dari proot …'); break;
     case 'toggle-provider': {
       var p=null; (state.providers||[]).forEach(function(x){if(x.id===val)p=x;});
-      if(p){ p.configured=!p.configured; toast(p.name+(p.configured?' diaktifkan':' dinonaktifkan')); render(); }
+      if(!p) break;
+      if(p.configured){
+        if(p.envKey) feature('env.delete',{key:p.envKey}).catch(function(){});
+        else toast('Provider OAuth: jalankan `hermes auth add '+p.id+'` di Terminal');
+        p.configured=false; render(); toast(p.name+' dinonaktifkan');
+      } else {
+        if(p.envKey) openForm('key',p.envKey);
+        else runCommand('hermes auth add '+p.id);
+      }
       break;
     }
     case 'toggle-setting': {
       var on=!(state.settings&&state.settings[val]);
       state.settings=state.settings||{}; state.settings[val]=on;
       if(!DEMO){ var patch={}; patch[val]=on; api('/api/settings','POST',patch).catch(function(){}); }
-      render(); toast(val+' = '+(on?'aktif':'nonaktif')); break;
+      persistState(); render(); toast(val+' = '+(on?'aktif':'nonaktif')); break;
     }
     case 'toggle-item': {
       state.toggles[val]=!state.toggles[val]; render();
       toast(esc(val)+' → '+(state.toggles[val]?'aktif':'nonaktif')+' (dikirim ke Hermes)');
       if(state.screen==='cron') feature('cron.toggle',{id:val,enabled:state.toggles[val]}).catch(function(){});
       if(state.screen==='tools') feature('tools.set',{toolsets:demoToolsets.filter(function(t){return state.toggles[t]!==false;})}).catch(function(){});
-      if(state.screen==='gateway') api('/api/service','POST',{name:'gateway',action:state.toggles[val]?'start':'stop'}).catch(function(){});
       break;
     }
     case 'term-cmd': document.getElementById('term-in').value=val; termRun(); break;
     case 'term-run': termRun(); break;
     case 'term-tui': termTui(); break;
     case 'term-clear': state.terminal=[{t:'Terminal dibersihkan',c:'dim'}]; render(); break;
-    case 'folder-menu': toast('Folder: '+val+' · ekspor / ganti nama / hapus tersedia lewat Workspace API'); break;
-    case 'file-menu': toast('Berkas: '+val+' · buka, salin, ekspor .zip, hapus'); break;
+    case 'folder-menu': state.workspacePath=val||'/root/.hermes'; loadFeatureFor('workspace'); toast('Membuka '+val); break;
+    case 'folder-up': state.workspacePath=val||'/root/.hermes'; loadFeatureFor('workspace'); break;
+    case 'file-menu': openModal('Berkas: '+esc(val),
+      '<div class="small muted mono" style="word-break:break-all">'+esc(val)+'</div>',
+      btn('Buka / Baca','file-open',val,'btn primary')+btn('Ekspor teks','file-export',val,'btn ghost')+btn('Hapus','file-delete',val,'btn danger')+btn('Tutup','modal-close','','btn ghost'),
+      'Aksi berkas nyata di dalam rootfs'); break;
+    case 'file-open': feature('files.read',{path:val}).then(function(r){
+      var d=r.data||{}; var text=d.text||('[berkas biner/base64] '+(d.base64||'').slice(0,80));
+      showOutput(val,text);
+    }).catch(function(e){toast('Gagal membuka: '+e.message);}); break;
+    case 'file-delete': feature('files.delete',{path:val}).then(function(){closeModal();toast('Dihapus: '+val);loadFeatureFor('workspace');}); break;
+    case 'file-export': feature('files.read',{path:val}).then(function(r){
+      var text=(r.data&&r.data.text)||'';
+      if(BRIDGE&&BRIDGE.shareText) BRIDGE.shareText('Arkaxhermes',text);
+      else toast('Diekspor ke clipboard');
+      if(BRIDGE&&BRIDGE.copy) BRIDGE.copy(text);
+      closeModal();
+    }); break;
+    case 'feature-run': feature(val,{}).then(function(r){
+      toast(r.ok===false?'Gagal: '+((r.warnings&&r.warnings[0])||r.error||'lihat Terminal'):val+' berhasil');
+      if(r.ok===false && r.fallback && r.fallback.argv) runArgv(r.fallback.argv).then(function(rr){showOutput('Fallback CLI',rr.stdout||rr.stderr);});
+      loadFeatureFor(state.screen);
+    }).catch(function(e){toast('Gagal: '+e.message);}); break;
     case 'export': feature('export.chat',{format:'md',title:'Arkaxhermes',messages:state.messages}).then(function(r){
       toast('Diekspor: '+(r.data&&r.data.path||'/mnt/arkax/exports'));
       if(BRIDGE&&BRIDGE.shareText) BRIDGE.shareText('Arkaxhermes',state.messages.map(function(m){return m.content;}).join('\n\n'));
     }); break;
-    case 'clear-data': openModal('Hapus riwayat & cache','<div class="small muted">Ini akan menghapus cache WebView dan riwayat lokal. Data <span class="mono">~/.hermes</span> di rootfs tidak ikut terhapus tanpa backup.</div>',btn('Hapus','do-clear','','btn danger')+btn('Batal','modal-close','','btn ghost'),'Tindakan tidak dapat dibatalkan'); break;
-    case 'do-clear': state.messages=state.messages.slice(0,1); closeModal(); toast('Cache lokal dibersihkan'); break;
+    case 'clear-data': openModal('Hapus riwayat & cache','<div class="small muted">Menghapus riwayat obrolan tersimpan (terenkripsi maupun localStorage). Data <span class="mono">~/.hermes</span> di rootfs tidak ikut terhapus.</div>',btn('Hapus','do-clear','','btn danger')+btn('Batal','modal-close','','btn ghost'),'Tindakan tidak dapat dibatalkan'); break;
+    case 'do-clear': state.messages=state.messages.slice(0,1); state.sessionId=''; state.threadId='t-'+Date.now().toString(36); clearStoredState(); closeModal(); render(); toast('Riwayat lokal dibersihkan'); break;
     case 'battery': if(BRIDGE&&BRIDGE.requestPermissions) BRIDGE.requestPermissions('battery'); else toast('Mode demo: pengecualian optimasi baterai'); break;
     case 'install': state.install={percent:0,message:'Siap memasang Ubuntu proot',done:0,log:[],finished:false}; renderOverlayOnly(); break;
     case 'install-start': startInstall(); break;
@@ -1036,11 +2758,13 @@ document.addEventListener('input',function(e){
     else if(document.querySelector('.slash')) render();
   }
   if(e.target.id==='wsearch'){ state.search=e.target.value; render(); var w=document.getElementById('wsearch'); if(w){w.focus();w.setSelectionRange(w.value.length,w.value.length);} }
+  if(e.target.id==='cli-search'){ state.cliSearch=e.target.value; render(); var c=document.getElementById('cli-search'); if(c){c.focus();c.setSelectionRange(c.value.length,c.value.length);} }
 });
 document.addEventListener('change',function(e){
   var act=e.target.getAttribute&&e.target.getAttribute('data-act');
   if(act==='font'){
-    state.font=parseInt(e.target.value,10)||14;
+    state.font=parseInt(e.target.value,10)||14; applyFont();
+    if(state.settings) state.settings.fontSize=state.font;
     if(!DEMO) api('/api/settings','POST',{fontSize:state.font}).catch(function(){});
     toast('Font '+state.font+'px');
   }
@@ -1061,12 +2785,14 @@ async function boot(){
   var hash=(location.hash||'').replace('#/','');
   if(hash&&screenById(hash).id===hash) state.screen=hash;
   setTheme(state.theme);
-  render();
+  applyFont();
   if(DEMO){
     document.body.insertAdjacentHTML('afterbegin','<div class="demo-badge">MODE DEMO · PREVIEW</div>');
     state.status=await Demo.request('/api/status');
     state.settings=state.status.settings;
+    restoreState();
     render();
+    loadFeatureFor(state.screen);
     return;
   }
   var info=null; try{ info=JSON.parse(BRIDGE.ready()); }catch(e){}
@@ -1074,14 +2800,17 @@ async function boot(){
     var s=await api('/api/status');
     state.status=s; state.settings=s.settings||{};
     if(s.settings&&s.settings.theme) setTheme(s.settings.theme);
-    if(s.settings&&s.settings.fontSize) state.font=s.settings.fontSize;
+    if(s.settings&&s.settings.fontSize){ state.font=s.settings.fontSize; applyFont(); }
+    restoreState();
     render();
+    loadFeatureFor('provider'); loadFeatureFor('workspace'); loadFeatureFor(state.screen);
     if(s.state!=='ready'){
       state.install={percent:0,message:'Ubuntu proot belum dipasang',done:0,log:[],finished:false};
       renderOverlayOnly();
     }
   }catch(e){
     toast('Server jembatan belum siap: '+e.message);
+    render();
   }
 }
 boot();

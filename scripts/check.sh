@@ -89,6 +89,18 @@ log "7. Aset biner (informasional, tidak menggagalkan CI)"
 [[ -f "$JNILIBS_DIR/arm64-v8a/libproot.so" ]] && ok "libproot.so ada" || skip "libproot.so belum ada"
 [[ -f "$RUNTIME_ASSET_DIR/hermes-src.tar.gz" ]] && ok "source Hermes ada" || skip "source Hermes belum ada"
 
+log "8. Audit UI / CLI / API terhadap Hermes v0.23.1"
+if command -v node >/dev/null 2>&1; then
+  if python3 "$ARKAX_ROOT/scripts/audit.py" --strict > "$PY_TMP/audit.log" 2>&1; then
+    ok "audit.py: $(head -n1 "$PY_TMP/audit.log")"
+  else
+    bad "audit.py menemukan ketidaksesuaian"
+    sed 's/^/       /' "$PY_TMP/audit.log"
+  fi
+else
+  skip "node tidak tersedia (audit UI dilewati)"
+fi
+
 printf '\n'
 if [[ $FAIL -eq 0 ]]; then
   log "Semua pemeriksaan lulus ✅"

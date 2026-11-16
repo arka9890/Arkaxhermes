@@ -40,7 +40,9 @@ class SettingsStore(context: Context) {
         set(v) = prefs.edit().putString("defaultModel", v).apply()
 
     var toolsets: String
-        get() = prefs.getString("toolsets", "web,terminal,skills") ?: "web,terminal,skills"
+        // `hermes-cli` adalah toolset bundle default resmi v0.23.1 (bukan
+        // "web,terminal,skills" yang justru membatasi 40+ tool inti).
+        get() = prefs.getString("toolsets", "hermes-cli") ?: "hermes-cli"
         set(v) = prefs.edit().putString("toolsets", v).apply()
 
     var yolo: Boolean

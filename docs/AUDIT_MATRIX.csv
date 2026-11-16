@@ -1,0 +1,526 @@
+kategori,sumber,elemen/aksi,handler/bukti,status
+UI,chat,data-act=attach,click/change handler,OK
+UI,chat,data-act=copy,click/change handler,OK
+UI,chat,data-act=dictate,click/change handler,OK
+UI,chat,data-act=drawer,click/change handler,OK
+UI,chat,data-act=drawer-close,click/change handler,OK
+UI,chat,data-act=like,click/change handler,OK
+UI,chat,data-act=nav,click/change handler,OK
+UI,chat,data-act=new-chat,click/change handler,OK
+UI,chat,data-act=quick,click/change handler,OK
+UI,chat,data-act=regenerate,click/change handler,OK
+UI,chat,data-act=resume,click/change handler,OK
+UI,chat,data-act=send,click/change handler,OK
+UI,chat,data-act=theme,click/change handler,OK
+UI,provider,data-act=drawer,click/change handler,OK
+UI,provider,data-act=drawer-close,click/change handler,OK
+UI,provider,data-act=form-key,click/change handler,OK
+UI,provider,data-act=nav,click/change handler,OK
+UI,provider,data-act=new-chat,click/change handler,OK
+UI,provider,data-act=pf,click/change handler,OK
+UI,provider,data-act=resume,click/change handler,OK
+UI,provider,data-act=run,click/change handler,OK
+UI,provider,data-act=theme,click/change handler,OK
+UI,provider,data-act=toggle-provider,click/change handler,OK
+UI,workspace,data-act=drawer,click/change handler,OK
+UI,workspace,data-act=drawer-close,click/change handler,OK
+UI,workspace,data-act=feature-load,click/change handler,OK
+UI,workspace,data-act=file-menu,click/change handler,OK
+UI,workspace,data-act=folder-menu,click/change handler,OK
+UI,workspace,data-act=folder-up,click/change handler,OK
+UI,workspace,data-act=form,click/change handler,OK
+UI,workspace,data-act=nav,click/change handler,OK
+UI,workspace,data-act=new-chat,click/change handler,OK
+UI,workspace,data-act=resume,click/change handler,OK
+UI,workspace,data-act=theme,click/change handler,OK
+UI,workspace,data-act=wf,click/change handler,OK
+UI,terminal,data-act=drawer,click/change handler,OK
+UI,terminal,data-act=drawer-close,click/change handler,OK
+UI,terminal,data-act=nav,click/change handler,OK
+UI,terminal,data-act=new-chat,click/change handler,OK
+UI,terminal,data-act=resume,click/change handler,OK
+UI,terminal,data-act=term-clear,click/change handler,OK
+UI,terminal,data-act=term-cmd,click/change handler,OK
+UI,terminal,data-act=term-run,click/change handler,OK
+UI,terminal,data-act=term-tui,click/change handler,OK
+UI,terminal,data-act=theme,click/change handler,OK
+UI,settings,data-act=battery,click/change handler,OK
+UI,settings,data-act=clear-data,click/change handler,OK
+UI,settings,data-act=drawer,click/change handler,OK
+UI,settings,data-act=drawer-close,click/change handler,OK
+UI,settings,data-act=export,click/change handler,OK
+UI,settings,data-act=font,click/change handler,OK
+UI,settings,data-act=install,click/change handler,OK
+UI,settings,data-act=nav,click/change handler,OK
+UI,settings,data-act=new-chat,click/change handler,OK
+UI,settings,data-act=resume,click/change handler,OK
+UI,settings,data-act=run,click/change handler,OK
+UI,settings,data-act=theme,click/change handler,OK
+UI,settings,data-act=toggle-setting,click/change handler,OK
+UI,sessions,data-act=drawer,click/change handler,OK
+UI,sessions,data-act=drawer-close,click/change handler,OK
+UI,sessions,data-act=feature-load,click/change handler,OK
+UI,sessions,data-act=form,click/change handler,OK
+UI,sessions,data-act=nav,click/change handler,OK
+UI,sessions,data-act=new-chat,click/change handler,OK
+UI,sessions,data-act=resume,click/change handler,OK
+UI,sessions,data-act=run,click/change handler,OK
+UI,sessions,data-act=theme,click/change handler,OK
+UI,skills,data-act=drawer,click/change handler,OK
+UI,skills,data-act=drawer-close,click/change handler,OK
+UI,skills,data-act=feature-load,click/change handler,OK
+UI,skills,data-act=form,click/change handler,OK
+UI,skills,data-act=nav,click/change handler,OK
+UI,skills,data-act=new-chat,click/change handler,OK
+UI,skills,data-act=resume,click/change handler,OK
+UI,skills,data-act=run,click/change handler,OK
+UI,skills,data-act=theme,click/change handler,OK
+UI,memory,data-act=drawer,click/change handler,OK
+UI,memory,data-act=drawer-close,click/change handler,OK
+UI,memory,data-act=feature-load,click/change handler,OK
+UI,memory,data-act=form,click/change handler,OK
+UI,memory,data-act=nav,click/change handler,OK
+UI,memory,data-act=new-chat,click/change handler,OK
+UI,memory,data-act=resume,click/change handler,OK
+UI,memory,data-act=run,click/change handler,OK
+UI,memory,data-act=theme,click/change handler,OK
+UI,cron,data-act=drawer,click/change handler,OK
+UI,cron,data-act=drawer-close,click/change handler,OK
+UI,cron,data-act=feature-load,click/change handler,OK
+UI,cron,data-act=form,click/change handler,OK
+UI,cron,data-act=nav,click/change handler,OK
+UI,cron,data-act=new-chat,click/change handler,OK
+UI,cron,data-act=resume,click/change handler,OK
+UI,cron,data-act=run,click/change handler,OK
+UI,cron,data-act=theme,click/change handler,OK
+UI,cron,data-act=toggle-item,click/change handler,OK
+UI,gateway,data-act=drawer,click/change handler,OK
+UI,gateway,data-act=drawer-close,click/change handler,OK
+UI,gateway,data-act=feature-load,click/change handler,OK
+UI,gateway,data-act=form,click/change handler,OK
+UI,gateway,data-act=nav,click/change handler,OK
+UI,gateway,data-act=new-chat,click/change handler,OK
+UI,gateway,data-act=resume,click/change handler,OK
+UI,gateway,data-act=run,click/change handler,OK
+UI,gateway,data-act=theme,click/change handler,OK
+UI,mcp,data-act=drawer,click/change handler,OK
+UI,mcp,data-act=drawer-close,click/change handler,OK
+UI,mcp,data-act=feature-load,click/change handler,OK
+UI,mcp,data-act=form,click/change handler,OK
+UI,mcp,data-act=nav,click/change handler,OK
+UI,mcp,data-act=new-chat,click/change handler,OK
+UI,mcp,data-act=resume,click/change handler,OK
+UI,mcp,data-act=run,click/change handler,OK
+UI,mcp,data-act=theme,click/change handler,OK
+UI,tools,data-act=drawer,click/change handler,OK
+UI,tools,data-act=drawer-close,click/change handler,OK
+UI,tools,data-act=feature-load,click/change handler,OK
+UI,tools,data-act=form,click/change handler,OK
+UI,tools,data-act=nav,click/change handler,OK
+UI,tools,data-act=new-chat,click/change handler,OK
+UI,tools,data-act=resume,click/change handler,OK
+UI,tools,data-act=run,click/change handler,OK
+UI,tools,data-act=theme,click/change handler,OK
+UI,tools,data-act=toggle-item,click/change handler,OK
+UI,delegation,data-act=drawer,click/change handler,OK
+UI,delegation,data-act=drawer-close,click/change handler,OK
+UI,delegation,data-act=feature-load,click/change handler,OK
+UI,delegation,data-act=form,click/change handler,OK
+UI,delegation,data-act=nav,click/change handler,OK
+UI,delegation,data-act=new-chat,click/change handler,OK
+UI,delegation,data-act=resume,click/change handler,OK
+UI,delegation,data-act=run,click/change handler,OK
+UI,delegation,data-act=theme,click/change handler,OK
+UI,profiles,data-act=drawer,click/change handler,OK
+UI,profiles,data-act=drawer-close,click/change handler,OK
+UI,profiles,data-act=feature-load,click/change handler,OK
+UI,profiles,data-act=form,click/change handler,OK
+UI,profiles,data-act=nav,click/change handler,OK
+UI,profiles,data-act=new-chat,click/change handler,OK
+UI,profiles,data-act=resume,click/change handler,OK
+UI,profiles,data-act=run,click/change handler,OK
+UI,profiles,data-act=theme,click/change handler,OK
+UI,approvals,data-act=drawer,click/change handler,OK
+UI,approvals,data-act=drawer-close,click/change handler,OK
+UI,approvals,data-act=feature-load,click/change handler,OK
+UI,approvals,data-act=form,click/change handler,OK
+UI,approvals,data-act=nav,click/change handler,OK
+UI,approvals,data-act=new-chat,click/change handler,OK
+UI,approvals,data-act=resume,click/change handler,OK
+UI,approvals,data-act=run,click/change handler,OK
+UI,approvals,data-act=theme,click/change handler,OK
+UI,media,data-act=drawer,click/change handler,OK
+UI,media,data-act=drawer-close,click/change handler,OK
+UI,media,data-act=feature-load,click/change handler,OK
+UI,media,data-act=form,click/change handler,OK
+UI,media,data-act=nav,click/change handler,OK
+UI,media,data-act=new-chat,click/change handler,OK
+UI,media,data-act=resume,click/change handler,OK
+UI,media,data-act=run,click/change handler,OK
+UI,media,data-act=theme,click/change handler,OK
+UI,context,data-act=drawer,click/change handler,OK
+UI,context,data-act=drawer-close,click/change handler,OK
+UI,context,data-act=feature-load,click/change handler,OK
+UI,context,data-act=form,click/change handler,OK
+UI,context,data-act=nav,click/change handler,OK
+UI,context,data-act=new-chat,click/change handler,OK
+UI,context,data-act=resume,click/change handler,OK
+UI,context,data-act=run,click/change handler,OK
+UI,context,data-act=theme,click/change handler,OK
+UI,hooks,data-act=drawer,click/change handler,OK
+UI,hooks,data-act=drawer-close,click/change handler,OK
+UI,hooks,data-act=feature-load,click/change handler,OK
+UI,hooks,data-act=form,click/change handler,OK
+UI,hooks,data-act=nav,click/change handler,OK
+UI,hooks,data-act=new-chat,click/change handler,OK
+UI,hooks,data-act=resume,click/change handler,OK
+UI,hooks,data-act=run,click/change handler,OK
+UI,hooks,data-act=theme,click/change handler,OK
+UI,batch,data-act=drawer,click/change handler,OK
+UI,batch,data-act=drawer-close,click/change handler,OK
+UI,batch,data-act=feature-load,click/change handler,OK
+UI,batch,data-act=form,click/change handler,OK
+UI,batch,data-act=nav,click/change handler,OK
+UI,batch,data-act=new-chat,click/change handler,OK
+UI,batch,data-act=resume,click/change handler,OK
+UI,batch,data-act=run,click/change handler,OK
+UI,batch,data-act=theme,click/change handler,OK
+UI,bots,data-act=drawer,click/change handler,OK
+UI,bots,data-act=drawer-close,click/change handler,OK
+UI,bots,data-act=feature-load,click/change handler,OK
+UI,bots,data-act=form,click/change handler,OK
+UI,bots,data-act=nav,click/change handler,OK
+UI,bots,data-act=new-chat,click/change handler,OK
+UI,bots,data-act=resume,click/change handler,OK
+UI,bots,data-act=run,click/change handler,OK
+UI,bots,data-act=theme,click/change handler,OK
+UI,code,data-act=drawer,click/change handler,OK
+UI,code,data-act=drawer-close,click/change handler,OK
+UI,code,data-act=feature-load,click/change handler,OK
+UI,code,data-act=form,click/change handler,OK
+UI,code,data-act=nav,click/change handler,OK
+UI,code,data-act=new-chat,click/change handler,OK
+UI,code,data-act=resume,click/change handler,OK
+UI,code,data-act=run,click/change handler,OK
+UI,code,data-act=theme,click/change handler,OK
+UI,portal,data-act=drawer,click/change handler,OK
+UI,portal,data-act=drawer-close,click/change handler,OK
+UI,portal,data-act=feature-load,click/change handler,OK
+UI,portal,data-act=form,click/change handler,OK
+UI,portal,data-act=nav,click/change handler,OK
+UI,portal,data-act=new-chat,click/change handler,OK
+UI,portal,data-act=resume,click/change handler,OK
+UI,portal,data-act=run,click/change handler,OK
+UI,portal,data-act=theme,click/change handler,OK
+UI,stats,data-act=drawer,click/change handler,OK
+UI,stats,data-act=drawer-close,click/change handler,OK
+UI,stats,data-act=feature-load,click/change handler,OK
+UI,stats,data-act=form,click/change handler,OK
+UI,stats,data-act=nav,click/change handler,OK
+UI,stats,data-act=new-chat,click/change handler,OK
+UI,stats,data-act=resume,click/change handler,OK
+UI,stats,data-act=run,click/change handler,OK
+UI,stats,data-act=theme,click/change handler,OK
+UI,backup,data-act=drawer,click/change handler,OK
+UI,backup,data-act=drawer-close,click/change handler,OK
+UI,backup,data-act=feature-load,click/change handler,OK
+UI,backup,data-act=feature-run,click/change handler,OK
+UI,backup,data-act=form,click/change handler,OK
+UI,backup,data-act=nav,click/change handler,OK
+UI,backup,data-act=new-chat,click/change handler,OK
+UI,backup,data-act=resume,click/change handler,OK
+UI,backup,data-act=run,click/change handler,OK
+UI,backup,data-act=theme,click/change handler,OK
+UI,logs,data-act=drawer,click/change handler,OK
+UI,logs,data-act=drawer-close,click/change handler,OK
+UI,logs,data-act=feature-load,click/change handler,OK
+UI,logs,data-act=form,click/change handler,OK
+UI,logs,data-act=nav,click/change handler,OK
+UI,logs,data-act=new-chat,click/change handler,OK
+UI,logs,data-act=resume,click/change handler,OK
+UI,logs,data-act=run,click/change handler,OK
+UI,logs,data-act=theme,click/change handler,OK
+UI,cli,data-act=drawer,click/change handler,OK
+UI,cli,data-act=drawer-close,click/change handler,OK
+UI,cli,data-act=nav,click/change handler,OK
+UI,cli,data-act=new-chat,click/change handler,OK
+UI,cli,data-act=resume,click/change handler,OK
+UI,cli,data-act=run,click/change handler,OK
+UI,cli,data-act=theme,click/change handler,OK
+UI,about,data-act=drawer,click/change handler,OK
+UI,about,data-act=drawer-close,click/change handler,OK
+UI,about,data-act=feature-load,click/change handler,OK
+UI,about,data-act=nav,click/change handler,OK
+UI,about,data-act=new-chat,click/change handler,OK
+UI,about,data-act=resume,click/change handler,OK
+UI,about,data-act=run,click/change handler,OK
+UI,about,data-act=theme,click/change handler,OK
+Bridge,hermes_bridge.py,approvals.decide,ACTIONS,OK
+Bridge,hermes_bridge.py,approvals.list,ACTIONS,OK
+Bridge,hermes_bridge.py,backup.create,ACTIONS,OK
+Bridge,hermes_bridge.py,backup.restore,ACTIONS,OK
+Bridge,hermes_bridge.py,backups.list,ACTIONS,OK
+Bridge,hermes_bridge.py,batch.run,ACTIONS,OK
+Bridge,hermes_bridge.py,bots.list,ACTIONS,OK
+Bridge,hermes_bridge.py,bots.set,ACTIONS,OK
+Bridge,hermes_bridge.py,config.get,ACTIONS,OK
+Bridge,hermes_bridge.py,config.set,ACTIONS,OK
+Bridge,hermes_bridge.py,context.add,ACTIONS,OK
+Bridge,hermes_bridge.py,context.list,ACTIONS,OK
+Bridge,hermes_bridge.py,cron.create,ACTIONS,OK
+Bridge,hermes_bridge.py,cron.delivery,ACTIONS,OK
+Bridge,hermes_bridge.py,cron.list,ACTIONS,OK
+Bridge,hermes_bridge.py,cron.remove,ACTIONS,OK
+Bridge,hermes_bridge.py,cron.run,ACTIONS,OK
+Bridge,hermes_bridge.py,cron.status,ACTIONS,OK
+Bridge,hermes_bridge.py,cron.tick,ACTIONS,OK
+Bridge,hermes_bridge.py,cron.toggle,ACTIONS,OK
+Bridge,hermes_bridge.py,doctor,ACTIONS,OK
+Bridge,hermes_bridge.py,env.delete,ACTIONS,OK
+Bridge,hermes_bridge.py,env.list,ACTIONS,OK
+Bridge,hermes_bridge.py,env.set,ACTIONS,OK
+Bridge,hermes_bridge.py,export.chat,ACTIONS,OK
+Bridge,hermes_bridge.py,files.delete,ACTIONS,OK
+Bridge,hermes_bridge.py,files.list,ACTIONS,OK
+Bridge,hermes_bridge.py,files.mkdir,ACTIONS,OK
+Bridge,hermes_bridge.py,files.read,ACTIONS,OK
+Bridge,hermes_bridge.py,files.write,ACTIONS,OK
+Bridge,hermes_bridge.py,gateway.status,ACTIONS,OK
+Bridge,hermes_bridge.py,hooks.list,ACTIONS,OK
+Bridge,hermes_bridge.py,hooks.set,ACTIONS,OK
+Bridge,hermes_bridge.py,mcp.add,ACTIONS,OK
+Bridge,hermes_bridge.py,mcp.list,ACTIONS,OK
+Bridge,hermes_bridge.py,mcp.remove,ACTIONS,OK
+Bridge,hermes_bridge.py,memory.append,ACTIONS,OK
+Bridge,hermes_bridge.py,memory.clear,ACTIONS,OK
+Bridge,hermes_bridge.py,memory.get,ACTIONS,OK
+Bridge,hermes_bridge.py,memory.providers,ACTIONS,OK
+Bridge,hermes_bridge.py,memory.set,ACTIONS,OK
+Bridge,hermes_bridge.py,model.set,ACTIONS,OK
+Bridge,hermes_bridge.py,plugins.install,ACTIONS,OK
+Bridge,hermes_bridge.py,plugins.list,ACTIONS,OK
+Bridge,hermes_bridge.py,plugins.remove,ACTIONS,OK
+Bridge,hermes_bridge.py,profiles.create,ACTIONS,OK
+Bridge,hermes_bridge.py,profiles.list,ACTIONS,OK
+Bridge,hermes_bridge.py,profiles.use,ACTIONS,OK
+Bridge,hermes_bridge.py,providers.list,ACTIONS,OK
+Bridge,hermes_bridge.py,sessions.delete,ACTIONS,OK
+Bridge,hermes_bridge.py,sessions.export,ACTIONS,OK
+Bridge,hermes_bridge.py,sessions.list,ACTIONS,OK
+Bridge,hermes_bridge.py,sessions.read,ACTIONS,OK
+Bridge,hermes_bridge.py,sessions.search,ACTIONS,OK
+Bridge,hermes_bridge.py,sessions.stats,ACTIONS,OK
+Bridge,hermes_bridge.py,skills.delete,ACTIONS,OK
+Bridge,hermes_bridge.py,skills.install,ACTIONS,OK
+Bridge,hermes_bridge.py,skills.list,ACTIONS,OK
+Bridge,hermes_bridge.py,skills.nudges,ACTIONS,OK
+Bridge,hermes_bridge.py,skills.read,ACTIONS,OK
+Bridge,hermes_bridge.py,skills.write,ACTIONS,OK
+Bridge,hermes_bridge.py,status,ACTIONS,OK
+Bridge,hermes_bridge.py,tools.backend,ACTIONS,OK
+Bridge,hermes_bridge.py,tools.list,ACTIONS,OK
+Bridge,hermes_bridge.py,tools.set,ACTIONS,OK
+Bridge,hermes_bridge.py,trajectories.list,ACTIONS,OK
+Bridge,hermes_bridge.py,update,ACTIONS,OK
+HTTP,ArkaxHttpServer.kt,/api/chat/stop,handler,OK
+HTTP,ArkaxHttpServer.kt,/api/events,handler,OK
+HTTP,ArkaxHttpServer.kt,/api/exec,handler,OK
+HTTP,ArkaxHttpServer.kt,/api/hermes/feature,handler,OK
+HTTP,ArkaxHttpServer.kt,/api/install,handler,OK
+HTTP,ArkaxHttpServer.kt,/api/settings,handler,OK
+HTTP,ArkaxHttpServer.kt,/api/status,handler,OK
+JS bridge,ArkaxJsBridge.kt,copy,@JavascriptInterface,OK
+JS bridge,ArkaxJsBridge.kt,dictate,@JavascriptInterface,OK
+JS bridge,ArkaxJsBridge.kt,haptic,@JavascriptInterface,OK
+JS bridge,ArkaxJsBridge.kt,openExternal,@JavascriptInterface,OK
+JS bridge,ArkaxJsBridge.kt,pickFile,@JavascriptInterface,OK
+JS bridge,ArkaxJsBridge.kt,platform,@JavascriptInterface,OK
+JS bridge,ArkaxJsBridge.kt,port,@JavascriptInterface,OK
+JS bridge,ArkaxJsBridge.kt,ready,@JavascriptInterface,OK
+JS bridge,ArkaxJsBridge.kt,requestPermissions,@JavascriptInterface,OK
+JS bridge,ArkaxJsBridge.kt,secureDelete,@JavascriptInterface,OK
+JS bridge,ArkaxJsBridge.kt,secureGet,@JavascriptInterface,OK
+JS bridge,ArkaxJsBridge.kt,securePut,@JavascriptInterface,OK
+JS bridge,ArkaxJsBridge.kt,setTheme,@JavascriptInterface,OK
+JS bridge,ArkaxJsBridge.kt,shareText,@JavascriptInterface,OK
+JS bridge,ArkaxJsBridge.kt,startService,@JavascriptInterface,OK
+JS bridge,ArkaxJsBridge.kt,stopService,@JavascriptInterface,OK
+JS bridge,ArkaxJsBridge.kt,token,@JavascriptInterface,OK
+CLI,docs/CLI_CATALOG.md,chat,,OK
+CLI,docs/CLI_CATALOG.md,model,,OK
+CLI,docs/CLI_CATALOG.md,moa,"list, ls, configure, config, delete, rm",OK
+CLI,docs/CLI_CATALOG.md,fallback,"list, ls, add, remove, rm, clear",OK
+CLI,docs/CLI_CATALOG.md,worktree,"list, ls, audit, prune, restore",OK
+CLI,docs/CLI_CATALOG.md,browser,"close-profile, export-signins",OK
+CLI,docs/CLI_CATALOG.md,secrets,"bitwarden, bw, onepassword, op, 1password",OK
+CLI,docs/CLI_CATALOG.md,egress,"install, setup, start, stop, restart, reload, status, disable",OK
+CLI,docs/CLI_CATALOG.md,migrate,"xai, relay, openclaw, claude-code, codex, cursor, grok-bot, openbot",OK
+CLI,docs/CLI_CATALOG.md,codex-runtime,migrate,OK
+CLI,docs/CLI_CATALOG.md,gateway,"run, ensure, attach, start, stop, restart, status, install",OK
+CLI,docs/CLI_CATALOG.md,proxy,"start, status, providers",OK
+CLI,docs/CLI_CATALOG.md,lsp,"status, list, install, install-all, restart, which",OK
+CLI,docs/CLI_CATALOG.md,setup,,OK
+CLI,docs/CLI_CATALOG.md,whatsapp,,OK
+CLI,docs/CLI_CATALOG.md,whatsapp-cloud,,OK
+CLI,docs/CLI_CATALOG.md,slack,manifest,OK
+CLI,docs/CLI_CATALOG.md,send,,OK
+CLI,docs/CLI_CATALOG.md,logout,,OK
+CLI,docs/CLI_CATALOG.md,auth,"add, list, remove, reset, priority, refresh, status, logout",OK
+CLI,docs/CLI_CATALOG.md,status,"list, prune",OK
+CLI,docs/CLI_CATALOG.md,pause,resume,OK
+CLI,docs/CLI_CATALOG.md,resume,,OK
+CLI,docs/CLI_CATALOG.md,cron,"list, create, add, edit, pause, resume, run, cancel",OK
+CLI,docs/CLI_CATALOG.md,webhook,"subscribe, add, list, ls, remove, rm, test",OK
+CLI,docs/CLI_CATALOG.md,peer,"add, set, list, ls, remove, rm, dm, run",OK
+CLI,docs/CLI_CATALOG.md,portal,"login, info, status, open, tools",OK
+CLI,docs/CLI_CATALOG.md,kanban,,OK
+CLI,docs/CLI_CATALOG.md,project,"create, list, ls, show, add-folder, remove-folder, rename, set-primary",OK
+CLI,docs/CLI_CATALOG.md,hooks,"list, ls, test, revoke, remove, rm, doctor",OK
+CLI,docs/CLI_CATALOG.md,doctor,,OK
+CLI,docs/CLI_CATALOG.md,verify,,OK
+CLI,docs/CLI_CATALOG.md,security,audit,OK
+CLI,docs/CLI_CATALOG.md,approvals,"suggest, test",OK
+CLI,docs/CLI_CATALOG.md,dump,,OK
+CLI,docs/CLI_CATALOG.md,debug,"share, delete",OK
+CLI,docs/CLI_CATALOG.md,backup,,OK
+CLI,docs/CLI_CATALOG.md,checkpoints,,OK
+CLI,docs/CLI_CATALOG.md,import,,OK
+CLI,docs/CLI_CATALOG.md,config,"show, edit, get, set, unset, path, env-path, check",OK
+CLI,docs/CLI_CATALOG.md,skin,"list, use, set",OK
+CLI,docs/CLI_CATALOG.md,console,,OK
+CLI,docs/CLI_CATALOG.md,pairing,"list, approve, revoke, clear-pending",OK
+CLI,docs/CLI_CATALOG.md,skills,"trust, untrust, browse, search, install, inspect, list, check",OK
+CLI,docs/CLI_CATALOG.md,bundles,"list, show, create, delete, reload",OK
+CLI,docs/CLI_CATALOG.md,plugins,"install, search, browse, validate, update, auto-update, adopt, trust-update-url",OK
+CLI,docs/CLI_CATALOG.md,curator,"status, usage, run, pause, resume, pin, unpin, lock",OK
+CLI,docs/CLI_CATALOG.md,pets,"list, install, select, show, off, scale, remove, doctor",OK
+CLI,docs/CLI_CATALOG.md,clipboard,image,OK
+CLI,docs/CLI_CATALOG.md,journey,"list, delete, edit",OK
+CLI,docs/CLI_CATALOG.md,memory,"setup, status, off, reset",OK
+CLI,docs/CLI_CATALOG.md,tools,"list, disable, enable, post-setup",OK
+CLI,docs/CLI_CATALOG.md,computer-use,"install, status, doctor, permissions, screen",OK
+CLI,docs/CLI_CATALOG.md,mcp,"add, remove, rm, list, ls, test, configure, config",OK
+CLI,docs/CLI_CATALOG.md,connectors,"list, ls, accounts, connect, rename, disconnect",OK
+CLI,docs/CLI_CATALOG.md,sessions,"list, export, delete, prune, archive, optimize, clean-markers, optimize-storage",OK
+CLI,docs/CLI_CATALOG.md,insights,,OK
+CLI,docs/CLI_CATALOG.md,usage,,OK
+CLI,docs/CLI_CATALOG.md,monitoring,status,OK
+CLI,docs/CLI_CATALOG.md,vault,"add, list, rm, sources, key",OK
+CLI,docs/CLI_CATALOG.md,update,,OK
+CLI,docs/CLI_CATALOG.md,uninstall,,OK
+CLI,docs/CLI_CATALOG.md,acp,,OK
+CLI,docs/CLI_CATALOG.md,profile,"list, use, create, delete, describe, show, alias, rename",OK
+CLI,docs/CLI_CATALOG.md,completion,,OK
+CLI,docs/CLI_CATALOG.md,dashboard,register,OK
+CLI,docs/CLI_CATALOG.md,serve,,OK
+CLI,docs/CLI_CATALOG.md,webapp,,OK
+CLI,docs/CLI_CATALOG.md,desktop,,OK
+CLI,docs/CLI_CATALOG.md,logs,,OK
+CLI,docs/CLI_CATALOG.md,prompt-size,,OK
+Perintah UI,provider,hermes model,Terminal /api/exec,OK
+Perintah UI,provider,hermes auth list,Terminal /api/exec,OK
+Perintah UI,provider,hermes setup --portal,Terminal /api/exec,OK
+Perintah UI,provider,hermes config get model.provider --json,Terminal /api/exec,OK
+Perintah UI,workspace,hermes config path,Terminal /api/exec,OK
+Perintah UI,workspace,hermes config env-path,Terminal /api/exec,OK
+Perintah UI,workspace,hermes sessions list --limit 20,Terminal /api/exec,OK
+Perintah UI,sessions,hermes sessions list --limit 20,Terminal /api/exec,OK
+Perintah UI,sessions,hermes chat --resume latest -Q --oneshot,Terminal /api/exec,OK
+Perintah UI,sessions,hermes sessions stats,Terminal /api/exec,OK
+Perintah UI,sessions,hermes sessions export --format md --yes,Terminal /api/exec,OK
+Perintah UI,skills,hermes skills list,Terminal /api/exec,OK
+Perintah UI,skills,hermes skills install openai/skills/skill-creator --yes,Terminal /api/exec,OK
+Perintah UI,skills,hermes config set memory.nudge_interval 10,Terminal /api/exec,OK
+Perintah UI,skills,hermes chat -s hermes-agent-dev -Q --oneshot,Terminal /api/exec,OK
+Perintah UI,memory,hermes memory status,Terminal /api/exec,OK
+Perintah UI,memory,hermes plugins list --json,Terminal /api/exec,OK
+Perintah UI,memory,hermes insights --days 7,Terminal /api/exec,OK
+Perintah UI,memory,hermes config get memory.nudge_interval,Terminal /api/exec,OK
+Perintah UI,cron,hermes cron list,Terminal /api/exec,OK
+Perintah UI,cron,hermes cron status,Terminal /api/exec,OK
+Perintah UI,cron,"hermes cron create ""every 2h"" ""Check server status""",Terminal /api/exec,OK
+Perintah UI,cron,hermes cron tick --accept-hooks,Terminal /api/exec,OK
+Perintah UI,cron,"/cron add ""in 30m"" ""Remind me""",Terminal /api/exec,OK
+Perintah UI,gateway,hermes gateway setup,Terminal /api/exec,OK
+Perintah UI,gateway,hermes gateway run,Terminal /api/exec,OK
+Perintah UI,gateway,hermes gateway status,Terminal /api/exec,OK
+Perintah UI,gateway,"hermes send -t telegram ""Halo dari Arkaxhermes""",Terminal /api/exec,OK
+Perintah UI,gateway,/platforms,Terminal /api/exec,OK
+Perintah UI,mcp,hermes mcp list,Terminal /api/exec,OK
+Perintah UI,mcp,hermes plugins list --json,Terminal /api/exec,OK
+Perintah UI,mcp,hermes plugins install homeassistant --yes-deps,Terminal /api/exec,OK
+Perintah UI,mcp,hermes plugins install camofox --yes-deps,Terminal /api/exec,OK
+Perintah UI,tools,hermes tools list --platform cli,Terminal /api/exec,OK
+Perintah UI,tools,hermes tools enable web browser terminal --platform cli,Terminal /api/exec,OK
+Perintah UI,tools,hermes chat -t hermes-cli -Q --oneshot,Terminal /api/exec,OK
+Perintah UI,tools,hermes config set terminal.backend ssh,Terminal /api/exec,OK
+Perintah UI,delegation,hermes config set delegation.max_spawn_depth 2,Terminal /api/exec,OK
+Perintah UI,delegation,hermes config set delegation.max_concurrent_children 3,Terminal /api/exec,OK
+Perintah UI,delegation,"hermes -w -z ""Fix issue #123""",Terminal /api/exec,OK
+Perintah UI,delegation,hermes worktree list --json,Terminal /api/exec,OK
+Perintah UI,profiles,hermes profile list,Terminal /api/exec,OK
+Perintah UI,profiles,hermes profile create riset,Terminal /api/exec,OK
+Perintah UI,profiles,hermes profile use riset,Terminal /api/exec,OK
+Perintah UI,profiles,hermes profile show riset,Terminal /api/exec,OK
+Perintah UI,approvals,hermes approvals suggest --json --days 90,Terminal /api/exec,OK
+Perintah UI,approvals,hermes security audit --json,Terminal /api/exec,OK
+Perintah UI,approvals,hermes chat --safe-mode -Q --oneshot,Terminal /api/exec,OK
+Perintah UI,approvals,hermes doctor,Terminal /api/exec,OK
+Perintah UI,media,"hermes chat --image /mnt/arkax/inbox/screen.png -q ""Analisis gambar ini""",Terminal /api/exec,OK
+Perintah UI,media,"hermes chat -t browser,vision,image_gen,tts -Q --oneshot",Terminal /api/exec,OK
+Perintah UI,media,hermes tools post-setup chromium,Terminal /api/exec,OK
+Perintah UI,context,hermes chat --query-file - -Q --oneshot,Terminal /api/exec,OK
+Perintah UI,context,hermes chat --ignore-rules -Q --oneshot,Terminal /api/exec,OK
+Perintah UI,context,hermes config get context.engine,Terminal /api/exec,OK
+Perintah UI,context,hermes prompt-size --json,Terminal /api/exec,OK
+Perintah UI,hooks,hermes hooks list,Terminal /api/exec,OK
+Perintah UI,hooks,hermes hooks doctor,Terminal /api/exec,OK
+Perintah UI,hooks,hermes hooks test pre_tool_call,Terminal /api/exec,OK
+Perintah UI,hooks,hermes gateway run,Terminal /api/exec,OK
+Perintah UI,batch,python3 /opt/hermes-agent/batch_runner.py --help,Terminal /api/exec,OK
+Perintah UI,batch,python3 /opt/hermes-agent/batch_runner.py --dataset_file=/mnt/arkax/inbox/prompts.jsonl,Terminal /api/exec,OK
+Perintah UI,batch,hermes sessions export --format trace --yes,Terminal /api/exec,OK
+Perintah UI,batch,hermes insights --days 7,Terminal /api/exec,OK
+Perintah UI,bots,hermes gateway run,Terminal /api/exec,OK
+Perintah UI,bots,hermes profile use riset,Terminal /api/exec,OK
+Perintah UI,bots,hermes peer list,Terminal /api/exec,OK
+Perintah UI,bots,"hermes send -t telegram ""Halo bot""",Terminal /api/exec,OK
+Perintah UI,code,"hermes -w -z ""Fix issue #123""",Terminal /api/exec,OK
+Perintah UI,code,hermes worktree list --json,Terminal /api/exec,OK
+Perintah UI,code,hermes chat --checkpoints -Q --oneshot,Terminal /api/exec,OK
+Perintah UI,code,hermes checkpoints list,Terminal /api/exec,OK
+Perintah UI,portal,hermes setup --portal,Terminal /api/exec,OK
+Perintah UI,portal,hermes portal info,Terminal /api/exec,OK
+Perintah UI,portal,hermes portal tools,Terminal /api/exec,OK
+Perintah UI,portal,hermes chat --provider nous -Q --oneshot,Terminal /api/exec,OK
+Perintah UI,portal,/model <name>,Terminal /api/exec,OK
+Perintah UI,stats,hermes usage --json,Terminal /api/exec,OK
+Perintah UI,stats,hermes insights --days 7,Terminal /api/exec,OK
+Perintah UI,stats,hermes sessions stats,Terminal /api/exec,OK
+Perintah UI,stats,hermes prompt-size --json,Terminal /api/exec,OK
+Perintah UI,stats,/usage,Terminal /api/exec,OK
+Perintah UI,backup,hermes backup -o /mnt/arkax/exports/arkax.zip,Terminal /api/exec,OK
+Perintah UI,backup,hermes import --force /mnt/arkax/exports/arkax.zip,Terminal /api/exec,OK
+Perintah UI,backup,hermes sessions export --format md --yes,Terminal /api/exec,OK
+Perintah UI,backup,hermes doctor,Terminal /api/exec,OK
+Perintah UI,backup,hermes update,Terminal /api/exec,OK
+Perintah UI,logs,hermes doctor,Terminal /api/exec,OK
+Perintah UI,logs,hermes doctor --live,Terminal /api/exec,OK
+Perintah UI,logs,hermes logs -n 100,Terminal /api/exec,OK
+Perintah UI,logs,hermes --version,Terminal /api/exec,OK
+Perintah UI,logs,uname -a,Terminal /api/exec,OK
+Perintah UI,cli,hermes --help,Terminal /api/exec,OK
+Perintah UI,cli,hermes chat --help,Terminal /api/exec,OK
+Perintah UI,cli,hermes config --help,Terminal /api/exec,OK
+Perintah UI,cli,hermes gateway --help,Terminal /api/exec,OK
+Perintah UI,about,hermes --version,Terminal /api/exec,OK
+Perintah UI,about,cat /etc/arkax-release,Terminal /api/exec,OK
+Perintah UI,about,hermes status,Terminal /api/exec,OK
+Perintah UI,ui,hermes auth add ,Terminal /api/exec,OK
+Perintah UI,ui,hermes doctor,Terminal /api/exec,OK
+Perintah UI,ui,hermes update,Terminal /api/exec,OK
+Perintah UI,ui,hermes doctor,Terminal /api/exec,OK
+Perintah UI,ui,hermes --help,Terminal /api/exec,OK
+Perintah UI,ui,hermes chat --help,Terminal /api/exec,OK
+Perintah UI,ui,hermes config --help,Terminal /api/exec,OK
+Perintah UI,ui,hermes ,Terminal /api/exec,OK

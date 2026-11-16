@@ -1,3 +1,13 @@
+## 0.1.1 — 16 November 2026 (audit kompatibilitas)
+
+- Audit menyeluruh terhadap source Hermes `v0.23.1`: `hermes --help`, 71 perintah top-level, dan help subcommand dijalankan langsung dari source bundel.
+- Perbaiki CLI yang tidak ada di upstream: `sessions show/search --json`, `cron list --json`, `mcp list --json`, `tools --json`, `dashboard serve`, `cron ticker`, `send <platform>`, `approvals approve/deny`, `batch/trajectory`, `--profile`, dll.
+- Selaraskan path/format: `state.db` + FTS5, `cron/jobs.json`, `mcp_servers` di `config.yaml`, `hooks.<event>`, `profiles/<name>`, backup ZIP + `hermes import`.
+- Perbaiki katalog: 43 provider, 57 toolset `toolsets.py` + `stt`, default `hermes-cli`, kunci `model.provider`/`model.default`, `memory.nudge_interval`, `delegation.max_spawn_depth`.
+- Chat: `-Q --oneshot --format text`, satu `--image`, sesi dari stderr, TTY quoting aman, status layanan tanpa foreground service.
+- UI: semua tombol berhandler, `do-clear`, aksi berkas nyata, Workspace/Provider memuat data proot, filter provider, `autoSave`/`encryptLocal` lewat Android Keystore, `haptics`, `--font-size`, ikon `download`, layar **Katalog CLI**.
+- Tambah `scripts/audit.py`, `scripts/audit-ui.js`, `docs/AUDIT.md`, `docs/AUDIT.json`, `docs/AUDIT_MATRIX.csv`, `docs/CLI_CATALOG.md`; `check.sh` kini menjalankan audit strict.
+
 # Changelog
 
 ## 0.1.0 — 16 November 2026

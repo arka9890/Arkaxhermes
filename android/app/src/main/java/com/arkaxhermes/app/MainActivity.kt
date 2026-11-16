@@ -214,6 +214,19 @@ class MainActivity : Activity() {
         cm.setPrimaryClip(ClipData.newPlainText("Arkaxhermes", text))
     }
 
+    /** Penyimpanan terenkripsi AES-GCM untuk state UI (mis. riwayat obrolan). */
+    fun securePut(name: String, value: String) {
+        runtime.vault.put("arkax_secure_$name", value)
+    }
+
+    fun secureGet(name: String): String =
+        runtime.vault.get("arkax_secure_$name") ?: ""
+
+    fun secureDelete(name: String) {
+        runtime.vault.delete("arkax_secure_$name")
+        runtime.vault.delete(name)
+    }
+
     fun sharePlainText(title: String, text: String) {
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"

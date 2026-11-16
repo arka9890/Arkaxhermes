@@ -211,7 +211,11 @@ class HermesRuntime(private val context: Context) {
 
         val threadId = req.optString("threadId", "default").replace(Regex("[^a-zA-Z0-9_-]"), "_")
         val session = req.optString("session", "").takeIf { it.isNotBlank() }
-        val args = mutableListOf("hermes", "chat", "--query-file", "-")
+        // -Q + --oneshot + --format text = protokol non-interaktif yang stabil
+        // di v0.23.1. `--format stream-json` sengaja TIDAK dipakai karena rilis
+        // ini merutekannya lewat gateway_chat (butuh gateway yang sedang hidup).
+        val args = mutableListOf("hermes", "chat", "--query-file", "-", "-Q",
+            "--oneshot", "--format", "text")
         if (session != null) args += listOf("--resume", session)
         else args += listOf("--continue", "Arkax/$threadId", "--create-if-missing")
 
@@ -224,8 +228,11 @@ class HermesRuntime(private val context: Context) {
             args += listOf("-s", names.joinToString(","))
         }
         val images = req.optJSONArray("images")
-        if (images != null) {
-            for (i in 0 until images.length()) args += listOf("--image", images.getString(i))
+        if (images != null && images.length() > 0) {
+            // v0.23.1 `--image` hanya menerima SATU path (argparse store, bukan append).
+            args += listOf("--image", images.getString(0))
+            if (images.length() > 1) emit("log", jsonOf("line" to
+                "Hermes v0.23.1 hanya mendukung satu --image per query; lampiran lain abaikan atau kirim terpisah"))
         }
         if (req.optBoolean("yolo", settings.yolo)) args += "--yolo"
         if (req.optBoolean("safeMode", false)) args += "--safe-mode"
@@ -261,7 +268,14 @@ class HermesRuntime(private val context: Context) {
                         else -> emit("chunk", jsonOf("text" to line + "\n"))
                     }
                 },
-                onStderr = { line -> emit("log", jsonOf("line" to line)) }
+                onStderr = { line ->
+                    // -Q mencetak `session_id:` ke stderr; jangan sampai id sesi hilang.
+                    if (sessionRegex.containsMatchIn(line)) {
+                        val id = sessionRegex.find(line)?.groupValues?.get(1) ?: ""
+                        emit("session", jsonOf("id" to id, "title" to "Arkax/$threadId"))
+                    }
+                    emit("log", jsonOf("line" to line))
+                }
             )
             emit("done", jsonOf("exit" to result.exit, "elapsedMs" to result.elapsedMs,
                 "tokens" to (message.length + result.stdout.length) / 4))
@@ -287,7 +301,7 @@ class HermesRuntime(private val context: Context) {
         val timeout = req.optLong("timeoutMs", 180_000)
         val tty = req.optBoolean("tty", false)
         val result = if (tty) {
-            proot.tty(argv.joinToString(" ") { if (it.contains(" ")) "'$it'" else it })
+            proot.tty(argv.joinToString(" ", transform = ::quoteArg))
         } else {
             proot.exec(argv, stdin = stdin, timeoutMs = timeout)
         }
@@ -330,6 +344,14 @@ class HermesRuntime(private val context: Context) {
         val allowedActions = listOf("start", "stop", "restart", "status")
         if (name !in allowedNames || action !in allowedActions)
             return errorJson("bad_request", "nama/aksi layanan tidak dikenal")
+        if (action == "status") {
+            // Status tidak perlu foreground service: langsung baca CLI di proot.
+            val r = proot.exec(listOf("/bin/bash", "/opt/arkax/services.sh", "status", name),
+                timeoutMs = 60_000)
+            return jsonOf("ok" to (r.exit == 0), "name" to name, "action" to "status",
+                "stdout" to r.stdout, "stderr" to r.stderr, "exit" to r.exit,
+                "elapsedMs" to r.elapsedMs)
+        }
         settings.setServiceEnabled(name, action != "stop")
         val intent = Intent(context, AgentService::class.java)
             .putExtra("name", name)
@@ -351,6 +373,10 @@ class HermesRuntime(private val context: Context) {
         }
         return all.takeLast(lines).joinToString("\n")
     }
+
+    /** Kutip argumen untuk `script -q -c …` tanpa membiarkan shell injection. */
+    private fun quoteArg(value: String): String =
+        "'" + value.replace("'", "'\\''") + "'"
 
     companion object {
         private const val TAG = "HermesRuntime"

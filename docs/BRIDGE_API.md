@@ -1,3 +1,5 @@
+> **Audit 16 Nov 2026:** daftar aksi final diverifikasi terhadap source `v0.23.1`; lihat [AUDIT.md](AUDIT.md). `hermes_bridge.py` kini punya 67 aksi, termasuk `gateway.status`, `backups.list`, `cron.status`, `cron.tick`, `sessions.export`, `files.mkdir`.
+
 # Arkax Bridge API
 
 Server lokal: `http://127.0.0.1:18789` (port 18789–18799 dicoba berurutan; port aktif dikirim ke UI lewat `JsBridge.port()`). Semua respons `Content-Type: application/json; charset=utf-8`, kecuali aset statis dan SSE.

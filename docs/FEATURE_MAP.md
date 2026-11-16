@@ -1,3 +1,5 @@
+> **Audit 16 Nov 2026:** pemetaan ulang terhadap 71 perintah CLI dan 67 aksi bridge ada di [AUDIT.md](AUDIT.md). Fitur interaktif/desktop tetap ditandai sebagai `TUI`/`CLI`, bukan UI tiruan.
+
 # Peta Fitur: Hermes Agent → Arkaxhermes
 
 Referensi: [repo upstream](https://github.com/NousResearch/hermes-agent), [dokumentasi resmi](https://hermes-agent.nousresearch.com/docs/), rilis stabil yang dipin: `v0.23.1` (10 Nov 2026).

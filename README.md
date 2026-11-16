@@ -85,6 +85,19 @@ Tabel lengkap satu-per-satu ada di [docs/FEATURE_MAP.md](docs/FEATURE_MAP.md). P
 
 ---
 
+## Audit kompatibilitas v0.23.1
+
+Saya sudah menjalankan audit dua arah terhadap source Hermes yang dibundel: `hermes --help` + help subcommand, lalu render seluruh UI untuk mencocokkan tiap tombol ke handler/endpoint/CLI. Hasil akhir: **27 layar, 44 tombol, 0 dead button, 0 ikon hilang, 71 perintah CLI, 67 aksi bridge, 43 provider, 57 toolset + `stt`, 0 ERROR / 0 WARNING**.
+
+Beberapa ketidaksesuaian awal (mis. `sessions list --json`, `mcp list --json`, `dashboard serve`, `config set provider`, `sessions.db`, `mcp.json`, backup `.tar.gz`) sudah diperbaiki. Rincian jujur, termasuk fitur yang tetap hanya bisa lewat Terminal/TUI dan batasan proot, ada di:
+
+- [docs/AUDIT.md](docs/AUDIT.md) — laporan lengkap
+- [docs/AUDIT.json](docs/AUDIT.json) — hasil mesin
+- [docs/AUDIT_MATRIX.csv](docs/AUDIT_MATRIX.csv) — matriks per elemen
+- [docs/CLI_CATALOG.md](docs/CLI_CATALOG.md) — 71 perintah `hermes`
+
+Jalankan ulang kapan saja: `./scripts/check.sh` atau `python3 scripts/audit.py --strict`.
+
 ## Keamanan
 
 - Kunci API disimpan terenkripsi (AES-GCM Android Keystore) di sisi native, lalu ditulis ke `~/.hermes/.env` di dalam rootfs dengan mode `600`. Kunci tidak pernah disimpan di `localStorage` WebView.

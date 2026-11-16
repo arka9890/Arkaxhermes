@@ -39,4 +39,9 @@ class ArkaxJsBridge(private val activity: MainActivity) {
     @JavascriptInterface fun requestPermissions(which: String) = activity.requestAppPermissions(which)
     @JavascriptInterface fun startService(name: String) = activity.controlService(name, "start")
     @JavascriptInterface fun stopService(name: String) = activity.controlService(name, "stop")
+
+    // State UI terenkripsi lewat Android Keystore, bukan localStorage polos.
+    @JavascriptInterface fun securePut(name: String, value: String) = activity.securePut(name, value)
+    @JavascriptInterface fun secureGet(name: String): String = activity.secureGet(name)
+    @JavascriptInterface fun secureDelete(name: String) = activity.secureDelete(name)
 }

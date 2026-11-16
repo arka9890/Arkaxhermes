@@ -65,12 +65,13 @@ exec "$BIN" "\$@"
 EOF
   chmod 755 /usr/local/bin/hermes
 elif [[ -z "$BIN" ]]; then
-  # Fallback terakhir: modul CLI ada di source tree.
+  # Fallback terakhir: pakai launcher `hermes` di root source tree.
+  # `python -m hermes_cli` TIDAK valid — paket itu tidak punya __main__.py.
   cat > /usr/local/bin/hermes <<EOF
 #!/bin/sh
 export HERMES_HOME="$HERMES_HOME"
 export PYTHONPATH="$DEST\${PYTHONPATH:+:\$PYTHONPATH}"
-exec "$DEST/.venv/bin/python" -m hermes_cli "\$@"
+exec "$DEST/.venv/bin/python" "$DEST/hermes" "\$@"
 EOF
   chmod 755 /usr/local/bin/hermes
   info "PERINGATAN: biner hermes tidak ditemukan; wrapper memakai python -m hermes_cli"

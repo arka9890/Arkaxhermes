@@ -1,3 +1,5 @@
+> Validasi tambahan: `./scripts/check.sh` sekarang memanggil `python3 scripts/audit.py --strict` (butuh Node.js untuk render UI). Lihat [AUDIT.md](AUDIT.md).
+
 # Build Arkaxhermes dari source
 
 ## 0. Ringkasan alur

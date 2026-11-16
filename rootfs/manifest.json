@@ -69,5 +69,37 @@
       "procps",
       "sqlite3"
     ]
+  },
+  "agentBrowser": {
+    "repository": "https://github.com/vercel-labs/agent-browser",
+    "tag": "v0.43.0",
+    "license": "Apache-2.0",
+    "architecture": "Rust CLI + CDP daemon; live WebSocket stream + dashboard port 4848",
+    "streamPort": 9223,
+    "dashboardPort": 4848,
+    "session": "arkaxhermes",
+    "binaries": {
+      "arm64-v8a": {
+        "asset": "agent-browser-linux-arm64",
+        "sha256": "34be55c2b92d8d199fb9d1d62a905ee5b6ac5b1f3e8c24e5b20597f370d905e5",
+        "target": "android/app/src/main/jniLibs/arm64-v8a/libagent-browser.so"
+      },
+      "x86_64": {
+        "asset": "agent-browser-linux-x64",
+        "sha256": "8e69c9fb662514c9cf36e4911e94e913742ba066e55102486350e049dd847612",
+        "target": "android/app/src/main/jniLibs/x86_64/libagent-browser.so"
+      }
+    }
+  },
+  "chrome": {
+    "distribution": "Chrome for Testing headless-shell",
+    "version": "157.0.8103.78",
+    "revision": "1717349",
+    "platform": "linux-arm64",
+    "url": "https://storage.googleapis.com/chrome-for-testing-public/157.0.8103.78/linux-arm64/chrome-headless-shell-linux-arm64.zip",
+    "sha256": "912fbf877e53de34d7b3cca5104f3b95607d41bd35412ccc6cd2a599ff0c0dbf",
+    "assetPack": "browser_pack",
+    "asset": "chrome-headless-shell.zip",
+    "note": "Diunduh scripts/fetch-agent-browser.sh ke dist/, lalu distagel ke install-time asset pack saat build APK; tidak disimpan di git agar repo ringan."
   }
 }

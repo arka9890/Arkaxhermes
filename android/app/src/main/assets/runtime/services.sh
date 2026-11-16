@@ -32,6 +32,8 @@ cmd_for() {
     webhook)
       # Webhook subscription disajikan proses gateway; tidak ada daemon terpisah.
       echo "ARKAX_SERVICE=webhook /usr/local/bin/hermes gateway run --replace" ;;
+    browser)
+      echo "ARKAX_SERVICE=browser /bin/bash -c '/usr/local/bin/agent-browser dashboard start --port 4848; /usr/local/bin/agent-browser open about:blank; while true; do sleep 3600; done'" ;;
     *) echo "" ;;
   esac
 }
@@ -42,6 +44,7 @@ status_cmd() {
     cron)     echo "/usr/local/bin/hermes cron status" ;;
     dashboard) echo "/usr/local/bin/hermes serve --status" ;;
     webhook)  echo "/usr/local/bin/hermes webhook list || true" ;;
+    browser)  echo "/usr/local/bin/agent-browser stream status" ;;
     *) echo "" ;;
   esac
 }
@@ -71,6 +74,10 @@ stop_one() {
   if [[ "$n" == "dashboard" ]]; then
     /usr/local/bin/hermes serve --stop >/dev/null 2>&1 || true
   fi
+  if [[ "$n" == "browser" ]]; then
+    /usr/local/bin/agent-browser close >/dev/null 2>&1 || true
+    /usr/local/bin/agent-browser dashboard stop >/dev/null 2>&1 || true
+  fi
   if [[ ! -f "$f" ]]; then echo "stopped:$n"; return 0; fi
   pid="$(cat "$f")"
   kill -TERM "$pid" 2>/dev/null || true
@@ -96,7 +103,7 @@ status_one() {
   printf '%s\n' "$out" | sed "s/^/[$n] /"
 }
 
-names=(gateway cron dashboard webhook)
+names=(gateway cron dashboard webhook browser)
 [[ "$NAME" != "all" ]] && names=("$NAME")
 
 case "$ACTION" in

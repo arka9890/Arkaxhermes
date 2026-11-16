@@ -36,6 +36,19 @@ object AssetExtractor {
         return result
     }
 
+    /** Salin install-time asset pack Chrome for Testing ke filesDir/browser. */
+    fun extractBrowserAsset(context: Context, destination: File): Boolean {
+        destination.parentFile?.mkdirs()
+        for (asset in listOf("chrome-headless-shell.zip", "browser/chrome-headless-shell.zip")) {
+            if (extractAsset(context, asset, destination)) {
+                Log.i(TAG, "Chrome asset pack diekstrak dari $asset")
+                return true
+            }
+        }
+        Log.w(TAG, "chrome-headless-shell.zip tidak ada di asset pack")
+        return false
+    }
+
     /** Ekstrak seluruh assets/runtime/ → filesDir/arkax/runtime/ */
     fun extractRuntime(context: Context): Int {
         RuntimePaths.ensure(context)

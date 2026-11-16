@@ -21,6 +21,7 @@ dist/
 # ./scripts/make-assets.sh untuk membuatnya ulang, atau `git add -f <berkas>`
 # bila memang ingin menyimpannya di Git / Git LFS.
 android/app/src/main/jniLibs/**/libproot*.so
+android/app/src/main/jniLibs/**/libagent-browser.so
 android/app/src/main/jniLibs/**/libtalloc*.so*
 android/app/src/main/jniLibs/**/libandroid-shmem*.so*
 android/app/src/main/jniLibs/**/README.txt
@@ -29,6 +30,8 @@ android/app/src/main/assets/rootfs/*.tar.gz
 android/app/src/main/assets/rootfs/rootfs.sha256
 android/app/src/main/assets/rootfs/README.txt
 android/app/src/main/assets/runtime/hermes-src.tar.gz
+browser_pack/src/main/assets/*.zip
+android/app/src/main/assets/browser/*.zip
 rootfs/work/
 build-cache/
 

@@ -1549,6 +1549,92 @@ def act_update(p):
     return cli_or_fallback("update", ["update"], hint="hermes update (atau build ulang APK dengan tag baru)")
 
 
+
+AB_BIN = "/usr/local/bin/agent-browser"
+AB_SESSION = "arkaxhermes"
+
+
+def ab(*args, timeout=120):
+    """Wrapper agent-browser Arkaxhermes (sudah --json + session + Chrome)."""
+    return run_cli([AB_BIN] + [str(a) for a in args], timeout=timeout)
+
+
+def ab_json(raw, key=None):
+    for line in reversed((raw or "").splitlines()):
+        line = line.strip()
+        if not line.startswith("{") or not line.endswith("}"):
+            continue
+        try:
+            obj = json.loads(line)
+            return obj.get(key) if key else obj
+        except Exception:
+            continue
+    return None
+
+
+def act_browser_status(p):
+    stream = ab("stream", "status", timeout=30)
+    url = ab("get", "url", timeout=30)
+    title = ab("get", "title", timeout=30)
+    cdp = ab("get", "cdp-url", timeout=30)
+    return result("browser.status", {
+        "session": AB_SESSION,
+        "streamPort": 9223,
+        "streamUrl": "ws://127.0.0.1:9223/?pacing=ack&maxFps=8",
+        "dashboardUrl": "http://127.0.0.1:4848",
+        "stream": ab_json(stream["stdout"]),
+        "url": (ab_json(url["stdout"], "data") or {}).get("url", ""),
+        "title": (ab_json(title["stdout"], "data") or {}).get("title", ""),
+        "cdpUrl": (ab_json(cdp["stdout"], "data") or {}).get("cdpUrl", ""),
+        "raw": {"stream": stream["stdout"], "url": url["stdout"], "cdp": cdp["stdout"]},
+    }, "agent-browser")
+
+
+def act_browser_command(p):
+    argv = p.get("argv") or []
+    if isinstance(argv, str):
+        argv = argv.split()
+    if not argv:
+        return result("browser.command", ok=False, warnings=["argv wajib diisi"])
+    r = ab(*argv)
+    return result("browser.command", {"argv": argv, "parsed": ab_json(r["stdout"])},
+                  "agent-browser", ok=r["ok"], raw=r,
+                  fallback={"argv": [AB_BIN] + argv, "hint": "Buka Terminal"})
+
+
+def act_browser_start(p):
+    dash = ab("dashboard", "start", "--port", "4848", timeout=60)
+    opening = ab("open", "about:blank", timeout=120)
+    return result("browser.start", {
+        "dashboardUrl": "http://127.0.0.1:4848",
+        "streamUrl": "ws://127.0.0.1:9223/?pacing=ack&maxFps=8",
+        "dashboard": dash["stdout"], "open": opening["stdout"]
+    }, "agent-browser", ok=dash["ok"] and opening["ok"])
+
+
+def act_browser_stop(p):
+    closing = ab("close", timeout=60)
+    dash = ab("dashboard", "stop", timeout=60)
+    return result("browser.stop", {"close": closing["stdout"], "dashboard": dash["stdout"]},
+                  "agent-browser", ok=True)
+
+
+def act_browser_snapshot(p):
+    r = ab("snapshot", "-i", timeout=60)
+    return result("browser.snapshot", {"text": r["stdout"]}, "agent-browser", ok=r["ok"], raw=r)
+
+
+def act_browser_screenshot(p):
+    stamp = dt.datetime.now().strftime("%Y%m%d-%H%M%S")
+    path = "/mnt/arkax/exports/browser-%s.jpg" % stamp
+    r = ab("screenshot", path, "--screenshot-format", "jpeg", "--screenshot-quality", "80", timeout=120)
+    return result("browser.screenshot", {"path": path, "stdout": r["stdout"]},
+                  "agent-browser", ok=r["ok"], raw=r)
+
+
+def act_browser_dashboard(p):
+    return result("browser.dashboard", {"url": "http://127.0.0.1:4848"}, "agent-browser")
+
 ACTIONS = {
     "status": act_status,
     "config.get": act_config_get,
@@ -1617,6 +1703,13 @@ ACTIONS = {
     "export.chat": act_export_chat,
     "doctor": act_doctor,
     "update": act_update,
+    "browser.status": act_browser_status,
+    "browser.command": act_browser_command,
+    "browser.start": act_browser_start,
+    "browser.stop": act_browser_stop,
+    "browser.snapshot": act_browser_snapshot,
+    "browser.screenshot": act_browser_screenshot,
+    "browser.dashboard": act_browser_dashboard,
 }
 
 def main():

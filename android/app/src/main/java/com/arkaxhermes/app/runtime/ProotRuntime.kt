@@ -35,6 +35,8 @@ class ProotRuntime(private val context: Context) {
             "-b", "/proc", "-b", "/dev", "-b", "/sys",
             "-b", "${shared.absolutePath}:${RuntimePaths.SHARED_IN_ROOTFS}",
             "-b", "${scripts.absolutePath}:${RuntimePaths.RUNTIME_IN_ROOTFS}",
+            "-b", "${RuntimePaths.nativeDir(context)}:/opt/arkax/native",
+            "-b", "${RuntimePaths.browser(context).absolutePath}:/mnt/arkax/browser",
             "--link2symlink",                      // dpkg/apt di filesystem Android
             "--kill-on-exit",
             "/usr/bin/env", "-i",

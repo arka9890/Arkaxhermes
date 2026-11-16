@@ -342,6 +342,29 @@ class ArkaxHttpServer(
                     headersSent = true; return
                 }
 
+                // ---- Browser bawaan agent-browser ----
+                if (req.path == "/api/browser/status" && req.method == "GET") {
+                    respondJson(out, 200, runtime.browser.status()); headersSent = true; return
+                }
+                if (req.path == "/api/browser/start" && req.method == "POST") {
+                    respondJson(out, 200, runtime.browser.start()); headersSent = true; return
+                }
+                if (req.path == "/api/browser/stop" && req.method == "POST") {
+                    respondJson(out, 200, runtime.browser.stop()); headersSent = true; return
+                }
+                if (req.path == "/api/browser/dashboard" && req.method == "GET") {
+                    respondJson(out, 200, jsonOf("ok" to true,
+                        "url" to "http://127.0.0.1:${com.arkaxhermes.app.runtime.BrowserRuntime.DASHBOARD_PORT}"));
+                    headersSent = true; return
+                }
+                if (req.path == "/api/browser/command" && req.method == "POST") {
+                    val body = parseBody(req.body)
+                    val array = body.optJSONArray("argv")
+                        ?: throw IllegalArgumentException("argv (array string) wajib diisi")
+                    val argv = (0 until array.length()).map { array.getString(it) }
+                    respondJson(out, 200, runtime.browser.command(argv)); headersSent = true; return
+                }
+
                 respondJson(out, 404, errorJson("not_found", "Endpoint tidak ada: ${req.path}"))
                 headersSent = true
             } catch (e: IllegalArgumentException) {

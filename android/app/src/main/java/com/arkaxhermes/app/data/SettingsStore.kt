@@ -61,7 +61,7 @@ class SettingsStore(context: Context) {
         put("encryptLocal", encryptLocal)
         put("batteryExemptionAsked", batteryExemptionAsked)
         put("services", JSONObject().apply {
-            listOf("gateway", "cron", "dashboard", "webhook").forEach {
+            listOf("gateway", "cron", "dashboard", "webhook", "browser").forEach {
                 put(it, serviceEnabled(it))
             }
         })

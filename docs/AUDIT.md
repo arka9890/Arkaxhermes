@@ -13,14 +13,14 @@ Pertanyaan: *"sudah sesuai sama repo Hermes-nya belum? cek setiap element, tombo
 | --- | --- |
 | `python3 hermes --help` dari source bundel | ✅ 71 perintah tingkat atas |
 | Subcommand dari parser builder + `<command> --help` | ✅ 309 nama subcommand terdeteksi; katalog ringkas di [CLI_CATALOG.md](CLI_CATALOG.md) |
-| Layar UI | ✅ 27 layar dirender di Node VM |
-| `data-act` / tombol | ✅ 44 aksi tampil, **44 handler**, **0 dead button** |
+| Layar UI | ✅ 28 layar dirender di Node VM (termasuk tab Browser) |
+| `data-act` / tombol | ✅ 57 aksi tampil, **57 handler**, **0 dead button** |
 | Ikon SVG | ✅ 32 ikon dipakai, 56 path tersedia, **0 ikon hilang** |
-| Aksi `hermes_bridge.py` | ✅ 67 aksi, semuanya terpetakan ke UI/CLI/TUI |
+| Aksi `hermes_bridge.py` | ✅ 74 aksi (7 aksi `browser.*`), semuanya terpetakan ke UI/CLI/TUI |
 | Provider | ✅ 43 entri dari `hermes_cli/auth.py` + `models_catalog_static.py` + alias lokal |
 | Toolset | ✅ 57 toolset dari `toolsets.py` + `stt` config-only |
-| Endpoint HTTP | ✅ 7 path dipakai UI, 19 path tersedia di `ArkaxHttpServer.kt` |
-| `window.ArkaxBridge` | ✅ 17 metode, semua panggilan JS tersedia di Kotlin |
+| Endpoint HTTP | ✅ 11 path dipakai UI, 24 path tersedia di `ArkaxHttpServer.kt` |
+| `window.ArkaxBridge` | ✅ 18 metode, semua panggilan JS tersedia di Kotlin |
 | `./scripts/audit.py --strict` | ✅ **0 ERROR, 0 WARNING** |
 | `./scripts/check.sh` | ✅ lulus |
 
@@ -115,6 +115,14 @@ Skrip audit permanen: `scripts/audit.py`, `scripts/audit-ui.js`, dipanggil otoma
 - Default toolset: `web,terminal,skills` → **`hermes-cli`** (bundle inti resmi, agar 40+ tools tidak terpotong).
 
 ---
+
+## Audit tambahan: browser bawaan
+
+- Sumber `agent-browser` diverifikasi dari GitHub + docs resmi: CLI Rust, daemon CDP, streaming WebSocket, dashboard port 4848.
+- `v0.43.0` (rilis stabil 12 Nov 2026) dipin; binary linux-arm64 diverifikasi SHA-256 `34be55c2…`.
+- Chrome for Testing `157.0.8103.78` linux-arm64 diverifikasi tersedia; SHA-256 ZIP `912fbf87…` dicatat di `rootfs/manifest.json`.
+- Tab Browser dirender dalam VM Node, semua 12 tombol/aksi barunya punya handler; `browser.status|command|start|stop|dashboard` masuk matriks endpoint.
+- Perintah `agent-browser` ikut divalidasi oleh `scripts/audit.py` terhadap katalog di [CLI_CATALOG.md](CLI_CATALOG.md).
 
 ## Yang **tidak** saya klaim sebagai "sama persis"
 

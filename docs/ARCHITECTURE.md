@@ -1,3 +1,5 @@
+> **Browser bawaan:** `BrowserRuntime.kt` + `agent-browser` CDP + Chrome for Testing, dengan live WebSocket 9223 ke tab Browser. Lihat [BROWSER.md](BROWSER.md).
+
 # Arsitektur Arkaxhermes
 
 ```

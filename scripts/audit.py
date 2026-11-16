@@ -154,6 +154,11 @@ def main() -> int:
         for c in s.get("cmds", []) or []:
             cli_cmds.append((s["id"], c))
     cli_cmds += [("ui", c) for c in re.findall(r"btn\('[^']*','run','([^']+)'", js)]
+    agent_cmds = {
+        "open", "back", "forward", "reload", "snapshot", "click", "fill", "type", "press",
+        "get", "screenshot", "tab", "stream", "dashboard", "close", "skills", "mcp",
+        "read", "eval", "wait", "scroll", "hover", "check", "uncheck", "select", "drag",
+    }
     bridge_src = BRIDGE_PY.read_text(encoding="utf-8")
     bridge_cli = set(re.findall(r'hermes\("([a-z][a-z0-9-]*)"', bridge_src))
     bridge_cli |= set(re.findall(r'cli_or_fallback\("[^"]+", \["([a-z][a-z0-9-]*)"', bridge_src))
@@ -162,6 +167,11 @@ def main() -> int:
     for screen, cmd in cli_cmds:
         if not cmd.strip() or cmd.startswith("/") or cmd.startswith(("python3 ", "cat ", "uname", "hermes --help")):
             continue
+        if cmd.startswith("agent-browser "):
+            parts = cmd.split()
+            if len(parts) < 2 or parts[1] in agent_cmds or parts[1].startswith("-"):
+                continue
+            unknown_cli.append("%s: %s (subcommand=%s)" % (screen, cmd, parts[1]))
         if cmd.startswith("hermes "):
             parts = cmd.split()
             if len(parts) < 2:

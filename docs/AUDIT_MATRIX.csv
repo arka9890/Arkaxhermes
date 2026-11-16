@@ -57,6 +57,25 @@ UI,settings,data-act=resume,click/change handler,OK
 UI,settings,data-act=run,click/change handler,OK
 UI,settings,data-act=theme,click/change handler,OK
 UI,settings,data-act=toggle-setting,click/change handler,OK
+UI,browser,data-act=browser-back,click/change handler,OK
+UI,browser,data-act=browser-cmd,click/change handler,OK
+UI,browser,data-act=browser-connect,click/change handler,OK
+UI,browser,data-act=browser-dashboard,click/change handler,OK
+UI,browser,data-act=browser-forward,click/change handler,OK
+UI,browser,data-act=browser-go,click/change handler,OK
+UI,browser,data-act=browser-reload,click/change handler,OK
+UI,browser,data-act=browser-screenshot,click/change handler,OK
+UI,browser,data-act=browser-snapshot,click/change handler,OK
+UI,browser,data-act=browser-start,click/change handler,OK
+UI,browser,data-act=browser-status,click/change handler,OK
+UI,browser,data-act=browser-stop,click/change handler,OK
+UI,browser,data-act=browser-tabs,click/change handler,OK
+UI,browser,data-act=drawer,click/change handler,OK
+UI,browser,data-act=drawer-close,click/change handler,OK
+UI,browser,data-act=nav,click/change handler,OK
+UI,browser,data-act=new-chat,click/change handler,OK
+UI,browser,data-act=resume,click/change handler,OK
+UI,browser,data-act=theme,click/change handler,OK
 UI,sessions,data-act=drawer,click/change handler,OK
 UI,sessions,data-act=drawer-close,click/change handler,OK
 UI,sessions,data-act=feature-load,click/change handler,OK
@@ -263,6 +282,13 @@ Bridge,hermes_bridge.py,backups.list,ACTIONS,OK
 Bridge,hermes_bridge.py,batch.run,ACTIONS,OK
 Bridge,hermes_bridge.py,bots.list,ACTIONS,OK
 Bridge,hermes_bridge.py,bots.set,ACTIONS,OK
+Bridge,hermes_bridge.py,browser.command,ACTIONS,OK
+Bridge,hermes_bridge.py,browser.dashboard,ACTIONS,OK
+Bridge,hermes_bridge.py,browser.screenshot,ACTIONS,OK
+Bridge,hermes_bridge.py,browser.snapshot,ACTIONS,OK
+Bridge,hermes_bridge.py,browser.start,ACTIONS,OK
+Bridge,hermes_bridge.py,browser.status,ACTIONS,OK
+Bridge,hermes_bridge.py,browser.stop,ACTIONS,OK
 Bridge,hermes_bridge.py,config.get,ACTIONS,OK
 Bridge,hermes_bridge.py,config.set,ACTIONS,OK
 Bridge,hermes_bridge.py,context.add,ACTIONS,OK
@@ -322,6 +348,10 @@ Bridge,hermes_bridge.py,tools.list,ACTIONS,OK
 Bridge,hermes_bridge.py,tools.set,ACTIONS,OK
 Bridge,hermes_bridge.py,trajectories.list,ACTIONS,OK
 Bridge,hermes_bridge.py,update,ACTIONS,OK
+HTTP,ArkaxHttpServer.kt,/api/browser/command,handler,OK
+HTTP,ArkaxHttpServer.kt,/api/browser/start,handler,OK
+HTTP,ArkaxHttpServer.kt,/api/browser/status,handler,OK
+HTTP,ArkaxHttpServer.kt,/api/browser/stop,handler,OK
 HTTP,ArkaxHttpServer.kt,/api/chat/stop,handler,OK
 HTTP,ArkaxHttpServer.kt,/api/events,handler,OK
 HTTP,ArkaxHttpServer.kt,/api/exec,handler,OK
@@ -332,6 +362,7 @@ HTTP,ArkaxHttpServer.kt,/api/status,handler,OK
 JS bridge,ArkaxJsBridge.kt,copy,@JavascriptInterface,OK
 JS bridge,ArkaxJsBridge.kt,dictate,@JavascriptInterface,OK
 JS bridge,ArkaxJsBridge.kt,haptic,@JavascriptInterface,OK
+JS bridge,ArkaxJsBridge.kt,openBrowserDashboard,@JavascriptInterface,OK
 JS bridge,ArkaxJsBridge.kt,openExternal,@JavascriptInterface,OK
 JS bridge,ArkaxJsBridge.kt,pickFile,@JavascriptInterface,OK
 JS bridge,ArkaxJsBridge.kt,platform,@JavascriptInterface,OK
@@ -424,6 +455,12 @@ Perintah UI,provider,hermes config get model.provider --json,Terminal /api/exec,
 Perintah UI,workspace,hermes config path,Terminal /api/exec,OK
 Perintah UI,workspace,hermes config env-path,Terminal /api/exec,OK
 Perintah UI,workspace,hermes sessions list --limit 20,Terminal /api/exec,OK
+Perintah UI,browser,agent-browser open example.com,Terminal /api/exec,OK
+Perintah UI,browser,agent-browser snapshot -i,Terminal /api/exec,OK
+Perintah UI,browser,agent-browser click @e1,Terminal /api/exec,OK
+Perintah UI,browser,agent-browser get url,Terminal /api/exec,OK
+Perintah UI,browser,agent-browser stream status,Terminal /api/exec,OK
+Perintah UI,browser,agent-browser dashboard start --port 4848,Terminal /api/exec,OK
 Perintah UI,sessions,hermes sessions list --limit 20,Terminal /api/exec,OK
 Perintah UI,sessions,hermes chat --resume latest -Q --oneshot,Terminal /api/exec,OK
 Perintah UI,sessions,hermes sessions stats,Terminal /api/exec,OK

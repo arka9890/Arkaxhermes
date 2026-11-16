@@ -14,6 +14,9 @@ android {
     namespace = "com.arkaxhermes.app"
     compileSdk = 35
 
+    // Chrome for Testing dibawa sebagai install-time asset pack (±128 MB).
+    assetPacks += ":browser_pack"
+
     defaultConfig {
         applicationId = "com.arkaxhermes.app"
         minSdk = 26

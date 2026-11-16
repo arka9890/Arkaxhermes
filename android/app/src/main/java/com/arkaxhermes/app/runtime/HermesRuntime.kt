@@ -20,6 +20,7 @@ import kotlin.concurrent.thread
 /** Lapisan tinggi: instalasi, chat streaming, fitur, layanan, log. */
 class HermesRuntime(private val context: Context) {
     val proot = ProotRuntime(context)
+    val browser = BrowserRuntime(context, proot)
     val settings = SettingsStore(context)
     val vault = KeyVault(context)
 
@@ -63,6 +64,13 @@ class HermesRuntime(private val context: Context) {
                 "upstreamTag" to "v0.23.1"
             ),
             "services" to ServiceState.snapshot(),
+            "browser" to jsonOf(
+                "engine" to "agent-browser v0.43.0 + Chrome for Testing 157.0.8103.78",
+                "session" to BrowserRuntime.SESSION,
+                "streamPort" to BrowserRuntime.STREAM_PORT,
+                "dashboardPort" to BrowserRuntime.DASHBOARD_PORT,
+                "chromePresent" to RuntimePaths.browserZip(context).exists()
+            ),
             "system" to SystemStats.snapshot(),
             "model" to jsonOf(
                 "provider" to settings.defaultProvider,

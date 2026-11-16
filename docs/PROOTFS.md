@@ -1,3 +1,5 @@
+> **Browser bawaan:** `/opt/arkax/native/libagent-browser.so`, `/mnt/arkax/browser/chrome-wrapper.sh`, dan `/usr/local/bin/agent-browser` ikut disiapkan; lihat [BROWSER.md](BROWSER.md).
+
 # Ubuntu proot di dalam Arkaxhermes
 
 ## Mengapa proot, bukan Termux / chroot / VM

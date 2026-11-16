@@ -1,3 +1,5 @@
+> **Browser bawaan:** `browser_*` Hermes kini memakai `agent-browser` v0.43.0; tab Browser menampilkan viewport live. Lihat [BROWSER.md](BROWSER.md).
+
 > **Audit 16 Nov 2026:** pemetaan ulang terhadap 71 perintah CLI dan 67 aksi bridge ada di [AUDIT.md](AUDIT.md). Fitur interaktif/desktop tetap ditandai sebagai `TUI`/`CLI`, bukan UI tiruan.
 
 # Peta Fitur: Hermes Agent → Arkaxhermes

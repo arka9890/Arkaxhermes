@@ -85,6 +85,18 @@ Tabel lengkap satu-per-satu ada di [docs/FEATURE_MAP.md](docs/FEATURE_MAP.md). P
 
 ---
 
+## Browser bawaan & tab Browser
+
+Arkaxhermes sekarang membawa **browser sungguhan**, bukan sekadar WebView kosong:
+
+- [`vercel-labs/agent-browser`](https://github.com/vercel-labs/agent-browser) `v0.43.0` (Apache-2.0), binary Linux arm64 dibundel sebagai `libagent-browser.so`.
+- **Chrome for Testing 157.0.8103.78 `linux-arm64`** dibawa sebagai **install-time asset pack** `browser_pack` (±128 MB); `scripts/fetch-agent-browser.sh --stage-assets` menyiapkannya sebelum build APK.
+- Daemon CDP memakai sesi tetap `arkaxhermes`, WebSocket live viewport di `ws://127.0.0.1:9223`, dan dashboard observability di `http://127.0.0.1:4848`.
+- **Tab Browser** di bottom nav menampilkan frame JPEG live, menerima sentuhan/mouse/keyboard, tombol Back/Forward/Reload, Snapshot, Screenshot, Tabs, Start/Stop, Status, dan Dashboard.
+- Endpoint native: `/api/browser/status|start|stop|command|dashboard`; aksi bridge `browser.*` juga tersedia lewat `/api/hermes/feature`.
+
+Karena Chrome ZIP ±128 MB, berkasnya **tidak disimpan di Git** agar repo ringan, tetapi tetap ikut terpasang di APK/AAB lewat Play Asset Delivery (`deliveryType = "install-time"`). Detail ada di [docs/BROWSER.md](docs/BROWSER.md) dan [docs/CLI_CATALOG.md](docs/CLI_CATALOG.md).
+
 ## Audit kompatibilitas v0.23.1
 
 Saya sudah menjalankan audit dua arah terhadap source Hermes yang dibundel: `hermes --help` + help subcommand, lalu render seluruh UI untuk mencocokkan tiap tombol ke handler/endpoint/CLI. Hasil akhir: **27 layar, 44 tombol, 0 dead button, 0 ikon hilang, 71 perintah CLI, 67 aksi bridge, 43 provider, 57 toolset + `stt`, 0 ERROR / 0 WARNING**.

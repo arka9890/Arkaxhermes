@@ -36,7 +36,7 @@ class AgentService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val allowedNames = listOf("gateway", "cron", "dashboard", "webhook", "all")
+        val allowedNames = listOf("gateway", "cron", "dashboard", "webhook", "browser", "all")
         val allowedActions = listOf("start", "stop", "restart", "status")
         val name = intent?.getStringExtra("name").takeIf { it in allowedNames } ?: "gateway"
         val action = intent?.getStringExtra("action").takeIf { it in allowedActions } ?: "start"

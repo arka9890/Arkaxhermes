@@ -54,6 +54,9 @@ fi
 chmod 700 "$HERMES_HOME"
 touch "$HERMES_HOME/.env" && chmod 600 "$HERMES_HOME/.env"
 
+step browser 88 "Memasang agent-browser + Chrome for Testing"
+bash /opt/arkax/browser-bootstrap.sh || info "Browser bawaan belum siap — tab Browser akan menampilkan status"
+
 step doctor 92 "hermes doctor"
 bash /opt/arkax/doctor.sh || info "doctor menemukan peringatan — lihat layar Log & Doctor"
 

@@ -44,4 +44,5 @@ class ArkaxJsBridge(private val activity: MainActivity) {
     @JavascriptInterface fun securePut(name: String, value: String) = activity.securePut(name, value)
     @JavascriptInterface fun secureGet(name: String): String = activity.secureGet(name)
     @JavascriptInterface fun secureDelete(name: String) = activity.secureDelete(name)
+    @JavascriptInterface fun openBrowserDashboard() = activity.openBrowserDashboard()
 }

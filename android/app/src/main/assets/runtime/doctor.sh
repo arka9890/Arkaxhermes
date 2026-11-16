@@ -28,6 +28,9 @@ check "pip"       python3 -m pip --version
 check "hermes"    hermes --version
 check "sqlite3"   sqlite3 --version
 check "ffmpeg"    ffmpeg -version
+check "agent-browser CLI" /usr/local/bin/agent-browser --version
+check "Chrome headless-shell" test -x /mnt/arkax/browser/chrome-wrapper.sh
+info "Stream browser: ws://127.0.0.1:9223 · Dashboard: http://127.0.0.1:4848"
 check "ripgrep"   rg --version
 check "resolv.conf" test -s /etc/resolv.conf
 check "HERMES_HOME" test -d "${HERMES_HOME:-/root/.hermes}"

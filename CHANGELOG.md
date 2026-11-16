@@ -1,3 +1,12 @@
+## 0.2.0 — 16 November 2026 (browser bawaan)
+
+- Tambah `agent-browser v0.43.0` dari vercel-labs: binary Rust CLI linux-arm64 + daemon CDP, diverifikasi SHA-256.
+- Tambah Chrome for Testing 157.0.8103.78 linux-arm64 sebagai install-time asset pack `browser_pack`; `fetch-agent-browser.sh` + `build-apk.sh --stage-assets`.
+- Tab **Browser** baru di bottom nav: live WebSocket viewport `9223`, input mouse/touch/keyboard, URL bar, Back/Forward/Reload, Snapshot, Screenshot, Tabs, Start/Stop/Status, Dashboard `4848`.
+- `BrowserRuntime.kt` mengekstrak Chrome ZIP dari asset pack, menulis wrapper `--no-sandbox`, dan menjalankan CLI lewat `/usr/local/bin/agent-browser`.
+- Endpoint `/api/browser/*`, aksi `browser.*` di `hermes_bridge.py`, service `browser` di `AgentService`/`BootReceiver`, serta `ArkaxBridge.openBrowserDashboard()`.
+- `bootstrap.sh`, `services.sh`, `doctor.sh`, `AGENTS.md` skill, manifest, Gradle asset pack, `.gitignore`, dan audit (`28 layar / 57 tombol / 74 aksi / 0 ERROR`) diperbarui.
+
 ## 0.1.1 — 16 November 2026 (audit kompatibilitas)
 
 - Audit menyeluruh terhadap source Hermes `v0.23.1`: `hermes --help`, 71 perintah top-level, dan help subcommand dijalankan langsung dari source bundel.

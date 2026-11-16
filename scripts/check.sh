@@ -67,6 +67,10 @@ REQUIRED=(
   "android/app/src/main/assets/runtime/hermes_bridge.py"
   "android/app/src/main/assets/runtime/bootstrap.sh"
   "android/app/src/main/assets/runtime/install-hermes.sh"
+  "android/app/src/main/assets/runtime/agent-browser-wrapper.sh"
+  "android/app/src/main/assets/runtime/browser-bootstrap.sh"
+  "android/app/src/main/java/com/arkaxhermes/app/runtime/BrowserRuntime.kt"
+  "browser_pack/build.gradle.kts"
 )
 for f in "${REQUIRED[@]}"; do
   if [[ -f "$ARKAX_ROOT/$f" ]]; then ok "$f"; else bad "$f (hilang)"; fi
@@ -87,6 +91,8 @@ fi
 log "7. Aset biner (informasional, tidak menggagalkan CI)"
 [[ -f "$ROOTFS_ASSET_DIR/rootfs.sha256" ]] && ok "rootfs.sha256 ada" || skip "rootfs belum dibuat (scripts/make-assets.sh)"
 [[ -f "$JNILIBS_DIR/arm64-v8a/libproot.so" ]] && ok "libproot.so ada" || skip "libproot.so belum ada"
+[[ -f "$JNILIBS_DIR/arm64-v8a/libagent-browser.so" ]] && ok "libagent-browser.so ada" || skip "libagent-browser.so belum ada"
+[[ -f "$ARKAX_ROOT/dist/chrome-headless-shell-linux-arm64.zip" ]] && ok "Chrome for Testing ZIP ada di dist/ (distagel saat build)" || skip "Chrome ZIP akan diunduh saat build APK"
 [[ -f "$RUNTIME_ASSET_DIR/hermes-src.tar.gz" ]] && ok "source Hermes ada" || skip "source Hermes belum ada"
 
 log "8. Audit UI / CLI / API terhadap Hermes v0.23.1"

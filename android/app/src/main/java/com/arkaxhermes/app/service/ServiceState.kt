@@ -7,7 +7,7 @@ object ServiceState {
     private val states = ConcurrentHashMap<String, String>()
 
     init {
-        listOf("gateway", "cron", "dashboard", "webhook").forEach { states[it] = "stopped" }
+        listOf("gateway", "cron", "dashboard", "webhook", "browser").forEach { states[it] = "stopped" }
     }
 
     fun set(name: String, state: String, detail: String = "") {

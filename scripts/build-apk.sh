@@ -14,6 +14,9 @@ done
 
 [[ -f "$ASSET_ROOT/www/index.html" ]] || die "UI belum ada: $ASSET_ROOT/www/index.html"
 [[ -d "$ANDROID_DIR" ]] || die "direktori proyek Android hilang"
+
+# Pastikan binary agent-browser + Chrome for Testing tersedia dan distagel ke asset pack.
+"$ARKAX_ROOT/scripts/fetch-agent-browser.sh" --stage-assets >/dev/null || die "aset browser bawaan belum siap"
 if [[ ! -f "$ROOTFS_ASSET_DIR/rootfs.sha256" ]]; then
   warn "rootfs belum dibundel — APK akan tetap terbuild tetapi first-run membutuhkan jaringan / asset belum lengkap."
   warn "Jalankan: ./scripts/make-assets.sh"

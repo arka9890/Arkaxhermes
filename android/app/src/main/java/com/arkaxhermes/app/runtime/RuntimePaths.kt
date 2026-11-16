@@ -17,6 +17,10 @@ object RuntimePaths {
     fun inbox(context: Context): File = File(shared(context), "inbox")
     fun exports(context: Context): File = File(shared(context), "exports")
     fun userScripts(context: Context): File = File(shared(context), "scripts")
+    fun browser(context: Context): File = File(base(context), "browser")
+    fun browserZip(context: Context): File = File(browser(context), "chrome-headless-shell.zip")
+    fun browserChrome(context: Context): File = File(browser(context), "chrome")
+    fun nativeDir(context: Context): String = context.applicationInfo.nativeLibraryDir
     fun tmp(context: Context): File = File(base(context), "tmp")
     fun installLog(context: Context): File = File(base(context), "install.log")
     fun readyMarker(context: Context): File = File(rootfs(context), ".arkax-ready")
@@ -33,7 +37,8 @@ object RuntimePaths {
 
     fun ensure(context: Context) {
         listOf(base(context), rootfs(context).parentFile!!, scripts(context), shared(context),
-            inbox(context), exports(context), userScripts(context), tmp(context))
+            inbox(context), exports(context), userScripts(context), tmp(context),
+            browser(context), browserChrome(context))
             .forEach { if (!it.exists()) it.mkdirs() }
     }
 }

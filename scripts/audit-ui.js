@@ -23,6 +23,8 @@ function elem(id) {
     id, innerHTML: '', textContent: '', value: '', checked: false,
     scrollTop: 0, scrollHeight: 1000,
     classList: { add() {}, remove() {}, toggle() {} },
+    dataset: {}, tabIndex: 0,
+    addEventListener() {}, getBoundingClientRect() { return { left: 0, top: 0, width: 900, height: 560 }; },
     insertAdjacentHTML() {}, focus() {}, setSelectionRange() {},
     setAttribute() {}, getAttribute() { return null; }, closest() { return null; },
     querySelectorAll() { return []; }, appendChild() {}, style: { setProperty() {} },

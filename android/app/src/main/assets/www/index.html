@@ -171,6 +171,13 @@ html[data-theme="dark"] .segmented button.on{background:var(--primary);color:var
 .toast.show{opacity:1;transform:translateX(-50%)}
 .demo-badge{position:fixed;top:8px;right:calc(50% - 205px);z-index:50;font-size:9px;font-weight:800;letter-spacing:.06em;padding:4px 9px;border-radius:var(--pill);background:var(--warn);color:#fff;box-shadow:var(--shadow-sm)}
 @media(max-width:440px){.demo-badge{right:8px}}
+.browser-stage{position:relative;background:#060e20;border-radius:var(--radius-sm);border:1px solid var(--border);overflow:hidden;min-height:180px;display:grid;place-items:center}
+.browser-stage img{display:block;width:100%;height:auto;max-height:58vh;object-fit:contain;touch-action:none;cursor:crosshair;background:#fff}
+.browser-overlay{position:absolute;top:8px;left:8px;right:8px;display:flex;justify-content:space-between;gap:6px;pointer-events:none}
+.browser-overlay .tag{backdrop-filter:blur(8px)}
+.browser-log{height:108px;overflow-y:auto;background:var(--code);color:var(--code-text);border-radius:12px;padding:9px;font-family:var(--mono);font-size:10px;line-height:1.55;white-space:pre-wrap}
+.browser-url{display:flex;gap:6px;margin-bottom:10px}
+.browser-url input{flex:1;padding:10px 12px;border-radius:var(--pill);border:1px solid var(--border);background:var(--surface);outline:0;font-family:var(--mono);font-size:11px}
 .hidden{display:none!important}
 </style>
 </head>
@@ -742,8 +749,9 @@ var Demo = {
       system:{cpuLoad:32,cores:8,ramUsedMb:4300,ramTotalMb:12288,tempC:42,diskFreeMb:8192},
       model:{provider:'anthropic',name:'Claude 3.5 Sonnet',context:200000},
       settings:{theme:state.theme,fontSize:state.font,haptics:true,autoSave:true,encryptLocal:true,
-        services:{gateway:true,cron:true,dashboard:false,webhook:false},
-        chat:{defaultProvider:'anthropic',defaultModel:'claude-sonnet-4.5',toolsets:'hermes-cli',yolo:false}}
+        services:{gateway:true,cron:true,dashboard:false,webhook:false,browser:true},
+        chat:{defaultProvider:'anthropic',defaultModel:'claude-sonnet-4.5',toolsets:'hermes-cli',yolo:false}},
+      browser:{engine:'agent-browser v0.43.0 + Chrome for Testing 157.0.8103.78',session:'arkaxhermes',streamPort:9223,dashboardPort:4848,chromePresent:true}
     };
     else if(p === '/api/settings') out = (method==='POST' && body) ? Object.assign({},state.settings,body) : state.settings;
     else if(p === '/api/exec'){
@@ -752,6 +760,11 @@ var Demo = {
     }
     else if(p === '/api/logs') out = {ok:true,logs:'[demo] Arkaxhermes siap\nhermes doctor: OK\ngateway: running'};
     else if(p === '/api/doctor') out = {ok:true,data:{local:{python:'3.12.3'},upstream:'All checks passed'}};
+    else if(p === '/api/browser/status') out = {ok:true,session:'arkaxhermes',chrome:true,chromeMessage:'Chrome siap (demo)',streamPort:9223,streamUrl:'ws://127.0.0.1:9223/?pacing=ack&maxFps=8',dashboardUrl:'http://127.0.0.1:4848',url:'https://example.com',title:'Example Domain',cdpUrl:'ws://127.0.0.1:9222/devtools/page/demo',stream:{ok:true,data:{enabled:true,port:9223,connected:true,screencasting:true}},tabs:{ok:true,data:{tabs:[{id:1,url:'https://example.com',title:'Example Domain'}]}}};
+    else if(p === '/api/browser/start') out = {ok:true,streamUrl:'ws://127.0.0.1:9223/?pacing=ack&maxFps=8',dashboardUrl:'http://127.0.0.1:4848'};
+    else if(p === '/api/browser/stop') out = {ok:true,stopped:true};
+    else if(p === '/api/browser/dashboard') out = {ok:true,url:'http://127.0.0.1:4848'};
+    else if(p === '/api/browser/command') out = {ok:true,argv:(body&&body.argv)||[],stdout:'{"success":true,"data":{"url":"https://example.com"}}',stderr:'',exit:0,elapsedMs:120};
     else if(p.indexOf('/api/hermes/') === 0){
       var action = (body && body.action) || p.replace('/api/hermes/','').replace(/\//g,'.');
       out = Demo.feature(action, body||{});
@@ -795,6 +808,13 @@ var Demo = {
     else if(action==='cli.catalog') d = CLI_CATALOG;
     else if(action==='doctor') d = {local:{python:'3.12.3',services:{gateway:'running'}},upstream:'All checks passed',exit:0};
     else if(action==='status') d = {hermesVersion:'0.23.1',skills:4,services:{gateway:'running'},sessionDb:'/root/.hermes/state.db'};
+    else if(action==='browser.status') d = {session:'arkaxhermes',streamPort:9223,dashboardUrl:'http://127.0.0.1:4848',url:'https://example.com',title:'Example Domain',stream:{enabled:true,connected:true,screencasting:true}};
+    else if(action==='browser.command') d = {argv:body.argv||body.url||['open'],stdout:'{"success":true}'};
+    else if(action==='browser.start') d = {dashboardUrl:'http://127.0.0.1:4848',streamUrl:'ws://127.0.0.1:9223'};
+    else if(action==='browser.stop') d = {stopped:true};
+    else if(action==='browser.snapshot') d = {text:'- link "Learn more" [ref=e1]\n- heading "Example Domain" [ref=e2]'};
+    else if(action==='browser.screenshot') d = {path:'/mnt/arkax/exports/browser-demo.jpg'};
+    else if(action==='browser.dashboard') d = {url:'http://127.0.0.1:4848'};
     else if(action==='batch.run') d = {results:[{argv:['python3','batch_runner.py'],ok:true}]};
     else if(action==='bots.set') d = {bots:[{name:body.name||'Bot',model:body.model||'claude-sonnet-4.5'}]};
     else if(action==='config.set') d = {key:body.key,value:body.value};
@@ -950,7 +970,10 @@ var state = {
   search:'', filter:'Semua Aset', providerFilter:'Semua', composer:'', slashOpen:false,
   terminal:[{t:'Arkaxhermes · Ubuntu 24.04.5 proot · aarch64',c:'dim'},{t:'Ketik perintah atau pilih aksi cepat. Semua perintah berjalan di /bin/bash rootfs.',c:'dim'},{t:'$ hermes --version',c:''},{t:'Hermes Agent v0.23.1',c:'ok'}],
   modal:null, install:null, toastTimer:null, toggles:{}, installLog:[],
-  featureData:{}, workspaceData:null, workspacePath:'/root/.hermes', cliSearch:''
+  featureData:{}, workspaceData:null, workspacePath:'/root/.hermes', cliSearch:'',
+  browser:{url:'https://example.com',title:'',frame:'',connected:false,screencasting:false,
+    streamPort:9223,dashboardPort:4848,ws:null,seq:0,viewW:900,viewH:600,activity:[
+      {t:'Browser bawaan siap',c:'dim'},{t:'agent-browser v0.43.0 · session arkaxhermes',c:'dim'}]}
 };
 state.messages=[{
   role:'assistant',content:'Halo! Saya **Hermes Agent** yang berjalan di dalam Ubuntu proot di perangkat Anda. ☤\n\nSaya punya memori lintas sesi, skills yang berkembang sendiri, 40+ tools, cron, gateway, MCP, dan subagen. Mau saya jelaskan cara kerja React Server Components dengan analogi sederhana dan kode minimal?',
@@ -960,8 +983,8 @@ state.messages=[{
 var CLI_CATALOG = [{"name":"chat","desc":"Interactive chat with the agent","subs":[],"usage":"usage: hermes chat [-h] [-q QUERY | --query-file PATH] [--oneshot] [--image IMAGE] [-m MODEL] [-t TOOLSETS] [--reasoning LEVEL] [-s SKILLS] [--provider PROVIDER] [--base-url URL] [--api-key KEY]"},{"name":"model","desc":"Select default model and provider","subs":[],"usage":"usage: hermes model [-h] [--refresh] [--portal-url PORTAL_URL] [--inference-url INFERENCE_URL] [--client-id CLIENT_ID] [--scope SCOPE] [--no-browser] [--timeout TIMEOUT] [--ca-bundle CA_BUNDLE]"},{"name":"moa","desc":"Configure Mixture of Agents provider/model slots","subs":["list","ls","configure","config","delete","rm"],"usage":"usage: hermes moa [-h] {list,ls,configure,config,delete,rm} ..."},{"name":"fallback","desc":"Manage fallback providers (tried when the primary model fails)","subs":["list","ls","add","remove","rm","clear"],"usage":"usage: hermes fallback [-h] {list,ls,add,remove,rm,clear} ..."},{"name":"worktree","desc":"Audit and reclaim accumulated git worktrees and merged branches","subs":["list","ls","audit","prune","restore"],"usage":"usage: hermes worktree [-h] {list,ls,audit,prune,restore} ..."},{"name":"browser","desc":"Real-profile browsing helpers (close a browser locking its profile)","subs":["close-profile","export-signins"],"usage":"usage: hermes browser [-h] {close-profile,export-signins} ..."},{"name":"secrets","desc":"Manage external secret sources (Bitwarden, 1Password)","subs":["bitwarden","bw","onepassword","op","1password"],"usage":"usage: hermes secrets [-h] {bitwarden,bw,onepassword,op,1password} ..."},{"name":"egress","desc":"Manage the iron-proxy egress credential-injection firewall","subs":["install","setup","start","stop","restart","reload","status","disable","config"],"usage":"usage: hermes egress [-h] {install,setup,start,stop,restart,reload,status,disable,config} ..."},{"name":"migrate","desc":"Move over from another agent, or migrate retired models and deprecated settings","subs":["xai","relay","openclaw","claude-code","codex","cursor","grok-bot","openbot"],"usage":"usage: hermes migrate [-h] {xai,relay,openclaw,claude-code,codex,cursor,grok-bot,openbot} ..."},{"name":"codex-runtime","desc":"Manage the optional codex app-server runtime (migrate MCP config)","subs":["migrate"],"usage":"usage: hermes codex-runtime [-h] {migrate} ..."},{"name":"gateway","desc":"Messaging gateway management","subs":["run","ensure","attach","start","stop","restart","status","install","uninstall","list","setup","migrate-legacy","migrate","enroll"],"usage":"usage: hermes gateway [-h] [--accept-hooks] {run,ensure,attach,start,stop,restart,status,install,uninstall,list,setup,migrate-legacy,migrate,enroll} ..."},{"name":"proxy","desc":"Local OpenAI-compatible proxy to OAuth providers","subs":["start","status","providers"],"usage":"usage: hermes proxy [-h] {start,status,providers} ..."},{"name":"lsp","desc":"Language Server Protocol management","subs":["status","list","install","install-all","restart","which"],"usage":"usage: hermes lsp [-h] {status,list,install,install-all,restart,which} ..."},{"name":"setup","desc":"Interactive setup wizard","subs":[],"usage":"usage: hermes setup [-h] [--non-interactive] [--reset] [--reconfigure] [--quick] [--portal] [{model,tts,terminal,gateway,tools,telemetry,agent}]"},{"name":"whatsapp","desc":"Set up WhatsApp integration","subs":[],"usage":"usage: hermes whatsapp [-h] [--passkey-browser EXECUTABLE]"},{"name":"whatsapp-cloud","desc":"Set up WhatsApp Business Cloud API integration","subs":[],"usage":"usage: hermes whatsapp-cloud [-h]"},{"name":"slack","desc":"Slack integration helpers (manifest generation, etc.)","subs":["manifest"],"usage":"usage: hermes slack [-h] {manifest} ..."},{"name":"send","desc":"Send a message to a configured platform (scripts, cron jobs, CI).","subs":[],"usage":"usage: hermes send [-h] [-t TARGET] [-f PATH] [-s LINE] [--mention PHONE_OR_JID] [-l] [-q] [--json] [message]"},{"name":"logout","desc":"Clear authentication for an inference provider","subs":[],"usage":"usage: hermes logout [-h] [--provider {nous,openai-codex,xai-oauth}]"},{"name":"auth","desc":"Manage pooled provider credentials","subs":["add","list","remove","reset","priority","refresh","status","logout","upgrade"],"usage":"usage: hermes auth [-h] {add,list,remove,reset,priority,refresh,status,logout,upgrade} ..."},{"name":"status","desc":"Show status of all components","subs":["list","prune"],"usage":"usage: hermes status [-h] [--full] [--deep]"},{"name":"pause","desc":"Emergency stop: pause cron/kanban dispatch and new gateway turns","subs":["resume"],"usage":"usage: hermes pause [-h] [--reason REASON]"},{"name":"resume","desc":"Lift the emergency stop set by `hermes pause`","subs":[],"usage":"usage: hermes resume [-h]"},{"name":"cron","desc":"Cron job management","subs":["list","create","add","edit","pause","resume","run","cancel","remove","rm","delete","status","runs","history","incidents","notepad","doctor","tick"],"usage":"usage: hermes cron [-h] [--accept-hooks] {list,create,add,edit,pause,resume,run,cancel,remove,rm,delete,status,runs,history,incidents,notepad,doctor,tick} ..."},{"name":"webhook","desc":"Manage dynamic webhook subscriptions","subs":["subscribe","add","list","ls","remove","rm","test"],"usage":"usage: hermes webhook [-h] {subscribe,add,list,ls,remove,rm,test} ..."},{"name":"peer","desc":"Bot-to-bot DMs across machines (peer Hermes gateways)","subs":["add","set","list","ls","remove","rm","dm","run","status","stop"],"usage":"usage: hermes peer [-h] {add,set,list,ls,remove,rm,dm,run,status,stop} ..."},{"name":"portal","desc":"Set up Nous Portal (login, model pick, Tool Gateway); see also `portal info`","subs":["login","info","status","open","tools"],"usage":"usage: hermes portal [-h] {login,info,status,open,tools} ..."},{"name":"kanban","desc":"Multi-profile collaboration board (tasks, links, comments)","subs":[],"usage":"usage: hermes kanban [-h] [--board <slug>]"},{"name":"project","desc":"Manage projects (named, multi-folder workspaces)","subs":["create","list","ls","show","add-folder","remove-folder","rename","set-primary","use","archive","restore","bind-board"],"usage":"usage: hermes project [-h] {create,list,ls,show,add-folder,remove-folder,rename,set-primary,use,archive,restore,bind-board} ..."},{"name":"hooks","desc":"Inspect and manage shell-script hooks","subs":["list","ls","test","revoke","remove","rm","doctor"],"usage":"usage: hermes hooks [-h] {list,ls,test,revoke,remove,rm,doctor} ..."},{"name":"doctor","desc":"Check configuration and dependencies","subs":[],"usage":"usage: hermes doctor [-h] [--fix] [--live] [--ack ADVISORY_ID]"},{"name":"verify","desc":"Detect a project's run recipe and smoke-test it","subs":[],"usage":"usage: hermes verify [-h] [--detect-only] [--save] [--skip-start] [--phase {bootstrap,build,test,start}] [--port PORT] [--timeout TIMEOUT] [--ready-timeout READY_TIMEOUT] [--json] [path]"},{"name":"security","desc":"Supply-chain audit (OSV.dev) for venv, plugins, and MCP servers","subs":["audit"],"usage":"usage: hermes security [-h] <subcommand> ..."},{"name":"approvals","desc":"Approval-prompt tools (mine history into allowlist proposals)","subs":["suggest","test"],"usage":"usage: hermes approvals [-h] <subcommand> ..."},{"name":"dump","desc":"Dump setup summary for support/debugging","subs":[],"usage":"usage: hermes dump [-h] [--show-keys]"},{"name":"debug","desc":"Debug tools — upload logs and system info for support","subs":["share","delete"],"usage":"usage: hermes debug [-h] {share,delete} ..."},{"name":"backup","desc":"Back up Hermes home directory to a zip file","subs":[],"usage":"usage: hermes backup [-h] [-o OUTPUT] [-q] [-l LABEL] [-k N]"},{"name":"checkpoints","desc":"Inspect / prune / clear ~/.hermes/checkpoints/","subs":[],"usage":"usage: hermes checkpoints [-h] COMMAND ..."},{"name":"import","desc":"Restore a Hermes backup from a zip file","subs":[],"usage":"usage: hermes import [-h] [--force] zipfile"},{"name":"config","desc":"View and edit configuration","subs":["show","edit","get","set","unset","path","env-path","check","migrate"],"usage":"usage: hermes config [-h] {show,edit,get,set,unset,path,env-path,check,migrate} ..."},{"name":"skin","desc":"List, switch, and tweak skins","subs":["list","use","set"],"usage":"usage: hermes skin [-h] {list,use,set} ..."},{"name":"console","desc":"Open the safe Hermes command console","subs":[],"usage":"usage: hermes console [-h]"},{"name":"pairing","desc":"Manage DM pairing codes for user authorization","subs":["list","approve","revoke","clear-pending"],"usage":"usage: hermes pairing [-h] {list,approve,revoke,clear-pending} ..."},{"name":"skills","desc":"Search, install, configure, and manage skills","subs":["trust","untrust","browse","search","install","inspect","list","check","update","audit","uninstall","reset","list-modified","diff","opt-out","opt-in","repair-official","publish","snapshot","tap","config"],"usage":"usage: hermes skills [-h] {trust,untrust,browse,search,install,inspect,list,check,update,audit,uninstall,reset,list-modified,diff,opt-out,opt-in,repair-official,publish,snapshot,tap,config} ..."},{"name":"bundles","desc":"Create, list, and manage skill bundles (aliases for multiple skills)","subs":["list","show","create","delete","reload"],"usage":"usage: hermes bundles [-h] {list,show,create,delete,reload} ..."},{"name":"plugins","desc":"Manage and validate plugins","subs":["install","search","browse","validate","update","auto-update","adopt","trust-update-url","check-updates","remove","list","enable","disable","capabilities","doctor","pack","export","show"],"usage":"usage: hermes plugins [-h]"},{"name":"curator","desc":"Background skill maintenance (curator) — status, run, pause, pin","subs":["status","usage","run","pause","resume","pin","unpin","lock","unlock","list-unmanaged","adopt","restore","list-archived","archive","prune","backup","rollback","ledger","purge"],"usage":"usage: hermes curator [-h] {status,usage,run,pause,resume,pin,unpin,lock,unlock,list-unmanaged,adopt,restore,list-archived,archive,prune,backup,rollback,ledger,purge} ..."},{"name":"pets","desc":"Browse, install, and select petdex animated pets","subs":["list","install","select","show","off","scale","remove","doctor"],"usage":"usage: hermes pets [-h] {list,install,select,show,off,scale,remove,doctor} ..."},{"name":"clipboard","desc":"Read this machine's clipboard (device-local)","subs":["image"],"usage":"usage: hermes clipboard [-h] {image} ..."},{"name":"journey","desc":"(learning, memory-graph) Timeline of learned skills + memories over time","subs":["list","delete","edit"],"usage":"usage: hermes journey [-h] [--reveal 0..1] [--play] [--fps FPS] [--width WIDTH] [--height HEIGHT] [--no-color] [--json] {list,delete,edit} ..."},{"name":"memory","desc":"Configure external memory provider","subs":["setup","status","off","reset"],"usage":"usage: hermes memory [-h] {setup,status,off,reset} ..."},{"name":"tools","desc":"Configure which tools are enabled per platform","subs":["list","disable","enable","post-setup"],"usage":"usage: hermes tools [-h] [--summary] {list,disable,enable,post-setup} ..."},{"name":"computer-use","desc":"Manage the Computer Use (cua-driver) backend (macOS/Windows/Linux)","subs":["install","status","doctor","permissions","screen"],"usage":"usage: hermes computer-use [-h] {install,status,doctor,permissions,screen} ..."},{"name":"mcp","desc":"Manage MCP server connections","subs":["add","remove","rm","list","ls","test","configure","config","login","reauth","picker","catalog","install"],"usage":"usage: hermes mcp [-h] {add,remove,rm,list,ls,test,configure,config,login,reauth,picker,catalog,install} ..."},{"name":"connectors","desc":"Manage hosted app connectors and their accounts","subs":["list","ls","accounts","connect","rename","disconnect"],"usage":"usage: hermes connectors [-h] {list,ls,accounts,connect,rename,disconnect} ..."},{"name":"sessions","desc":"Manage session history (list, rename, export, prune, delete)","subs":["list","export","delete","prune","archive","optimize","clean-markers","optimize-storage","repair","set-journal-mode","repair-routing","repair-profiles","repair-prompts","recover","stats","pin","unpin","pinned","retitle-skills","browse","import"],"usage":"usage: hermes sessions [-h]"},{"name":"insights","desc":"Show usage insights and analytics","subs":[],"usage":"usage: hermes insights [-h] [--days DAYS] [--source SOURCE]"},{"name":"usage","desc":"Show account rate-limit windows (the /usage block) without starting a session","subs":[],"usage":"usage: hermes usage [-h] [--provider PROVIDER] [--json]"},{"name":"monitoring","desc":"Inspect gateway monitoring (health & diagnostics export)","subs":["status"],"usage":"usage: hermes monitoring [-h] {status} ..."},{"name":"vault","desc":"Manage the local encrypted autofill vault (add/list/rm credentials)","subs":["add","list","rm","sources","key"],"usage":"usage: hermes vault [-h] {add,list,rm,sources,key} ..."},{"name":"update","desc":"Update Hermes Agent to the latest version","subs":[],"usage":"usage: hermes update [-h] [--gateway] [--check] [--plan] [--list-venv-holders] [--no-backup] [--backup] [--yes] [--keep-stash] [--branch NAME] [--switch-branch] [--force] [--force-venv]"},{"name":"uninstall","desc":"Uninstall Hermes Agent","subs":[],"usage":"usage: hermes uninstall [-h] [--full | --gui | --data] [--gui-summary] [--yes] [--dry-run]"},{"name":"acp","desc":"Run Hermes Agent as an ACP (Agent Client Protocol) server","subs":[],"usage":"usage: hermes acp [-h] [--accept-hooks] [--version] [--check] [--setup] [--setup-browser] [--yes]"},{"name":"profile","desc":"Manage profiles — multiple isolated Hermes instances","subs":["list","use","create","delete","describe","show","alias","rename","purge-identity","migrate-identity","export","import","install","update","info"],"usage":"usage: hermes profile [-h] {list,use,create,delete,describe,show,alias,rename,purge-identity,migrate-identity,export,import,install,update,info} ..."},{"name":"completion","desc":"Print shell completion script (bash, zsh, or fish)","subs":[],"usage":"usage: hermes completion [-h] [{bash,zsh,fish}]"},{"name":"dashboard","desc":"Start the web UI dashboard","subs":["register"],"usage":"usage: hermes dashboard [-h] [--port PORT] [--host HOST] [--insecure] [--skip-build] [--isolated] [--stop] [--status] [--no-open] {register} ..."},{"name":"serve","desc":"Start the Hermes backend server (headless; powers the desktop app and remote backends)","subs":[],"usage":"usage: hermes serve [-h] [--port PORT] [--host HOST] [--insecure] [--skip-build] [--isolated] [--stop] [--status] [--ssh-session-token-file PATH] [--ssh-owner-nonce NONCE]"},{"name":"webapp","desc":"Open the Hermes Desktop workspace in a browser","subs":[],"usage":"usage: hermes webapp [-h] [--no-open] [--force-build] [--skip-build] [--build-only | --status | --sign-out]"},{"name":"desktop","desc":"(gui)       Build and launch the native desktop app","subs":[],"usage":"usage: hermes desktop [-h] [--source] [--build-only] [--fake-boot] [--ignore-existing] [--hermes-root HERMES_ROOT] [--cwd CWD] [--skip-build] [--local] [--force-build] [--setup-tcc-identity]"},{"name":"logs","desc":"View and filter Hermes log files","subs":[],"usage":"usage: hermes logs [-h] [-n LINES] [-f] [--level LEVEL] [--session ID] [--since TIME] [--component NAME] [log_name]"},{"name":"prompt-size","desc":"Show a byte breakdown of the system prompt + tool schemas","subs":[],"usage":"usage: hermes prompt-size [-h] [--platform PLATFORM] [--json]"}];
 var NAV = [
   {id:'chat',label:'Chat',icon:'chat'}, {id:'provider',label:'Provider',icon:'provider'},
-  {id:'workspace',label:'Workspace',icon:'workspace'}, {id:'terminal',label:'Terminal',icon:'terminal'},
-  {id:'settings',label:'Pengaturan',icon:'settings'}
+  {id:'workspace',label:'Workspace',icon:'workspace'}, {id:'browser',label:'Browser',icon:'globe'},
+  {id:'terminal',label:'Terminal',icon:'terminal'}, {id:'settings',label:'Pengaturan',icon:'settings'}
 ];
 var SCREENS = [
   {
@@ -1053,6 +1076,47 @@ var SCREENS = [
     "kpis": [],
     "cmds": [],
     "add": null
+  },
+  {
+    "id": "browser",
+    "label": "Browser Bawaan",
+    "icon": "globe",
+    "group": "Utama",
+    "sub": "agent-browser v0.43.0 + Chrome for Testing. Tab ini menampilkan frame WebSocket live dari browser yang dipakai Hermes, bukan WebView terpisah.",
+    "kpis": [
+      [
+        "v0.43.0",
+        "CLI"
+      ],
+      [
+        "9223",
+        "Stream"
+      ],
+      [
+        "4848",
+        "Dashboard"
+      ]
+    ],
+    "action": "browser.status",
+    "cmds": [
+      "agent-browser open example.com",
+      "agent-browser snapshot -i",
+      "agent-browser click @e1",
+      "agent-browser get url",
+      "agent-browser stream status",
+      "agent-browser dashboard start --port 4848"
+    ],
+    "add": {
+      "title": "Buka URL",
+      "fields": [
+        {
+          "k": "url",
+          "label": "Alamat",
+          "ph": "https://example.com"
+        }
+      ],
+      "submit": "browser.command"
+    }
   },
   {
     "id": "sessions",
@@ -2397,6 +2461,27 @@ function renderCliCatalog(){
   '</div>';
 }
 
+function renderBrowser(){
+  var b=state.browser;
+  return '<div class="screen">'+
+    '<div class="h1">Browser Bawaan</div><p class="sub">agent-browser <b>v0.43.0</b> dari vercel-labs + Chrome for Testing 157 · sesi <span class="mono">arkaxhermes</span>. Frame di bawah dikirim lewat WebSocket CDP, bukan webview palsu.</p>'+
+    '<div class="browser-url"><input id="browser-url" value="'+attr(b.url)+'" placeholder="https://example.com"><button class="btn primary" data-act="browser-go">Buka</button></div>'+
+    '<div class="row wrap" style="gap:6px;margin-bottom:10px">'+
+      btn('◀','browser-back','','btn sm ghost')+btn('▶','browser-forward','','btn sm ghost')+btn('⟳','browser-reload','','btn sm ghost')+
+      btn('Snapshot','browser-snapshot','','btn sm')+btn('Screenshot','browser-screenshot','','btn sm')+btn('Tabs','browser-tabs','','btn sm')+
+      btn('Start','browser-start','','btn sm primary')+btn('Hubungkan','browser-connect','','btn sm')+btn('Status','browser-status','','btn sm ghost')+btn('Stop','browser-stop','','btn sm danger')+
+      btn('Dashboard','browser-dashboard','','btn sm ghost')+
+    '</div>'+
+    '<div class="browser-stage"><img id="browser-frame" src="'+attr(b.frame||browserFramePlaceholder())+'" alt="Live viewport agent-browser">'+
+      '<div class="browser-overlay"><span class="tag '+(b.connected?'ok':'warn')+'">'+(b.connected?'● LIVE':'○ OFFLINE')+'</span><span class="tag">'+esc(b.viewW+'×'+b.viewH)+' · ws:'+b.streamPort+'</span></div></div>'+
+    '<div class="row between" style="margin-top:10px"><span class="small muted mono">'+esc(b.url)+'</span><span class="tag '+(b.screencasting?'ok':'')+'">'+(b.screencasting?'screencast aktif':'menunggu frame')+'</span></div>'+
+    '<div class="section-title">'+icon('activity',14)+' Aktivitas & Perintah</div>'+
+    '<div class="browser-log" id="browser-log">'+b.activity.map(function(x){return '<span class="'+(x.c||'')+'">'+esc(x.t)+'</span>';}).join('\n')+'</div>'+
+    '<div class="card flat" style="margin-top:12px"><div class="bold small">Perintah agent-browser</div>'+
+      '<div class="row wrap" style="gap:5px;margin-top:8px">'+['open','snapshot -i','get url','back','forward','reload','screenshot','stream status','dashboard start','close'].map(function(c){return btn(esc(c),'browser-cmd',c,'btn sm ghost');}).join('')+'</div></div>'+
+  '</div>';
+}
+
 /* ======================= 6. MODAL / INSTALL ======================= */
 function renderOverlay(){
   var html='';
@@ -2427,6 +2512,170 @@ function renderOverlay(){
 function openModal(title,body,footer,sub){ state.modal={title:title,body:body,footer:footer,sub:sub}; renderOverlayOnly(); }
 function closeModal(){ state.modal=null; renderOverlayOnly(); }
 function renderOverlayOnly(){ document.getElementById('overlay').innerHTML=renderOverlay(); }
+
+function browserActivity(line, kind){
+  state.browser.activity.push({t:line,c:kind||''});
+  if(state.browser.activity.length>80) state.browser.activity.shift();
+  var el=document.getElementById('browser-log');
+  if(el) el.innerHTML=state.browser.activity.map(function(x){return '<span class="'+(x.c||'')+'">'+esc(x.t)+'</span>';}).join('\n');
+}
+function browserFramePlaceholder(){
+  var svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560"><rect width="900" height="560" fill="#0b1326"/><rect x="1" y="1" width="898" height="36" fill="#171f33"/><circle cx="22" cy="19" r="6" fill="#ffb4ab"/><circle cx="42" cy="19" r="6" fill="#fbbf24"/><circle cx="62" cy="19" r="6" fill="#34d399"/><text x="450" y="275" text-anchor="middle" fill="#c0c1ff" font-family="sans-serif" font-size="24">Browser bawaan Arkaxhermes</text><text x="450" y="310" text-anchor="middle" fill="#8d92ab" font-family="sans-serif" font-size="15">agent-browser v0.43.0 · Chrome for Testing · live stream 9223</text><text x="450" y="350" text-anchor="middle" fill="#8d92ab" font-family="sans-serif" font-size="13">Mode demo: tekan "Start / Hubungkan" di APK untuk frame nyata</text></svg>';
+  return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+}
+function updateBrowserFrame(){
+  var img=document.getElementById('browser-frame');
+  if(img) img.src=state.browser.frame||browserFramePlaceholder();
+}
+async function browserStatus(){
+  try{
+    var r=await api('/api/browser/status');
+    state.browser.streamPort=r.streamPort||9223;
+    state.browser.dashboardPort=r.dashboardPort||4848;
+    state.browser.url=r.url||state.browser.url;
+    state.browser.title=r.title||state.browser.title;
+    state.browser.connected=!!(r.stream&&r.stream.connected);
+    state.browser.screencasting=!!(r.stream&&r.stream.screencasting);
+    browserActivity('status: '+(r.chromeMessage||r.engine||'browser siap')+' · '+esc(r.url||''),r.chrome===false?'err':'dim');
+    if(state.screen==='browser') render();
+  }catch(e){ browserActivity('status gagal: '+e.message,'err'); }
+}
+async function browserCommand(argv,label){
+  if(!Array.isArray(argv)) argv=String(argv||'').split(/\s+/).filter(Boolean);
+  if(!argv.length) return;
+  browserActivity('$ agent-browser '+argv.join(' '),'warn');
+  try{
+    var r=await api('/api/browser/command','POST',{argv:argv});
+    browserActivity((label||argv[0])+' → exit '+(r.exit==null?0:r.exit)+(r.stdout?'\n'+String(r.stdout).slice(0,600):''),r.ok===false?'err':'ok');
+    if(argv[0]==='open'||argv[0]==='navigate') state.browser.url=argv[1]||state.browser.url;
+    await browserStatus();
+    return r;
+  }catch(e){ browserActivity('command gagal: '+e.message,'err'); }
+}
+function browserWsSend(obj){
+  var ws=state.browser.ws;
+  if(ws && ws.readyState===1){ try{ ws.send(JSON.stringify(obj)); }catch(e){} }
+}
+function connectBrowserStream(){
+  if(DEMO){ browserActivity('demo: WebSocket stream disimulasikan','dim'); return; }
+  if(state.browser.ws && state.browser.ws.readyState<=1) return;
+  var url='ws://127.0.0.1:'+state.browser.streamPort+'/?pacing=ack&maxFps=8';
+  try{
+    var ws=new WebSocket(url); state.browser.ws=ws;
+    ws.onopen=function(){ state.browser.connected=true; browserActivity('stream tersambung: '+url,'ok'); browserWsSend({type:'config',pacing:'ack',maxFps:8}); if(state.screen==='browser') render(); };
+    ws.onmessage=function(ev){
+      var m; try{ m=JSON.parse(ev.data); }catch(e){ return; }
+      if(m.type==='frame'){
+        state.browser.frame='data:image/jpeg;base64,'+m.data;
+        state.browser.seq=m.seq||0;
+        if(m.metadata){state.browser.viewW=m.metadata.deviceWidth||state.browser.viewW;state.browser.viewH=m.metadata.deviceHeight||state.browser.viewH;}
+        updateBrowserFrame(); browserWsSend({type:'ack',seq:m.seq});
+      } else if(m.type==='url'){ state.browser.url=m.url||state.browser.url; browserActivity('url → '+state.browser.url,'dim'); if(state.screen==='browser') render(); }
+      else if(m.type==='status'){ state.browser.connected=!!m.connected; state.browser.screencasting=!!m.screencasting; state.browser.viewW=m.viewportWidth||state.browser.viewW; state.browser.viewH=m.viewportHeight||state.browser.viewH; if(state.screen==='browser') render(); }
+      else if(m.type==='command'||m.type==='result'||m.type==='console'||m.type==='error'||m.type==='tab'){
+        browserActivity('['+m.type+'] '+(m.text||m.action||m.url||JSON.stringify(m).slice(0,160)),m.type==='error'?'err':'');
+      }
+    };
+    ws.onerror=function(){ browserActivity('stream error','err'); };
+    ws.onclose=function(){ state.browser.connected=false; state.browser.ws=null; browserActivity('stream terputus','warn'); if(state.screen==='browser') render(); };
+  }catch(e){ browserActivity('WebSocket gagal: '+e.message,'err'); }
+}
+function attachBrowserEvents(){
+  var img=document.getElementById('browser-frame'); if(!img||!img.dataset||img.dataset.bound==='1') return;
+  img.dataset.bound='1';
+  function xy(e){
+    var r=img.getBoundingClientRect();
+    return {x:Math.round((e.clientX-r.left)/r.width*state.browser.viewW),y:Math.round((e.clientY-r.top)/r.height*state.browser.viewH)};
+  }
+  img.addEventListener('pointerdown',function(e){var p=xy(e);browserWsSend({type:'input_mouse',eventType:'mousePressed',x:p.x,y:p.y,button:'left',clickCount:1});});
+  img.addEventListener('pointerup',function(e){var p=xy(e);browserWsSend({type:'input_mouse',eventType:'mouseReleased',x:p.x,y:p.y,button:'left'});});
+  img.addEventListener('pointermove',function(e){if(e.buttons){var p=xy(e);browserWsSend({type:'input_mouse',eventType:'mouseMoved',x:p.x,y:p.y});}});
+  img.addEventListener('wheel',function(e){var p=xy(e);browserWsSend({type:'input_mouse',eventType:'mouseWheel',x:p.x,y:p.y,deltaX:0,deltaY:Math.round(e.deltaY)});e.preventDefault();},{passive:false});
+  img.addEventListener('keydown',function(e){browserWsSend({type:'input_keyboard',eventType:'keyDown',key:e.key,code:e.code});browserWsSend({type:'input_keyboard',eventType:'char',text:e.key.length===1?e.key:''});});
+  img.tabIndex=0;
+}
+
+function browserActivity(line, kind){
+  state.browser.activity.push({t:line,c:kind||''});
+  if(state.browser.activity.length>80) state.browser.activity.shift();
+  var el=document.getElementById('browser-log');
+  if(el) el.innerHTML=state.browser.activity.map(function(x){return '<span class="'+(x.c||'')+'">'+esc(x.t)+'</span>';}).join('\n');
+}
+function browserFramePlaceholder(){
+  var svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560"><rect width="900" height="560" fill="#0b1326"/><rect x="1" y="1" width="898" height="36" fill="#171f33"/><circle cx="22" cy="19" r="6" fill="#ffb4ab"/><circle cx="42" cy="19" r="6" fill="#fbbf24"/><circle cx="62" cy="19" r="6" fill="#34d399"/><text x="450" y="275" text-anchor="middle" fill="#c0c1ff" font-family="sans-serif" font-size="24">Browser bawaan Arkaxhermes</text><text x="450" y="310" text-anchor="middle" fill="#8d92ab" font-family="sans-serif" font-size="15">agent-browser v0.43.0 · Chrome for Testing · live stream 9223</text><text x="450" y="350" text-anchor="middle" fill="#8d92ab" font-family="sans-serif" font-size="13">Mode demo: tekan "Start / Hubungkan" di APK untuk frame nyata</text></svg>';
+  return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+}
+function updateBrowserFrame(){
+  var img=document.getElementById('browser-frame');
+  if(img) img.src=state.browser.frame||browserFramePlaceholder();
+}
+async function browserStatus(){
+  try{
+    var r=await api('/api/browser/status');
+    state.browser.streamPort=r.streamPort||9223;
+    state.browser.dashboardPort=r.dashboardPort||4848;
+    state.browser.url=r.url||state.browser.url;
+    state.browser.title=r.title||state.browser.title;
+    state.browser.connected=!!(r.stream&&r.stream.connected);
+    state.browser.screencasting=!!(r.stream&&r.stream.screencasting);
+    browserActivity('status: '+(r.chromeMessage||r.engine||'browser siap')+' · '+esc(r.url||''),r.chrome===false?'err':'dim');
+    if(state.screen==='browser') render();
+  }catch(e){ browserActivity('status gagal: '+e.message,'err'); }
+}
+async function browserCommand(argv,label){
+  if(!Array.isArray(argv)) argv=String(argv||'').split(/\s+/).filter(Boolean);
+  if(!argv.length) return;
+  browserActivity('$ agent-browser '+argv.join(' '),'warn');
+  try{
+    var r=await api('/api/browser/command','POST',{argv:argv});
+    browserActivity((label||argv[0])+' → exit '+(r.exit==null?0:r.exit)+(r.stdout?'\n'+String(r.stdout).slice(0,600):''),r.ok===false?'err':'ok');
+    if(argv[0]==='open'||argv[0]==='navigate') state.browser.url=argv[1]||state.browser.url;
+    await browserStatus();
+    return r;
+  }catch(e){ browserActivity('command gagal: '+e.message,'err'); }
+}
+function browserWsSend(obj){
+  var ws=state.browser.ws;
+  if(ws && ws.readyState===1){ try{ ws.send(JSON.stringify(obj)); }catch(e){} }
+}
+function connectBrowserStream(){
+  if(DEMO){ browserActivity('demo: WebSocket stream disimulasikan','dim'); return; }
+  if(state.browser.ws && state.browser.ws.readyState<=1) return;
+  var url='ws://127.0.0.1:'+state.browser.streamPort+'/?pacing=ack&maxFps=8';
+  try{
+    var ws=new WebSocket(url); state.browser.ws=ws;
+    ws.onopen=function(){ state.browser.connected=true; browserActivity('stream tersambung: '+url,'ok'); browserWsSend({type:'config',pacing:'ack',maxFps:8}); if(state.screen==='browser') render(); };
+    ws.onmessage=function(ev){
+      var m; try{ m=JSON.parse(ev.data); }catch(e){ return; }
+      if(m.type==='frame'){
+        state.browser.frame='data:image/jpeg;base64,'+m.data;
+        state.browser.seq=m.seq||0;
+        if(m.metadata){state.browser.viewW=m.metadata.deviceWidth||state.browser.viewW;state.browser.viewH=m.metadata.deviceHeight||state.browser.viewH;}
+        updateBrowserFrame(); browserWsSend({type:'ack',seq:m.seq});
+      } else if(m.type==='url'){ state.browser.url=m.url||state.browser.url; browserActivity('url → '+state.browser.url,'dim'); if(state.screen==='browser') render(); }
+      else if(m.type==='status'){ state.browser.connected=!!m.connected; state.browser.screencasting=!!m.screencasting; state.browser.viewW=m.viewportWidth||state.browser.viewW; state.browser.viewH=m.viewportHeight||state.browser.viewH; if(state.screen==='browser') render(); }
+      else if(m.type==='command'||m.type==='result'||m.type==='console'||m.type==='error'||m.type==='tab'){
+        browserActivity('['+m.type+'] '+(m.text||m.action||m.url||JSON.stringify(m).slice(0,160)),m.type==='error'?'err':'');
+      }
+    };
+    ws.onerror=function(){ browserActivity('stream error','err'); };
+    ws.onclose=function(){ state.browser.connected=false; state.browser.ws=null; browserActivity('stream terputus','warn'); if(state.screen==='browser') render(); };
+  }catch(e){ browserActivity('WebSocket gagal: '+e.message,'err'); }
+}
+function attachBrowserEvents(){
+  var img=document.getElementById('browser-frame'); if(!img||img.dataset.bound==='1') return;
+  img.dataset.bound='1';
+  function xy(e){
+    var r=img.getBoundingClientRect();
+    return {x:Math.round((e.clientX-r.left)/r.width*state.browser.viewW),y:Math.round((e.clientY-r.top)/r.height*state.browser.viewH)};
+  }
+  img.addEventListener('pointerdown',function(e){var p=xy(e);browserWsSend({type:'input_mouse',eventType:'mousePressed',x:p.x,y:p.y,button:'left',clickCount:1});});
+  img.addEventListener('pointerup',function(e){var p=xy(e);browserWsSend({type:'input_mouse',eventType:'mouseReleased',x:p.x,y:p.y,button:'left'});});
+  img.addEventListener('pointermove',function(e){if(e.buttons){var p=xy(e);browserWsSend({type:'input_mouse',eventType:'mouseMoved',x:p.x,y:p.y});}});
+  img.addEventListener('wheel',function(e){var p=xy(e);browserWsSend({type:'input_mouse',eventType:'mouseWheel',x:p.x,y:p.y,deltaX:0,deltaY:Math.round(e.deltaY)});e.preventDefault();},{passive:false});
+  img.addEventListener('keydown',function(e){browserWsSend({type:'input_keyboard',eventType:'keyDown',key:e.key,code:e.code});browserWsSend({type:'input_keyboard',eventType:'char',text:e.key.length===1?e.key:''});});
+  img.tabIndex=0;
+}
 
 function openForm(kind, extra){
   var title='', fields=[], submit='', sub='';
@@ -2483,6 +2732,7 @@ async function submitForm(action){
   if(action==='files.write' && payload.commands!==undefined){
     payload={commands:String(payload.commands).split('\n').filter(Boolean)}; action='batch.run';
   }
+  if(action==='browser.command' && payload.url){ var br=await browserCommand(['open',payload.url],'open'); if(br)showOutput('Buka URL',br.stdout||br.stderr||''); closeModal(); return; }
   if(action==='exec'){ var r=await runShell(payload.cmd||'hermes doctor'); closeModal(); return showOutput('Hasil perintah',r.stdout||r.stderr); }
   if(action==='export.chat'){ payload.messages=state.messages.map(function(m){return {role:m.role,content:m.content};}); }
   if(action==='files.write' && payload.content===undefined && payload.path && payload.path.indexOf('.')<0){ payload.content=''; }
@@ -2611,6 +2861,7 @@ function render(){
     case 'workspace': body=renderWorkspace(); break;
     case 'terminal': body=renderTerminal(); break;
     case 'settings': body=renderSettings(); break;
+    case 'browser': body=renderBrowser(); break;
     case 'cli': body=renderCliCatalog(); break;
     default: body=renderFeature(state.screen);
   }
@@ -2621,12 +2872,14 @@ function render(){
   requestAnimationFrame(function(){
     var c=document.getElementById('chat-scroll'); if(c) c.scrollTop=c.scrollHeight;
     var t=document.getElementById('term-out'); if(t) t.scrollTop=t.scrollHeight;
+    attachBrowserEvents();
   });
 }
 function setScreen(id){
   state.screen=id; state.drawer=false;
   try{ location.hash='#/'+id; }catch(e){}
   render(); loadFeatureFor(id);
+  if(id==='browser'){ browserStatus(); connectBrowserStream(); }
 }
 
 /* ======================= 9. EVENTS ======================= */
@@ -2691,6 +2944,19 @@ document.addEventListener('click',function(e){
       if(state.screen==='tools') feature('tools.set',{toolsets:demoToolsets.filter(function(t){return state.toggles[t]!==false;})}).catch(function(){});
       break;
     }
+    case 'browser-go': var u=document.getElementById('browser-url'); browserCommand(['open',(u&&u.value)||state.browser.url||'about:blank'],'open'); break;
+    case 'browser-back': browserCommand(['back'],'back'); break;
+    case 'browser-forward': browserCommand(['forward'],'forward'); break;
+    case 'browser-reload': browserCommand(['reload'],'reload'); break;
+    case 'browser-snapshot': browserCommand(['snapshot','-i'],'snapshot').then(function(r){if(r)showOutput('Accessibility snapshot',(r.stdout||'')+(r.stderr||''));}); break;
+    case 'browser-screenshot': browserCommand(['screenshot','/mnt/arkax/exports/browser-'+Date.now()+'.jpg','--screenshot-format','jpeg','--screenshot-quality','80'],'screenshot'); break;
+    case 'browser-tabs': browserCommand(['tab','list'],'tabs').then(function(r){if(r)showOutput('Tab browser',(r.stdout||'')+(r.stderr||''));}); break;
+    case 'browser-start': api('/api/browser/start','POST',{}).then(function(r){browserActivity('start: '+(r.dashboardUrl||r.message||'OK'),'ok');browserStatus();connectBrowserStream();toast('Browser bawaan dinyalakan');}).catch(function(e){toast('Gagal start: '+e.message);}); break;
+    case 'browser-stop': api('/api/browser/stop','POST',{}).then(function(){browserActivity('stop','warn');if(state.browser.ws){try{state.browser.ws.close();}catch(e){}}browserStatus();toast('Browser dihentikan');}); break;
+    case 'browser-connect': connectBrowserStream(); toast('Menghubungkan stream …'); break;
+    case 'browser-status': browserStatus(); break;
+    case 'browser-dashboard': if(BRIDGE&&BRIDGE.openBrowserDashboard) BRIDGE.openBrowserDashboard(); else window.open('http://127.0.0.1:4848','_blank'); break;
+    case 'browser-cmd': browserCommand(String(val).split(/\s+/),val); break;
     case 'term-cmd': document.getElementById('term-in').value=val; termRun(); break;
     case 'term-run': termRun(); break;
     case 'term-tui': termTui(); break;
@@ -2758,6 +3024,7 @@ document.addEventListener('input',function(e){
     else if(document.querySelector('.slash')) render();
   }
   if(e.target.id==='wsearch'){ state.search=e.target.value; render(); var w=document.getElementById('wsearch'); if(w){w.focus();w.setSelectionRange(w.value.length,w.value.length);} }
+  if(e.target.id==='browser-url'){ state.browser.url=e.target.value; }
   if(e.target.id==='cli-search'){ state.cliSearch=e.target.value; render(); var c=document.getElementById('cli-search'); if(c){c.focus();c.setSelectionRange(c.value.length,c.value.length);} }
 });
 document.addEventListener('change',function(e){
@@ -2793,6 +3060,7 @@ async function boot(){
     restoreState();
     render();
     loadFeatureFor(state.screen);
+    if(state.screen==='browser') browserStatus();
     return;
   }
   var info=null; try{ info=JSON.parse(BRIDGE.ready()); }catch(e){}
@@ -2804,6 +3072,7 @@ async function boot(){
     restoreState();
     render();
     loadFeatureFor('provider'); loadFeatureFor('workspace'); loadFeatureFor(state.screen);
+    if(state.screen==='browser'){ browserStatus(); connectBrowserStream(); }
     if(s.state!=='ready'){
       state.install={percent:0,message:'Ubuntu proot belum dipasang',done:0,log:[],finished:false};
       renderOverlayOnly();

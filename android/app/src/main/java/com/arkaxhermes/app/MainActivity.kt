@@ -59,6 +59,7 @@ class MainActivity : Activity() {
             0
         }
 
+        WebView.setWebContentsDebuggingEnabled(true)
         webView = WebView(this)
         setContentView(webView)
         configureWebView()
@@ -221,6 +222,13 @@ class MainActivity : Activity() {
 
     fun secureGet(name: String): String =
         runtime.vault.get("arkax_secure_$name") ?: ""
+
+    fun openBrowserDashboard() {
+        // Dashboard bawaan agent-browser; dibuka di browser sistem karena
+        // dashboard Next.js tidak ramah di-iframe. Tab Browser tetap live di aplikasi.
+        try { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("http://127.0.0.1:4848"))) }
+        catch (e: Exception) { Toast.makeText(this, "Dashboard browser tidak tersedia", Toast.LENGTH_SHORT).show() }
+    }
 
     fun secureDelete(name: String) {
         runtime.vault.delete("arkax_secure_$name")

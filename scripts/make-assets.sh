@@ -47,7 +47,10 @@ else
   warn "rootfs dilewati (--skip-rootfs)"
 fi
 
-log "=== 4/4  ringkasan ==="
+log "=== 4/5  agent-browser v0.43.0 ==="
+"$ARKAX_ROOT/scripts/fetch-agent-browser.sh" --binaries-only
+
+log "=== 5/5  ringkasan ==="
 printf '\n'
 printf '  %-52s %s\n' "jniLibs/$ABI/libproot.so" \
   "$( [[ -f "$JNILIBS_DIR/$ABI/libproot.so" ]] && du -h "$JNILIBS_DIR/$ABI/libproot.so" | cut -f1 || echo 'BELUM ADA' )"
@@ -57,5 +60,9 @@ printf '  %-52s %s\n' "assets/rootfs/ubuntu-rootfs.tar.gz.part*" \
   "$( ls "$ROOTFS_ASSET_DIR"/ubuntu-rootfs.tar.gz.part* 2>/dev/null | wc -l ) bagian"
 printf '  %-52s %s\n' "assets/www/index.html" \
   "$( [[ -f "$ASSET_ROOT/www/index.html" ]] && echo OK || echo 'HILANG' )"
+printf '  %-52s %s\n' "jniLibs/arm64-v8a/libagent-browser.so" \
+  "$( [[ -f "$JNILIBS_DIR/arm64-v8a/libagent-browser.so" ]] && du -h "$JNILIBS_DIR/arm64-v8a/libagent-browser.so" | cut -f1 || echo 'BELUM ADA' )"
+printf '  %-52s %s\n' "dist/chrome-headless-shell-linux-arm64.zip" \
+  "$( [[ -f "$ARKAX_ROOT/dist/chrome-headless-shell-linux-arm64.zip" ]] && du -h "$ARKAX_ROOT/dist/chrome-headless-shell-linux-arm64.zip" | cut -f1 || echo 'DIUNDUH SAAT BUILD' )"
 printf '\n'
 log "Lanjutkan dengan: ./scripts/build-apk.sh debug"

@@ -1,3 +1,5 @@
+> **Browser bawaan:** endpoint `/api/browser/status|start|stop|command|dashboard` dan aksi `browser.*` ditambahkan; lihat [BROWSER.md](BROWSER.md).
+
 > **Audit 16 Nov 2026:** daftar aksi final diverifikasi terhadap source `v0.23.1`; lihat [AUDIT.md](AUDIT.md). `hermes_bridge.py` kini punya 67 aksi, termasuk `gateway.status`, `backups.list`, `cron.status`, `cron.tick`, `sessions.export`, `files.mkdir`.
 
 # Arkax Bridge API

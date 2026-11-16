@@ -75,3 +75,27 @@ Dihasilkan dari `python3 hermes --help` dan `<command> --help` pada source yang 
 | `desktop` | (gui)       Build and launch the native desktop app |  |
 | `logs` | View and filter Hermes log files |  |
 | `prompt-size` | Show a byte breakdown of the system prompt + tool schemas |  |
+
+## Browser bawaan: `agent-browser` v0.43.0
+
+Sumber: [vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser), Apache-2.0.
+Dijalankan Arkaxhermes dengan sesi tetap `arkaxhermes`, stream `9223`, dashboard `4848`,
+dan Chrome for Testing 157.0.8103.78 linux-arm64.
+
+| Perintah | Fungsi |
+| --- | --- |
+| `agent-browser open <url>` | Buka/navigasi halaman |
+| `agent-browser back` / `forward` / `reload` | Navigasi riwayat |
+| `agent-browser snapshot -i` | Accessibility tree + `@eN` ref |
+| `agent-browser click <sel>` / `fill` / `type` / `press` | Interaksi elemen |
+| `agent-browser get url` / `title` / `cdp-url` | Info halaman & CDP |
+| `agent-browser screenshot <path> --screenshot-format jpeg` | Tangkapan layar |
+| `agent-browser tab list` | Daftar tab |
+| `agent-browser stream status` | Status WebSocket live viewport |
+| `agent-browser stream enable --port 9223` | Aktifkan stream port tetap |
+| `agent-browser dashboard start --port 4848` | Dashboard observability |
+| `agent-browser close` / `dashboard stop` | Tutup sesi & dashboard |
+| `agent-browser skills get core` | Panduan resmi sesuai versi CLI |
+| `agent-browser mcp` | MCP server stdio untuk klien lain |
+
+Protokol live frame dan input (mouse/keyboard/touch): [Streaming docs](https://agent-browser.dev/streaming).

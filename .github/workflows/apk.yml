@@ -1,0 +1,106 @@
+name: Arkaxhermes APK
+
+# Merakit APK debug arm64 dan mengunggahnya sebagai artifact, supaya tidak perlu
+# menyiapkan Android SDK di mesin sendiri. Tanda tangan memakai keystore
+# Arkaxhermes yang sama dengan build lokal (lihat docs/BUILD.md bagian 7),
+# sehingga APK baru bisa menimpa versi terpasang tanpa uninstall.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: apk-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  apk:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Checkout penuh (versionCode = jumlah commit)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Gradle 8.9
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      # Aset biner tidak di-commit (.gitignore) dan totalnya ±250 MB: base Ubuntu
+      # 28 MB, source Hermes 88 MB, Chrome for Testing 128 MB. Cache dikunci pada
+      # hash rootfs/manifest.json karena manifest yang mem-pin versi + checksum
+      # upstream, jadi perubahan manifest otomatis membatalkan cache.
+      - name: Cache aset biner
+        uses: actions/cache@v4
+        with:
+          path: |
+            rootfs/work
+            dist
+            android/app/src/main/jniLibs
+            android/app/src/main/assets/rootfs
+            android/app/src/main/assets/runtime/hermes-src.tar.gz
+            browser_pack/src/main/assets
+          key: arkax-assets-${{ hashFiles('rootfs/manifest.json') }}
+
+      - name: Validasi repositori
+        run: ./scripts/check.sh
+
+      # Keystore ditulis ke $RUNNER_TEMP, bukan ke dalam repo. Password masuk ke
+      # android/local.properties yang dibaca build.gradle.kts.
+      - name: Siapkan keystore penandatangan
+        env:
+          KEYSTORE_B64: ${{ secrets.ARKAX_KEYSTORE_B64 }}
+          STORE_PASSWORD: ${{ secrets.ARKAX_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ARKAX_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ARKAX_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          KSTORE="$RUNNER_TEMP/arkax-release.jks"
+          printf '%s' "$KEYSTORE_B64" | base64 -d > "$KSTORE"
+          chmod 600 "$KSTORE"
+          keytool -list -keystore "$KSTORE" -storepass "$STORE_PASSWORD" > /dev/null
+          {
+            echo "sdk.dir=$ANDROID_HOME"
+            echo "ARKAX_STORE_FILE=$KSTORE"
+            echo "ARKAX_STORE_PASSWORD=$STORE_PASSWORD"
+            echo "ARKAX_KEY_ALIAS=$KEY_ALIAS"
+            echo "ARKAX_KEY_PASSWORD=$KEY_PASSWORD"
+          } > android/local.properties
+          chmod 600 android/local.properties
+
+      # Dipanggil satu per satu, bukan lewat make-assets.sh, karena skrip itu
+      # memakai --force yang akan mengunduh ulang dan mengabaikan cache.
+      - name: Siapkan aset biner
+        run: |
+          set -euo pipefail
+          TAG="$(python3 -c 'import json;print(json.load(open("rootfs/manifest.json"))["hermesSrc"]["tag"])')"
+          ./scripts/fetch-proot.sh --abi arm64-v8a
+          ./scripts/fetch-hermes-src.sh --tag "$TAG" --slim
+          ./scripts/build-rootfs.sh --arch arm64
+          ./scripts/fetch-agent-browser.sh --stage-assets
+
+      - name: Rakit APK debug
+        run: ./scripts/build-apk.sh debug
+
+      - name: Daftar keluaran Gradle (diagnostik)
+        if: always()
+        run: find android/app/build/outputs -name '*.apk' -o -name '*.aab' 2>/dev/null | head -20 || true
+
+      - name: Unggah APK arm64
+        uses: actions/upload-artifact@v4
+        with:
+          name: Arkaxhermes-debug-arm64
+          path: android/app/build/outputs/apk/debug/app-arm64-v8a-debug.apk
+          if-no-files-found: error
+          retention-days: 30

@@ -27,13 +27,16 @@ if [[ -z "${ANDROID_HOME:-}${ANDROID_SDK_ROOT:-}" && ! -f "$ANDROID_DIR/local.pr
 fi
 
 GRADLEW="$ANDROID_DIR/gradlew"
-if [[ ! -x "$GRADLEW" ]]; then
+WRAPPER_JAR="$ANDROID_DIR/gradle/wrapper/gradle-wrapper.jar"
+# gradle-wrapper.jar ada di .gitignore dan gradlew yang ter-commit hanya stub,
+# jadi yang diperiksa bukan hanya bit executable-nya.
+if [[ ! -x "$GRADLEW" || ! -f "$WRAPPER_JAR" ]]; then
   if command -v gradle >/dev/null 2>&1; then
-    log "gradlew belum ada, membuat wrapper …"
+    log "wrapper Gradle belum lengkap (gradlew/gradle-wrapper.jar), membuat ulang …"
     (cd "$ANDROID_DIR" && gradle wrapper --gradle-version 8.9)
     chmod +x "$GRADLEW"
   else
-    die "gradlew tidak ada dan 'gradle' tidak di PATH. Buka proyek dengan Android Studio sekali untuk menghasilkan wrapper."
+    die "wrapper Gradle tidak lengkap dan 'gradle' tidak di PATH. Pasang Gradle 8.9 atau buka proyek dengan Android Studio sekali untuk menghasilkannya."
   fi
 fi
 

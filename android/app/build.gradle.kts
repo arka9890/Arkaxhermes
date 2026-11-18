@@ -10,6 +10,15 @@ val localProperties = Properties().apply {
     if (f.exists()) f.inputStream().use { load(it) }
 }
 
+// versionCode mengikuti jumlah commit git, bukan angka tetap. Dengan begitu
+// setiap APK baru selalu lebih tinggi dari yang terpasang sehingga bisa
+// diperbarui di tempat (tanpa uninstall) dan tidak kena INSTALL_FAILED_VERSION_DOWNGRADE.
+// CI melakukan checkout penuh (fetch-depth: 0) supaya angkanya benar.
+val arkaxVersionCode: Int = runCatching {
+    providers.exec { commandLine("git", "rev-list", "--count", "HEAD") }
+        .standardOutput.asText.get().trim().toInt()
+}.getOrDefault(1)
+
 android {
     namespace = "com.arkaxhermes.app"
     compileSdk = 35
@@ -21,7 +30,7 @@ android {
         applicationId = "com.arkaxhermes.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
+        versionCode = arkaxVersionCode
         versionName = "0.1.0"
         buildConfigField("String", "ARKAX_UPSTREAM_TAG", "\"v0.23.1\"")
         buildConfigField("String", "ARKAX_ROOTFS", "\"ubuntu-24.04.5\"")
@@ -42,6 +51,12 @@ android {
         debug {
             isDebuggable = true
             applicationIdSuffix = ".debug"
+            // Bila keystore Arkaxhermes tersedia (ARKAX_STORE_FILE di
+            // local.properties), build debug ikut memakainya. Tanpa ini, APK
+            // debug dari CI ditandatangani kunci debug milik runner GitHub yang
+            // berbeda dari kunci mesin pengembang, sehingga tidak bisa menimpa
+            // aplikasi yang sudah terpasang.
+            signingConfigs.findByName("arkaxRelease")?.let { signingConfig = it }
         }
         release {
             isMinifyEnabled = false

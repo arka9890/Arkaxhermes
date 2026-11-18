@@ -2793,6 +2793,11 @@ function startInstall(){
       state.install.message=d.message||''; state.install.done=Math.min(5,Math.floor(state.install.percent/17));
       state.install.log.push(d.message||''); renderOverlayOnly();
     } else if(ev==='log'){ state.install.log.push(d.line||''); renderOverlayOnly(); }
+    else if(ev==='error'){
+      // Event 'error' membawa detail asli (mis. "Gagal mengekstrak rootfs: …").
+      state.install.message=d.message||'Gagal'; state.install.percent=Math.max(state.install.percent,5);
+      state.install.log.push('ERROR: '+(d.message||'tidak diketahui')); renderOverlayOnly();
+    }
     else if(ev==='state'){
       if(d.state==='ready'){ state.install.percent=100; state.install.done=6; state.install.finished=true; state.install.message='Siap'; }
       if(d.state==='error'){ state.install.message=d.message||'Gagal'; }

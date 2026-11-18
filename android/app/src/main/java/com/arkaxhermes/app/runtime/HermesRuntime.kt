@@ -33,6 +33,9 @@ class HermesRuntime(private val context: Context) {
     @Volatile var chatRunning = false
         private set
     @Volatile private var stopRequested = false
+    /** Detail kegagalan terakhir dari RootfsInstaller, untuk pesan state yang jujur. */
+    @Volatile var lastExtractError: String = ""
+        private set
 
     private fun initialState(): String =
         if (RootfsInstaller.isInstalled(context) && File(RuntimePaths.prootBinary(context)).exists())
@@ -124,6 +127,7 @@ class HermesRuntime(private val context: Context) {
             return
         }
         installing = true
+        lastExtractError = ""
         state = "extracting"
         EventBus.publish("state", jsonOf("state" to state, "message" to "Menyiapkan Ubuntu proot"))
         emit("state", jsonOf("state" to state, "message" to "Menyiapkan Ubuntu proot"))
@@ -131,14 +135,16 @@ class HermesRuntime(private val context: Context) {
         thread(name = "arkax-install", isDaemon = true) {
             try {
                 val ok = RootfsInstaller.install(context) { event, data ->
+                    if (event == "error") lastExtractError = data.optString("message", "")
                     EventBus.publish(event, data)
                     emit(event, data)
                     appendInstallLog("[${event}] ${data.optString("message", data.optString("line", ""))}")
                 }
                 if (!ok) {
                     state = "error"
-                    EventBus.publish("state", jsonOf("state" to "error", "message" to "Ekstraksi rootfs gagal"))
-                    emit("state", jsonOf("state" to "error", "message" to "Ekstraksi rootfs gagal"))
+                    val reason = lastExtractError.ifBlank { "Ekstraksi rootfs gagal" }
+                    EventBus.publish("state", jsonOf("state" to "error", "message" to reason))
+                    emit("state", jsonOf("state" to "error", "message" to reason))
                     return@thread
                 }
 

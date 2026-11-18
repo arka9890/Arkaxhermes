@@ -106,13 +106,24 @@ object RootfsInstaller {
 
         val archive = assembleArchive(context, emit) ?: return false
         try {
+            // Bersihkan sisa ekstraksi sebelumnya. Tanpa ini, berkas yang tadinya
+            // regular file lalu menjadi direktori (atau sebaliknya) membuat
+            // FileOutputStream/mkdirs melempar FileNotFoundException dan
+            // ekstraksi gagal di tengah pada percobaan kedua.
+            if (root.exists()) {
+                val cleaned = root.deleteRecursively()
+                if (!cleaned) emit("log", JSONObject().put("line",
+                    "Peringatan: sebagian berkas lama gagal dihapus, ekstraksi melanjutkan"))
+                root.mkdirs()
+            }
             TarExtractor.extract(archive, root) { percent, message ->
                 emit("progress", JSONObject().put("step", "extract").put("percent", 8 + (percent * 0.42).toInt())
                     .put("message", message))
             }
         } catch (e: Exception) {
             Log.e(TAG, "ekstraksi gagal", e)
-            emit("error", JSONObject().put("message", "Gagal mengekstrak rootfs: ${e.message}"))
+            val detail = e.message ?: e.javaClass.simpleName
+            emit("error", JSONObject().put("message", "Gagal mengekstrak rootfs: $detail"))
             return false
         } finally {
             archive.delete()
@@ -264,7 +275,12 @@ object RootfsInstaller {
                             }
                             '0', '\u0000', '7' -> {
                                 target.parentFile?.mkdirs()
-                                FileOutputStream(target).use { out -> copyExactly(gz, out, size) }
+                                try {
+                                    FileOutputStream(target).use { out -> copyExactly(gz, out, size) }
+                                } catch (e: Exception) {
+                                    throw java.io.IOException(
+                                        "menulis $rawName (${e.message ?: e.javaClass.simpleName})", e)
+                                }
                                 if (mode != 0) target.setExecutable((mode and 0x111) != 0, false)
                                 padded(gz, size)
                             }

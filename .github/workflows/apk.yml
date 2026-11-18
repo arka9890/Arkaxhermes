@@ -53,6 +53,7 @@ jobs:
             rootfs/work
             dist
             android/app/src/main/jniLibs
+            android/app/src/main/assets/native
             android/app/src/main/assets/rootfs
             android/app/src/main/assets/runtime/hermes-src.tar.gz
           key: arkax-assets-${{ hashFiles('rootfs/manifest.json') }}

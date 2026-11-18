@@ -49,3 +49,4 @@ secrets.env
 
 # Manifest hasil salinan build-apk.sh ke assets (ChromeDownloader). Jangan di-commit.
 android/app/src/main/assets/manifest.json
+android/app/src/main/assets/native/

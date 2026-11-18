@@ -26,10 +26,28 @@ case "$ABI" in
 esac
 
 OUT="$JNILIBS_DIR/$ABI"
-mkdir -p "$OUT"
-if [[ -f "$OUT/libproot.so" && $FORCE -eq 0 ]]; then
-  log "proot sudah ada di $OUT/libproot.so. Pakai --force untuk ganti."
-  exit 0
+# libtalloc.so.2 TIDAK ikut ke APK bila ditaruh di jniLibs: PackageManager hanya
+# mengemas berkas bernama lib*.so, sedangkan DT_NEEDED proot meminta nama persis
+# "libtalloc.so.2". Karena itu talloc dibawa sebagai asset dan diekstrak ke
+# filesDir saat runtime (RuntimePaths.extractTalloc), lalu direktori itu
+# ditambahkan ke LD_LIBRARY_PATH oleh ProotRuntime.
+ASSET_NATIVE="$ASSET_ROOT/native/$ABI"
+mkdir -p "$OUT" "$ASSET_NATIVE"
+stage_talloc_asset() {
+  cp -f "$1" "$ASSET_NATIVE/libtalloc.so.2"
+  chmod 644 "$ASSET_NATIVE/libtalloc.so.2"
+}
+if [[ $FORCE -eq 0 ]]; then
+  if [[ -f "$OUT/libproot.so" && -f "$ASSET_NATIVE/libtalloc.so.2" ]]; then
+    log "proot + libtalloc sudah ada. Pakai --force untuk ganti."
+    exit 0
+  fi
+  # Cache CI bisa hanya memuat jniLibs; turunkan asset talloc dari salinan itu.
+  if [[ -f "$OUT/libproot.so" && -f "$OUT/libtalloc.so.2" ]]; then
+    stage_talloc_asset "$OUT/libtalloc.so.2"
+    log "libtalloc.so.2 disalin dari cache jniLibs ke assets"
+    exit 0
+  fi
 fi
 
 need curl
@@ -90,10 +108,12 @@ extract_deb "$TALLOC_URL" "$TMP/talloc"
 TALLOC_REAL="$(find "$TMP/talloc" -type f -name 'libtalloc.so.*' -print -quit)"
 [[ -n "$TALLOC_REAL" ]] || die "libtalloc.so.* tidak ditemukan"
 cp "$TALLOC_REAL" "$OUT/$(basename "$TALLOC_REAL")"
-# Android linker mencari nama persis sesuai DT_NEEDED.
+# Salinan jniLibs tidak ikut dikemas, tetapi dipakai sebagai cache untuk
+# menurunkan asset saat build berikutnya.
 cp "$TALLOC_REAL" "$OUT/libtalloc.so.2"
 chmod 755 "$OUT/libtalloc.so.2"
-log "libtalloc.so.2 → $OUT"
+stage_talloc_asset "$TALLOC_REAL"
+log "libtalloc.so.2 → $OUT + $ASSET_NATIVE"
 
 # --- 3. libandroid-shmem ----------------------------------------------------
 SHMEM_URL="$(latest_deb liba/libandroid-shmem 'libandroid-shmem_')"

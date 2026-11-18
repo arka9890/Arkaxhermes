@@ -75,9 +75,14 @@ class ProotRuntime(private val context: Context) {
             .directory(RuntimePaths.base(context))
             .redirectErrorStream(false)
         pb.environment()["PROOT_TMP_DIR"] = RuntimePaths.tmp(context).absolutePath
-        // libproot.so Termux membutuhkan libtalloc.so.2 + libandroid-shmem.so
-        // yang ikut dibundel di direktori native library yang sama.
-        pb.environment()["LD_LIBRARY_PATH"] = context.applicationInfo.nativeLibraryDir
+        // libproot.so Termux membutuhkan libandroid-shmem.so (ada di
+        // nativeLibraryDir) dan libtalloc.so.2 (asset, diekstrak ke filesDir
+        // oleh RuntimePaths.ensure karena PackageManager hanya mengemas
+        // berkas lib*.so sehingga libtalloc.so.2 tidak ikut ke APK).
+        pb.environment()["LD_LIBRARY_PATH"] = listOf(
+            context.applicationInfo.nativeLibraryDir,
+            RuntimePaths.talloc(context).parentFile!!.absolutePath
+        ).joinToString(":")
         RuntimePaths.prootLoader(context)?.let {
             pb.environment()["PROOT_LOADER"] = it
         }

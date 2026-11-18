@@ -21,6 +21,7 @@ Nama repo / aplikasi: **Arkaxhermes** · Package: `com.arkaxhermes.app` · Versi
 | `scripts/` | Pembuat rootfs, pengunduh proot & source Hermes, perakit aset, build APK, pemeriksa repositori |
 | `docs/` | Arsitektur, peta **semua fitur** Hermes → layar/CLI, API jembatan, cara build, batasan proot |
 | `.github/workflows/ci.yml` | Validasi sintaks shell / Python / JS / JSON setiap push |
+| `.github/workflows/apk.yml` | Merakit APK debug arm64 setiap push ke `main` (juga bisa lewat tombol **Run workflow**) dan mengunggahnya sebagai artifact `Arkaxhermes-debug-arm64` |
 
 ### Status penting (baca ini dulu)
 

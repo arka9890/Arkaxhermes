@@ -146,43 +146,83 @@ android/app/src/main/jniLibs/arm64-v8a/libproot.so
 
 ## 6. Build APK
 
-```bash
-# pertama kali, bila gradle wrapper belum ada:
-cd android && gradle wrapper --gradle-version 8.9 && cd ..
-chmod +x android/gradlew
+Cara tercepat: biarkan GitHub Actions yang merakit (bagian 6b).
 
+### 6a. Build lokal
+
+```bash
 ./scripts/build-apk.sh debug
 # atau
 ./scripts/build-apk.sh release   # butuh keystore, lihat bagian 7
 ```
 
-`build-apk.sh` memanggil `./gradlew :app:assembleDebug`, lalu menyalin APK ke `dist/Arkaxhermes-<variant>-<version>.apk`.
+Tidak perlu lagi menjalankan `gradle wrapper` manual: `build-apk.sh` membuat
+ulang wrapper bila `gradlew` tidak executable **atau** `gradle-wrapper.jar`
+belum ada (berkas itu di-`.gitignore`). Skrip memanggil
+`./gradlew :app:assembleDebug` lalu menyalin APK ke
+`dist/Arkaxhermes-<variant>-<version>.apk`.
+
+Karena `splits.abi` aktif, Gradle menghasilkan satu APK per ABI dan `dist/`
+hanya berisi yang pertama ditemukan. Untuk perangkat arm64, pakai langsung
+`android/app/build/outputs/apk/debug/app-arm64-v8a-debug.apk`.
 
 ```bash
-adb install -r dist/Arkaxhermes-debug-0.1.0.apk
+adb install -r android/app/build/outputs/apk/debug/app-arm64-v8a-debug.apk
 adb logcat -s Arkaxhermes ArkaxHttpServer ProotRuntime HermesRuntime
 ```
+
+### 6b. Build di GitHub Actions
+
+`.github/workflows/apk.yml` berjalan pada setiap push ke `main` dan lewat
+tombol **Run workflow**. Hasilnya artifact `Arkaxhermes-debug-arm64` di tab
+**Actions → run terakhir → Artifacts**.
+
+Aset biner diunduh di dalam job (±250 MB: base Ubuntu 28 MB, source Hermes
+88 MB, Chrome 128 MB) dan di-cache dengan kunci
+`hashFiles('rootfs/manifest.json')`, jadi build berikutnya melewati unduhan.
+`rootfs/manifest.json` ditulis ulang oleh skrip unduh selama job berjalan dan
+perubahannya tidak di-commit.
 
 ---
 
 ## 7. Rilis & signing
 
-```bash
-keytool -genkeypair -v -keystore arkaxhermes.jks -alias arkaxhermes \
-  -keyalg RSA -keysize 2048 -validity 10000
-```
+Keystore Arkaxhermes sudah dibuat dan dipasang sebagai secret repo, jadi APK
+dari CI dan build lokal Anda memakai kunci yang sama. Ini syarat agar APK baru
+bisa menimpa aplikasi terpasang tanpa uninstall.
 
-Isi `android/local.properties` (jangan di-commit):
+| Secret | Isi |
+| --- | --- |
+| `ARKAX_KEYSTORE_B64` | isi `arkax-release.jks` dalam base64 |
+| `ARKAX_STORE_PASSWORD` | password keystore |
+| `ARKAX_KEY_ALIAS` | `arkax` |
+| `ARKAX_KEY_PASSWORD` | password kunci (sama dengan store password) |
+
+Untuk build lokal dengan kunci yang sama, isi `android/local.properties`
+(jangan di-commit):
 
 ```
 sdk.dir=/home/you/Android/Sdk
-ARKAX_STORE_FILE=/abs/path/arkaxhermes.jks
+ARKAX_STORE_FILE=/abs/path/arkax-release.jks
 ARKAX_STORE_PASSWORD=***
-ARKAX_KEY_ALIAS=arkaxhermes
+ARKAX_KEY_ALIAS=arkax
 ARKAX_KEY_PASSWORD=***
 ```
 
-`app/build.gradle.kts` membaca properti itu untuk `signingConfigs.release`; bila tidak ada, build release jatuh ke debug signing dengan peringatan.
+`app/build.gradle.kts` memakai konfigurasi itu untuk `release` **dan** `debug`
+(lihat `signingConfigs.arkaxRelease`). Bila properti tidak ada, kedua varian
+jatuh ke kunci debug lokal, dan APK hasilnya tidak bisa menimpa APK dari CI.
+
+`versionCode` diambil dari jumlah commit git (`git rev-list --count HEAD`),
+dengan cadangan `1` bila git tidak tersedia. Karena itu CI melakukan checkout
+penuh (`fetch-depth: 0`). Konsekuensinya setiap build selalu punya versionCode
+lebih tinggi, sehingga pembaruan di tempat tidak kena
+`INSTALL_FAILED_VERSION_DOWNGRADE`.
+
+> **Sekali saja:** APK bertanda tangan kunci Arkaxhermes tidak bisa menimpa
+> aplikasi lama yang dibangun dengan kunci debug mesin lain
+> (`INSTALL_FAILED_UPDATE_INCOMPATIBLE`). Uninstall aplikasi lama satu kali,
+> setelah itu semua build saling menimpa.
 
 ---
 

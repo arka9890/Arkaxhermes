@@ -199,8 +199,9 @@ object RootfsInstaller {
 
         private fun safeTarget(root: File, name: String): File {
             val cleaned = name.removePrefix("./").removePrefix("/")
+            val rootCan = root.canonicalFile
             val target = File(root, cleaned).canonicalFile
-            if (target != root && !target.path.startsWith(root.canonicalPath + File.separator)) {
+            if (target != rootCan && !target.path.startsWith(rootCan.path + File.separator)) {
                 throw SecurityException("path traversal ditolak: $name")
             }
             return target

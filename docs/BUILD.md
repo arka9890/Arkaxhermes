@@ -1,4 +1,4 @@
-> **Browser bawaan:** `./scripts/fetch-agent-browser.sh` mengunduh CLI v0.43.0 + Chrome ZIP; `build-apk.sh` otomatis memanggil `--stage-assets` untuk install-time asset pack `browser_pack`. Lihat [BROWSER.md](BROWSER.md).
+> **Browser bawaan:** `./scripts/fetch-agent-browser.sh` mengunduh CLI agent-browser v0.43.0. Chrome for Testing **tidak dibundel**: APK mengunduh ZIP-nya saat Browser pertama kali dibutuhkan (URL + SHA-256 dari `assets/manifest.json`). Lihat [BROWSER.md](BROWSER.md).
 
 > Validasi tambahan: `./scripts/check.sh` sekarang memanggil `python3 scripts/audit.py --strict` (butuh Node.js untuk render UI). Lihat [AUDIT.md](AUDIT.md).
 

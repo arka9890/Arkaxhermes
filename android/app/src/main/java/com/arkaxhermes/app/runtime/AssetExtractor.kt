@@ -36,7 +36,8 @@ object AssetExtractor {
         return result
     }
 
-    /** Salin install-time asset pack Chrome for Testing ke filesDir/browser. */
+    /** Salin Chrome for Testing bila tersedia di assets (jalur lama, untuk build dengan --stage-assets).
+     * Untuk build APK saat ini Chrome diunduh saat runtime oleh ChromeDownloader. */
     fun extractBrowserAsset(context: Context, destination: File): Boolean {
         destination.parentFile?.mkdirs()
         for (asset in listOf("chrome-headless-shell.zip", "browser/chrome-headless-shell.zip")) {

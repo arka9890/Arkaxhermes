@@ -4,7 +4,8 @@
 # Hasil:
 #   jniLibs/<abi>/libagent-browser.so   -> binary CLI yang dieksekusi dari nativeLibraryDir
 #   dist/chrome-headless-shell-*.zip    -> bundel browser (TIDAK disimpan di git/workspace snapshot)
-#   --stage-assets                      -> salin ZIP ke install-time asset pack untuk dirakit APK
+#   --stage-assets                      -> tidak berlaku lagi: Chrome TIDAK dibundel,
+#                                           ZIP-nya diunduh saat runtime (ChromeDownloader)
 #
 # Chrome for Testing arm64 ±128 MB sengaja tidak di-commit: melewati batas snapshot
 # repo. build-apk.sh memanggil --stage-assets sebelum Gradle sehingga APK akhir
@@ -37,7 +38,7 @@ done
 
 need curl
 ABI_DIR="$JNILIBS_DIR/arm64-v8a"
-mkdir -p "$ABI_DIR" "$ARKAX_ROOT/dist" "$ARKAX_ROOT/browser_pack/src/main/assets"
+mkdir -p "$ABI_DIR" "$ARKAX_ROOT/dist"
 
 fetch_binary() {
   local abi="$1" asset="$2" sha="$3" out="$4" url
@@ -114,9 +115,8 @@ with open(path, "w", encoding="utf-8") as fh:
 PY
 
 if [[ $STAGE -eq 1 ]]; then
-  [[ -f "$CHROME_ZIP" ]] || die "Chrome ZIP belum ada. Jalankan ./scripts/fetch-agent-browser.sh tanpa --stage-assets dulu."
-  cp "$CHROME_ZIP" "$ARKAX_ROOT/browser_pack/src/main/assets/chrome-headless-shell.zip"
-  log "Asset pack siap: browser_pack/src/main/assets/chrome-headless-shell.zip"
+  warn "--stage-assets tidak berlaku lagi: Chrome sengaja tidak dibundel dalam APK."
+  warn "APK mengunduhnya saat Browser pertama kali dibutuhkan (ChromeDownloader), pakai URL + SHA-256 di assets/manifest.json."
 fi
 
 file "$ABI_DIR/libagent-browser.so" || true

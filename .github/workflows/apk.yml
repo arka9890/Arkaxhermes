@@ -4,6 +4,10 @@ name: Arkaxhermes APK
 # menyiapkan Android SDK di mesin sendiri. Tanda tangan memakai keystore
 # Arkaxhermes yang sama dengan build lokal (lihat docs/BUILD.md bagian 7),
 # sehingga APK baru bisa menimpa versi terpasang tanpa uninstall.
+#
+# Chrome for Testing sengaja tidak dibundel: ZIP-nya diunduh saat Browser
+# pertama kali dibutuhkan di perangkat (ChromeDownloader), jadi job ini tidak
+# perlu mengunduh 128 MB Chrome dan APK tetap ramping.
 on:
   push:
     branches: [main]
@@ -37,10 +41,11 @@ jobs:
         with:
           gradle-version: '8.9'
 
-      # Aset biner tidak di-commit (.gitignore) dan totalnya ±250 MB: base Ubuntu
-      # 28 MB, source Hermes 88 MB, Chrome for Testing 128 MB. Cache dikunci pada
-      # hash rootfs/manifest.json karena manifest yang mem-pin versi + checksum
-      # upstream, jadi perubahan manifest otomatis membatalkan cache.
+      # Aset biner tidak di-commit (.gitignore) dan totalnya ±120 MB: base Ubuntu
+      # 28 MB + source Hermes 52 MB (Chrome TIDAK diunduh di sini). Cache
+      # dikunci pada hash rootfs/manifest.json karena manifest yang mem-pin
+      # versi + checksum upstream, jadi perubahan manifest otomatis membatalkan
+      # cache.
       - name: Cache aset biner
         uses: actions/cache@v4
         with:
@@ -50,7 +55,6 @@ jobs:
             android/app/src/main/jniLibs
             android/app/src/main/assets/rootfs
             android/app/src/main/assets/runtime/hermes-src.tar.gz
-            browser_pack/src/main/assets
           key: arkax-assets-${{ hashFiles('rootfs/manifest.json') }}
 
       - name: Validasi repositori
@@ -88,7 +92,9 @@ jobs:
           ./scripts/fetch-proot.sh --abi arm64-v8a
           ./scripts/fetch-hermes-src.sh --tag "$TAG" --slim
           ./scripts/build-rootfs.sh --arch arm64
-          ./scripts/fetch-agent-browser.sh --stage-assets
+          ./scripts/fetch-agent-browser.sh --binaries-only
+          # manifest.json disalin ke assets supaya ChromeDownloader tahu URL + SHA-256 Chrome.
+          cp rootfs/manifest.json android/app/src/main/assets/manifest.json
 
       - name: Rakit APK debug
         run: ./scripts/build-apk.sh debug

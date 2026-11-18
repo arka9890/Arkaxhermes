@@ -23,7 +23,7 @@
 
 - APK baru ditolak saat instalasi karena kunci berbeda (`INSTALL_FAILED_UPDATE_INCOMPATIBLE`) — perilaku yang diharapkan: satu kali uninstall, setelah itu semua build saling menimpa.
 - `versionCode` APK CI lebih rendah dari yang terpasang (`INSTALL_FAILED_VERSION_DOWNGRADE`) — dijamin oleh hitungan commit yang monoton.
-- `assembleDebug` ditolak karena proyek memakai asset pack (`:browser_pack`) — jalur cadangan: taruh ZIP di `assets/browser/`, yang sudah didukung `AssetExtractor`.
+- (Sudah teratasi) Chrome tidak lagi memakai asset pack; APK mengunduh ZIP saat runtime.
 - Build CI kehabisan waktu atau kuota karena mengunduh ulang ±250 MB — dijamin oleh `actions/cache`.
 - Keystore tidak terbaca di CI karena path di `local.properties` relatif terhadap modul `android/app` — gunakan path absolut.
 

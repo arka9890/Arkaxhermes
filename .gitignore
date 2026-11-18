@@ -30,8 +30,6 @@ android/app/src/main/assets/rootfs/*.tar.gz
 android/app/src/main/assets/rootfs/rootfs.sha256
 android/app/src/main/assets/rootfs/README.txt
 android/app/src/main/assets/runtime/hermes-src.tar.gz
-browser_pack/src/main/assets/*.zip
-android/app/src/main/assets/browser/*.zip
 rootfs/work/
 build-cache/
 
@@ -48,3 +46,6 @@ Thumbs.db
 *.key
 *.pem
 secrets.env
+
+# Manifest hasil salinan build-apk.sh ke assets (ChromeDownloader). Jangan di-commit.
+android/app/src/main/assets/manifest.json

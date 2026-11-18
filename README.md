@@ -91,7 +91,7 @@ Tabel lengkap satu-per-satu ada di [docs/FEATURE_MAP.md](docs/FEATURE_MAP.md). P
 Arkaxhermes sekarang membawa **browser sungguhan**, bukan sekadar WebView kosong:
 
 - [`vercel-labs/agent-browser`](https://github.com/vercel-labs/agent-browser) `v0.43.0` (Apache-2.0), binary Linux arm64 dibundel sebagai `libagent-browser.so`.
-- **Chrome for Testing 157.0.8103.78 `linux-arm64`** dibawa sebagai **install-time asset pack** `browser_pack` (±128 MB); `scripts/fetch-agent-browser.sh --stage-assets` menyiapkannya sebelum build APK.
+- **Chrome for Testing 157.0.8103.78 `linux-arm64`** **tidak dibundel**: APK tetap ramping dan ZIP Chrome (±128 MB) diunduh saat Browser pertama kali dibutuhkan (`ChromeDownloader`, checksum dari `assets/manifest.json`).
 - Daemon CDP memakai sesi tetap `arkaxhermes`, WebSocket live viewport di `ws://127.0.0.1:9223`, dan dashboard observability di `http://127.0.0.1:4848`.
 - **Tab Browser** di bottom nav menampilkan frame JPEG live, menerima sentuhan/mouse/keyboard, tombol Back/Forward/Reload, Snapshot, Screenshot, Tabs, Start/Stop, Status, dan Dashboard.
 - Endpoint native: `/api/browser/status|start|stop|command|dashboard`; aksi bridge `browser.*` juga tersedia lewat `/api/hermes/feature`.

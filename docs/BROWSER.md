@@ -27,7 +27,7 @@ Tab Browser (WebView UI)
 | Path | Isi |
 | --- | --- |
 | `android/app/src/main/jniLibs/arm64-v8a/libagent-browser.so` | CLI Rust; dieksekusi dari `nativeLibraryDir` |
-| `browser_pack/src/main/assets/chrome-headless-shell.zip` | dibuat `fetch-agent-browser.sh --stage-assets` saat build APK |
+| `assets/manifest.json` | URL + SHA-256 Chrome untuk `ChromeDownloader` (disalin `build-apk.sh` dari `rootfs/manifest.json`) |
 | `filesDir/browser/chrome/` | hasil ekstraksi ZIP oleh `BrowserRuntime.kt` |
 | `/opt/arkax/native/libagent-browser.so` | bind `nativeLibraryDir` di dalam proot |
 | `/mnt/arkax/browser/chrome-wrapper.sh` | wrapper Chrome dengan `--no-sandbox --disable-dev-shm-usage --disable-gpu` |
@@ -55,12 +55,12 @@ Input pengguna pada gambar viewport dikirim balik sebagai `input_mouse`, `input_
 ./scripts/build-apk.sh debug                # otomatis --stage-assets lalu Gradle
 ```
 
-Chrome ZIP **tidak disimpan di Git** karena ukurannya ±128 MB dan akan melewati batas snapshot repo. `build-apk.sh` menyalinnya ke modul `browser_pack` (`com.android.asset-pack`, `deliveryType = "install-time"`) sebelum Gradle, sehingga APK/AAB final tetap membawa browser secara offline.
+Chrome ZIP **tidak dibundel dalam APK** (±128 MB). `ChromeDownloader` mengunduhnya saat Browser pertama kali dibutuhkan, memverifikasi SHA-256 dari `assets/manifest.json`, lalu `BrowserRuntime` mengekstraknya seperti biasa. Jalur assets (`chrome-headless-shell.zip` di `assets/`) tetap didukung bila suatu build mau membundel manual.
 
 ## Batasan jujur
 
 - Chrome berjalan headless di proot tanpa root; `--no-sandbox`, tanpa GPU, dan `/dev/shm` dimatikan. Ekstensi Chrome, WebGPU penuh, dan profil persistent tertentu tidak dijamin.
 - Dashboard Next.js dibuka di browser sistem karena tidak ramah di-iframe; **tab Browser di aplikasi** tetap menampilkan viewport live secara native.
 - Port `9223`/`4848` hanya loopback. WebView diizinkan mengaksesnya lewat `network_security_config.xml`.
-- Jika asset pack belum distagel, tab Browser menampilkan status jelas dan `doctor.sh` menandai Chrome belum siap — bukan screenshot palsu.
+- Jika Chrome belum terunduh (mis. perangkat offline saat pertama kali), tab Browser menampilkan status jelas dan `doctor.sh` menandai Chrome belum siap — bukan screenshot palsu.
 - APK belum dirakit di sandbox ini; file binary sudah ada di workspace, tetapi verifikasi runtime Chrome arm64 harus dilakukan di perangkat Android / emulator.

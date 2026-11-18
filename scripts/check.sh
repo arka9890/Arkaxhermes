@@ -70,7 +70,6 @@ REQUIRED=(
   "android/app/src/main/assets/runtime/agent-browser-wrapper.sh"
   "android/app/src/main/assets/runtime/browser-bootstrap.sh"
   "android/app/src/main/java/com/arkaxhermes/app/runtime/BrowserRuntime.kt"
-  "browser_pack/build.gradle.kts"
 )
 for f in "${REQUIRED[@]}"; do
   if [[ -f "$ARKAX_ROOT/$f" ]]; then ok "$f"; else bad "$f (hilang)"; fi

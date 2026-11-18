@@ -18,4 +18,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "Arkaxhermes"
 include(":app")
-include(":browser_pack")

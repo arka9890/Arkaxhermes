@@ -15,8 +15,10 @@ done
 [[ -f "$ASSET_ROOT/www/index.html" ]] || die "UI belum ada: $ASSET_ROOT/www/index.html"
 [[ -d "$ANDROID_DIR" ]] || die "direktori proyek Android hilang"
 
-# Pastikan binary agent-browser + Chrome for Testing tersedia dan distagel ke asset pack.
-"$ARKAX_ROOT/scripts/fetch-agent-browser.sh" --stage-assets >/dev/null || die "aset browser bawaan belum siap"
+# Pastikan binary agent-browser tersedia. Chrome sengaja TIDAK dibundel: ZIP-nya
+# diunduh saat Browser pertama kali dibutuhkan (ChromeDownloader), jadi job ini
+# hanya menyiapkan CLI.
+"$ARKAX_ROOT/scripts/fetch-agent-browser.sh" --binaries-only >/dev/null || die "aset browser bawaan belum siap"
 if [[ ! -f "$ROOTFS_ASSET_DIR/rootfs.sha256" ]]; then
   warn "rootfs belum dibundel — APK akan tetap terbuild tetapi first-run membutuhkan jaringan / asset belum lengkap."
   warn "Jalankan: ./scripts/make-assets.sh"
@@ -45,10 +47,15 @@ case "$VARIANT" in
   release) TASK="assembleRelease" ;;
 esac
 
+# Manifest (berisi URL + SHA-256 Chrome untuk ChromeDownloader) harus masuk
+# assets SEBELUM Gradle dirakit, karena Chrome TIDAK dibundel dalam APK.
+cp -f "$ARKAX_ROOT/rootfs/manifest.json" "$ASSET_ROOT/manifest.json"
+
 log "Menjalankan :app:$TASK …"
 (cd "$ANDROID_DIR" && ./gradlew ":app:$TASK" --stacktrace)
 
 VERSION="$(grep -oE 'versionName "[^"]+"' "$ANDROID_DIR/app/build.gradle.kts" | head -n1 | cut -d'"' -f2 || echo 0.1.0)"
+
 SRC="$(find "$ANDROID_DIR/app/build/outputs/apk/$VARIANT" -name '*.apk' -print -quit 2>/dev/null || true)"
 if [[ -n "$SRC" ]]; then
   DEST="$ARKAX_ROOT/dist/Arkaxhermes-$VARIANT-$VERSION.apk"

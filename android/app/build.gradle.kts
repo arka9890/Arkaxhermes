@@ -23,8 +23,8 @@ android {
     namespace = "com.arkaxhermes.app"
     compileSdk = 35
 
-    // Chrome for Testing dibawa sebagai install-time asset pack (±128 MB).
-    assetPacks += ":browser_pack"
+    // Chrome for Testing TIDAK dibundel: ZIP-nya diunduh saat Browser pertama
+    // kali dibutuhkan (ChromeDownloader) supaya APK tetap ramping.
 
     defaultConfig {
         applicationId = "com.arkaxhermes.app"
@@ -98,4 +98,3 @@ dependencies {
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
 }
-

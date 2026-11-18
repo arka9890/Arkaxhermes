@@ -22,6 +22,10 @@ class BrowserRuntime(
 ) {
     data class EnsureResult(val ok: Boolean, val message: String, val path: String)
 
+    // Arkaxhermes: Chrome for Testing TIDAK dibundel dalam APK. ZIP-nya
+    // diunduh saat pertama kali Browser dibutuhkan (ChromeDownloader, URL +
+    // SHA-256 dari assets/manifest.json) dan disimpan di direktori privat.
+    // Jalur assets tetap didukung untuk build yang mau membundel manual.
     fun ensureChrome(): EnsureResult {
         val zip = RuntimePaths.browserZip(context)
         val chromeDir = RuntimePaths.browserChrome(context)
@@ -30,11 +34,16 @@ class BrowserRuntime(
             return EnsureResult(true, "Chrome sudah diekstrak", chromeDir.absolutePath)
         }
         if (!zip.exists()) {
-            val copied = AssetExtractor.extractBrowserAsset(context, zip)
-            if (!copied) {
-                return EnsureResult(false,
-                    "Asset pack chrome-headless-shell.zip tidak ada. Jalankan ./scripts/fetch-agent-browser.sh --stage-assets lalu build ulang APK.",
-                    zip.absolutePath)
+            val extracted = AssetExtractor.extractBrowserAsset(context, zip)
+            if (extracted) {
+                Log.i(TAG, "Chrome ditemukan di assets")
+            } else {
+                val (ok, message) = ChromeDownloader.download(context, zip)
+                if (!ok) {
+                    return EnsureResult(false,
+                        "Chrome belum diunduh. $message",
+                        zip.absolutePath)
+                }
             }
         }
         return try {

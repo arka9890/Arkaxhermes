@@ -3,23 +3,35 @@
 # Offline-first: memakai /opt/arkax/hermes-src.tar.gz yang dibundel di APK.
 set -euo pipefail
 
-SRC="/opt/arkax/hermes-src.tar.gz"
+SRC_GZ="/opt/arkax/hermes-src.tar.gz"
+SRC_TAR="/opt/arkax/hermes-src.tar"
+# aapt2 meng-un-gzip aset berekstensi .gz saat APK dirakit dan membuang
+# akhirannya, jadi di dalam APK berkas ini bernama hermes-src.tar. Terima
+# keduanya dan sesuaikan flag tar.
+if [[ -f "$SRC_GZ" ]]; then
+  SRC="$SRC_GZ"; TARFLAGS=(-xzf)
+elif [[ -f "$SRC_TAR" ]]; then
+  SRC="$SRC_TAR"; TARFLAGS=(-xf)
+else
+  SRC=""; TARFLAGS=()
+fi
 DEST="/opt/hermes-agent"
 HERMES_HOME="${HERMES_HOME:-/root/.hermes}"
 HERMES_TAG="${HERMES_TAG:-v0.23.1}"
 VERBOSE="${1:-}"
 
 info() { printf 'ARKAX:log:%s\n' "$*"; }
-info "install-hermes.sh: tag=$HERMES_TAG src=$([[ -f "$SRC" ]] && echo bundled || echo network)"
+SRC_LABEL=$([[ -n "$SRC" ]] && echo bundled || echo network)
+info "install-hermes.sh: tag=$HERMES_TAG src=$SRC_LABEL"
 
 if [[ "${ARKAX_USE_INSTALLER:-0}" == "1" ]]; then
   info "Menggunakan installer resmi (ARKAX_USE_INSTALLER=1) …"
   curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
 else
-  if [[ -f "$SRC" ]]; then
-    info "Mengekstrak source Hermes yang dibundel …"
+  if [[ -n "$SRC" ]]; then
+    info "Mengekstrak source Hermes yang dibundel ($SRC_LABEL) …"
     rm -rf "$DEST.tmp" && mkdir -p "$DEST.tmp"
-    tar -xzf "$SRC" -C "$DEST.tmp" --strip-components=1
+    tar "${TARFLAGS[@]}" "$SRC" -C "$DEST.tmp" --strip-components=1
     rm -rf "$DEST" && mv "$DEST.tmp" "$DEST"
   else
     info "Source bundel tidak ada; clone dari GitHub $HERMES_TAG …"

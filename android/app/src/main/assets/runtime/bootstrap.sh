@@ -33,6 +33,16 @@ if [[ ! -f "$ARKAX_STATE/deps.done" ]]; then
   touch "$ARKAX_STATE/deps.done"
 fi
 
+# uv tidak ada di repo Ubuntu 24.04, padahal Hermes membutuhkannya: dependency
+# intinya di-gate `python_version >= '3.14'` dan Python 3.14 dipasang lewat
+# `uv python install`. Dipasang di luar guard deps.done supaya rootfs lama pun
+# ikut mendapatkannya.
+if ! command -v uv >/dev/null 2>&1; then
+  info "Memasang uv (manajer Python untuk Hermes) …"
+  python3 -m pip install --break-system-packages -q uv \
+    || info "pip install uv gagal; install-hermes.sh akan memakai venv python3 sistem"
+fi
+
 step hermes 45 "Memasang Hermes Agent dari source bundel"
 bash /opt/arkax/install-hermes.sh
 

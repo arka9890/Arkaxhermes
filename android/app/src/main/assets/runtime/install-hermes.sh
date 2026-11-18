@@ -41,10 +41,19 @@ else
   fi
 
   cd "$DEST"
-  # Hermes upstream memakai uv untuk mengelola environment Python; fallback ke venv+pip.
+  # Hermes memakai uv untuk mengelola environment Python; fallback ke venv+pip.
+  # PENTING: dependency inti pyproject di-gate `python_version >= '3.14'`
+  # (mis. ruamel.yaml), sedangkan Ubuntu 24.04 membawa Python 3.12. Tanpa
+  # Python 3.14, venv terpasang kosong dan `hermes doctor` gagal dengan
+  # "No module named 'ruamel'". .python-version upstream juga 3.14.
+  # UV_LINK_MODE=copy wajib di proot --link2symlink: hardlink cache→venv
+  # gagal dengan EINVAL (terbukti saat uji di lingkungan proot).
+  export UV_LINK_MODE=copy
   if command -v uv >/dev/null 2>&1; then
-    info "uv ditemukan: uv sync"
-    uv sync --frozen 2>/dev/null || uv sync || {
+    info "uv $(uv --version 2>/dev/null | head -n1): siapkan Python 3.14"
+    uv python install 3.14 || info "uv python install 3.14 gagal; mencoba Python sistem"
+    info "uv sync (Python 3.14)"
+    uv sync --frozen --python 3.14 2>/dev/null || uv sync --python 3.14 || {
       info "uv sync gagal, fallback python3 -m venv + pip install -e ."
       python3 -m venv .venv && .venv/bin/pip install --upgrade pip && .venv/bin/pip install -e .
     }
@@ -56,6 +65,13 @@ else
   else
     info "pyproject.toml tidak ada — memakai installer resmi sebagai fallback"
     curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
+  fi
+
+  # Self-check: venv yang tidak memuat ruamel berarti dependency 3.14 tidak
+  # terpasang, dan `hermes doctor` pasti gagal. Beri petunjuk jelas di log.
+  if [[ -x "$DEST/.venv/bin/python" ]] && \
+     ! "$DEST/.venv/bin/python" -c 'import ruamel.yaml' >/dev/null 2>&1; then
+    info "PERINGATAN: venv Hermes tidak lengkap ($("$DEST/.venv/bin/python" -V 2>&1)). Hermes v0.23.1 membutuhkan Python 3.14."
   fi
 fi
 
